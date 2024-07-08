@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, FocusEvent, SyntheticEvent } from 'react';
+import React, { useState, FocusEvent, SyntheticEvent, useEffect } from 'react';
 
 // next
 import Image from 'next/legacy/image';
@@ -40,6 +40,7 @@ import { fetcher } from 'utils/axios';
 // assets
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
+import { getGoogleUrl } from 'utils/getGoogleUrl';
 
 const Auth0 = '/assets/images/icons/auth0.svg';
 const Cognito = '/assets/images/icons/aws-cognito.svg';
@@ -48,6 +49,7 @@ const Google = '/assets/images/icons/google.svg';
 // ============================|| AWS CONNITO - LOGIN ||============================ //
 
 export default function AuthLogin({ providers, csrfToken }: any) {
+  const [from, setFrom] = useState('');
   const downSM = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   const [checked, setChecked] = useState(false);
   const [capsWarning, setCapsWarning] = useState(false);
@@ -61,6 +63,10 @@ export default function AuthLogin({ providers, csrfToken }: any) {
     event.preventDefault();
   };
 
+  const handleGoogleSignIn = () => {
+    console.log('SIGN IN WITH GOOGLE');
+  };
+
   const onKeyDown = (keyEvent: any) => {
     if (keyEvent.getModifierState('CapsLock')) {
       setCapsWarning(true);
@@ -68,6 +74,12 @@ export default function AuthLogin({ providers, csrfToken }: any) {
       setCapsWarning(false);
     }
   };
+
+  useEffect(() => {
+    if (window) {
+      setFrom(window.location.href);
+    }
+  }, []);
 
   return (
     <>
@@ -211,6 +223,27 @@ export default function AuthLogin({ providers, csrfToken }: any) {
           </form>
         )}
       </Formik>
+      <Stack
+        direction="row"
+        spacing={{ xs: 1, sm: 2 }}
+        justifyContent={{ xs: 'space-around', sm: 'space-between' }}
+        sx={{ mt: 3, '& .MuiButton-startIcon': { mr: { xs: 0, sm: 1 }, ml: { xs: 0, sm: -0.5 } } }}
+      >
+        <Box sx={{ width: '100%' }}>
+          <Divider sx={{ mt: 2 }}>
+            <Typography variant="caption"> Login with</Typography>
+          </Divider>
+          <Button
+            variant="outlined"
+            color="secondary"
+            fullWidth={!downSM}
+            startIcon={<Image src={Google} alt="Twitter" width={16} height={16} />}
+            href={getGoogleUrl(from)}
+          >
+            {!downSM && 'Google'}
+          </Button>
+        </Box>
+      </Stack>
 
       {providers && (
         <Stack

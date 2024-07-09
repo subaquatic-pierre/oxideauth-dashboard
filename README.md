@@ -1,1 +1,15 @@
-This is starter template for [Learn Next.js](https://nextjs.org/learn).
+# OxideAuth Dashboard
+
+Dashboard for OxideAuth Api Server
+
+## TODO:
+
+### Simple Layout
+
+### Header
+
+- documentation link
+
+### Footer
+
+- update links

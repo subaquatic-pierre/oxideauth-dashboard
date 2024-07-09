@@ -38,7 +38,9 @@ export default function LoadingProfile() {
       }
     });
 
-    router.push(APP_DEFAULT_PATH);
+    console.log({ res });
+
+    // router.push(APP_DEFAULT_PATH);
   };
 
   useEffect(() => {

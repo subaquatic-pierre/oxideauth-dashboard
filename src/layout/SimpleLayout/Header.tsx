@@ -35,6 +35,7 @@ import useUser from 'hooks/useUser';
 // assets
 import MenuOutlined from '@ant-design/icons/MenuOutlined';
 import LineOutlined from '@ant-design/icons/LineOutlined';
+import { usePathname } from 'next/navigation';
 
 // ==============================|| COMPONENTS - APP BAR ||============================== //
 
@@ -58,8 +59,14 @@ function ElevationScroll({ children, window }: any) {
 }
 
 export default function Header() {
+  const pathname = usePathname();
   const theme = useTheme();
   const user = useUser();
+
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 10
+  });
 
   const downMD = useMediaQuery(theme.breakpoints.down('md'));
   const [drawerToggle, setDrawerToggle] = useState<boolean>(false);
@@ -79,15 +86,8 @@ export default function Header() {
           <Toolbar sx={{ px: { xs: 1.5, md: 0, lg: 0 }, py: 2 }}>
             <Stack direction="row" sx={{ flexGrow: 1, display: { xs: 'none', md: 'block' } }} alignItems="center">
               <Typography sx={{ textAlign: 'left', display: 'inline-block' }}>
-                <Logo reverse to="/" />
+                <Logo reverse={trigger} to="/" />
               </Typography>
-              <Chip
-                label={process.env.NEXT_APP_VERSION}
-                variant="outlined"
-                size="small"
-                color="secondary"
-                sx={{ mt: 0.5, ml: 1, fontSize: '0.725rem', height: 20, '& .MuiChip-label': { px: 0.5 } }}
-              />
             </Stack>
             <Stack
               direction="row"
@@ -97,32 +97,18 @@ export default function Header() {
               }}
               spacing={2}
             >
-              <NextLink href={user ? APP_DEFAULT_PATH : '/login'} passHref legacyBehavior>
-                <Link className="header-link" color="white" target="_blank" underline="none">
-                  {user ? 'Dashboard' : 'Login'}
-                </Link>
-              </NextLink>
-              <NextLink href="/components-overview/buttons" passHref legacyBehavior>
-                <Link className="header-link" color="white" underline="none">
-                  Components
-                </Link>
-              </NextLink>
-              <Link className="header-link" color="white" href="https://codedthemes.gitbook.io/mantis/" target="_blank" underline="none">
+              <Link className="header-link" color={trigger ? 'white' : 'inherit'} href="" target="_blank" underline="none">
                 Documentation
               </Link>
-              <Box sx={{ display: 'inline-block' }}>
-                <AnimateButton>
-                  <Button
-                    component={Link}
-                    href="https://mui.com/store/items/mantis-react-admin-dashboard-template/"
-                    disableElevation
-                    color="primary"
-                    variant="contained"
-                  >
-                    Purchase Now
-                  </Button>
-                </AnimateButton>
-              </Box>
+              {!pathname.includes('loading-profile') && (
+                <Box sx={{ display: 'inline-block' }}>
+                  <AnimateButton>
+                    <Button component={Link} href={user ? APP_DEFAULT_PATH : '/login'} disableElevation color="primary" variant="contained">
+                      {user ? 'Dashboard' : 'Login'}
+                    </Button>
+                  </AnimateButton>
+                </Box>
+              )}
             </Stack>
             <Box
               sx={{

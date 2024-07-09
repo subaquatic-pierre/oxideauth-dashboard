@@ -2,7 +2,6 @@
 
 // next
 import NextLink from 'next/link';
-import { getProviders, getCsrfToken } from 'next-auth/react';
 
 // material-ui
 import Grid from '@mui/material/Grid';
@@ -15,9 +14,6 @@ import AuthWrapper from 'sections/auth/AuthWrapper';
 import AuthLogin from 'sections/auth/auth-forms/AuthLogin';
 
 export default function SignIn() {
-  const csrfToken = getCsrfToken();
-  const providers = getProviders();
-
   return (
     <AuthWrapper>
       <Grid container spacing={3}>
@@ -32,7 +28,7 @@ export default function SignIn() {
           </Stack>
         </Grid>
         <Grid item xs={12}>
-          <AuthLogin providers={providers} csrfToken={csrfToken} />
+          <AuthLogin />
         </Grid>
       </Grid>
     </AuthWrapper>

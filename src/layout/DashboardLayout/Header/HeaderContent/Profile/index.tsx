@@ -2,7 +2,6 @@ import { useRef, useState, ReactNode, SyntheticEvent } from 'react';
 
 // next
 import { useRouter } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -28,12 +27,12 @@ import Transitions from 'components/@extended/Transitions';
 import IconButton from 'components/@extended/IconButton';
 
 import { ThemeMode } from 'config';
-import useUser from 'hooks/useUser';
 
 // assets
 import LogoutOutlined from '@ant-design/icons/LogoutOutlined';
 import SettingOutlined from '@ant-design/icons/SettingOutlined';
 import UserOutlined from '@ant-design/icons/UserOutlined';
+import useAuth from 'hooks/useAuth';
 
 // types
 interface TabPanelProps {
@@ -63,22 +62,11 @@ function a11yProps(index: number) {
 
 export default function Profile() {
   const theme = useTheme();
-  const user = useUser();
+  const { user } = useAuth();
   const router = useRouter();
-  const { data: session } = useSession();
-  const provider = session?.provider;
 
   const handleLogout = () => {
-    switch (provider) {
-      case 'auth0':
-        signOut({ callbackUrl: `${process.env.NEXTAUTH_URL}/api/auth/logout/auth0` });
-        break;
-      case 'cognito':
-        signOut({ callbackUrl: `${process.env.NEXTAUTH_URL}/api/auth/logout/cognito` });
-        break;
-      default:
-        signOut({ redirect: false });
-    }
+    console.log('handle logout');
 
     router.push('/login');
   };

@@ -1,7 +1,6 @@
 'use client';
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { signIn } from 'next-auth/react';
 
 // material-ui
 import Box from '@mui/material/Box';

@@ -3,16 +3,13 @@
 import React from 'react';
 
 // next
-import Image from 'next/legacy/image';
 import NextLink from 'next/link';
-import { signIn } from 'next-auth/react';
 
 // material-ui
 import { Theme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
@@ -28,7 +25,6 @@ import * as Yup from 'yup';
 import { Formik } from 'formik';
 
 // project import
-import FirebaseSocial from './FirebaseSocial';
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
 
@@ -70,6 +66,10 @@ export default function AuthRegister({ providers, csrfToken }: any) {
     changePassword('');
   }, []);
 
+  const handleSubmit = (values: any, { setErrors, setSubmitting }: any) => {
+    console.log('form values', values);
+  };
+
   return (
     <>
       <Formik
@@ -87,22 +87,7 @@ export default function AuthRegister({ providers, csrfToken }: any) {
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
           password: Yup.string().max(255).required('Password is required')
         })}
-        onSubmit={(values, { setErrors, setSubmitting }) => {
-          signIn('register', {
-            redirect: false,
-            firstName: values.firstName,
-            lastName: values.lastName,
-            company: values.company,
-            email: values.email,
-            password: values.password,
-            callbackUrl: APP_DEFAULT_PATH
-          }).then((res: any) => {
-            if (res?.error) {
-              setErrors({ submit: res.error });
-              setSubmitting(false);
-            }
-          });
-        }}
+        onSubmit={handleSubmit}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit}>
@@ -270,66 +255,6 @@ export default function AuthRegister({ providers, csrfToken }: any) {
           </form>
         )}
       </Formik>
-
-      {providers && (
-        <Stack
-          direction="row"
-          spacing={{ xs: 1, sm: 2 }}
-          justifyContent={{ xs: 'space-around', sm: 'space-between' }}
-          sx={{ mt: 3, '& .MuiButton-startIcon': { mr: { xs: 0, sm: 1 }, ml: { xs: 0, sm: -0.5 } } }}
-        >
-          {Object.values(providers).map((provider: any) => {
-            if (provider.id === 'login' || provider.id === 'register') {
-              return;
-            }
-            return (
-              <Box key={provider.name} sx={{ width: '100%' }}>
-                <Divider sx={{ mt: 2 }}>
-                  <Typography variant="caption"> Sign up with</Typography>
-                </Divider>
-                {provider.id === 'google' && (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    fullWidth={!downSM}
-                    startIcon={<Image src={Google} alt="Twitter" width={16} height={16} />}
-                    onClick={() => signIn(provider.id, { callbackUrl: APP_DEFAULT_PATH })}
-                  >
-                    {!downSM && 'Google'}
-                  </Button>
-                )}
-                {provider.id === 'auth0' && (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    fullWidth={!downSM}
-                    startIcon={<Image src={Auth0} alt="Twitter" width={16} height={16} />}
-                    onClick={() => signIn(provider.id, { callbackUrl: APP_DEFAULT_PATH })}
-                  >
-                    {!downSM && 'Auth0'}
-                  </Button>
-                )}
-                {provider.id === 'cognito' && (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    fullWidth={!downSM}
-                    startIcon={<Image src={Cognito} alt="Twitter" width={16} height={16} />}
-                    onClick={() => signIn(provider.id, { callbackUrl: APP_DEFAULT_PATH })}
-                  >
-                    {!downSM && 'Cognito'}
-                  </Button>
-                )}
-              </Box>
-            );
-          })}
-        </Stack>
-      )}
-      {!providers && (
-        <Box sx={{ mt: 3 }}>
-          <FirebaseSocial />
-        </Box>
-      )}
     </>
   );
 }

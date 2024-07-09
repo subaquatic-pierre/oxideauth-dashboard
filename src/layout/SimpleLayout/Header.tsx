@@ -30,12 +30,12 @@ import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
 
 import { APP_DEFAULT_PATH, ThemeMode } from 'config';
-import useUser from 'hooks/useUser';
 
 // assets
 import MenuOutlined from '@ant-design/icons/MenuOutlined';
 import LineOutlined from '@ant-design/icons/LineOutlined';
 import { usePathname } from 'next/navigation';
+import useAuth from 'hooks/useAuth';
 
 // ==============================|| COMPONENTS - APP BAR ||============================== //
 
@@ -61,7 +61,7 @@ function ElevationScroll({ children, window }: any) {
 export default function Header() {
   const pathname = usePathname();
   const theme = useTheme();
-  const user = useUser();
+  const { user } = useAuth();
 
   const trigger = useScrollTrigger({
     disableHysteresis: true,

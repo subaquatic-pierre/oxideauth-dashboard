@@ -3,7 +3,6 @@ import { useState, MouseEvent } from 'react';
 // next
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
 
 // material-ui
 import { styled, useTheme, Theme } from '@mui/material/styles';
@@ -18,11 +17,11 @@ import MenuItem from '@mui/material/MenuItem';
 
 // project import
 import Avatar from 'components/@extended/Avatar';
-import useUser from 'hooks/useUser';
 import { useGetMenuMaster } from 'api/menu';
 
 // assets
 import RightOutlined from '@ant-design/icons/RightOutlined';
+import useAuth from 'hooks/useAuth';
 
 interface ExpandMoreProps extends IconButtonProps {
   theme: Theme;
@@ -54,24 +53,11 @@ export default function NavUser() {
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
 
-  const user = useUser();
+  const { user } = useAuth();
   const router = useRouter();
-  const { data: session } = useSession();
-  const provider = session?.provider;
 
   const handleLogout = () => {
-    switch (provider) {
-      case 'auth0':
-        signOut({ callbackUrl: `${process.env.NEXTAUTH_URL}/api/auth/logout/auth0` });
-        break;
-      case 'cognito':
-        signOut({ callbackUrl: `${process.env.NEXTAUTH_URL}/api/auth/logout/cognito` });
-        break;
-      default:
-        signOut({ redirect: false });
-    }
-
-    router.push('/login');
+    console.log('handle logout');
   };
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

@@ -15,7 +15,6 @@ import Typography from '@mui/material/Typography';
 // project import
 import AnimateButton from 'components/@extended/AnimateButton';
 import AuthWrapper from 'sections/auth/AuthWrapper';
-import FirebaseSocial from 'sections/auth/auth-forms/FirebaseSocial';
 
 // ================================|| CHECK MAIL ||================================ //
 
@@ -46,9 +45,6 @@ export default function CheckMail() {
           <Divider>
             <Typography variant={downSM ? 'subtitle1' : 'h5'}>Sign up with</Typography>
           </Divider>
-        </Grid>
-        <Grid item xs={12}>
-          <FirebaseSocial />
         </Grid>
       </Grid>
     </AuthWrapper>

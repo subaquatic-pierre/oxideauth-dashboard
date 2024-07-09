@@ -2,7 +2,6 @@
 
 // next
 import NextLink from 'next/link';
-import { getProviders, getCsrfToken } from 'next-auth/react';
 
 // material-ui
 import Grid from '@mui/material/Grid';
@@ -17,9 +16,6 @@ import AuthRegister from 'sections/auth/auth-forms/AuthRegister';
 // ================================|| REGISTER ||================================ //
 
 export default function Register() {
-  const csrfToken = getCsrfToken();
-  const providers = getProviders();
-
   return (
     <AuthWrapper>
       <Grid container spacing={3}>
@@ -34,7 +30,7 @@ export default function Register() {
           </Stack>
         </Grid>
         <Grid item xs={12}>
-          <AuthRegister providers={providers} csrfToken={csrfToken} />
+          <AuthRegister />
         </Grid>
       </Grid>
     </AuthWrapper>

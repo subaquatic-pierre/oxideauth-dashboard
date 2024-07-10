@@ -19,7 +19,7 @@ import Breadcrumbs from 'components/@extended/Breadcrumbs';
 
 import { MenuOrientation } from 'config';
 import useConfig from 'hooks/useConfig';
-import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+import { handlerDrawerOpen, useGetMenuMaster } from 'state/menu';
 
 interface Props {
   children: ReactNode;
@@ -49,7 +49,8 @@ export default function DashboardLayout({ children }: Props) {
   return (
     <Box sx={{ display: 'flex', width: '100%' }}>
       <Header />
-      {!isHorizontal ? <Drawer /> : <HorizontalBar />}
+      <Drawer />
+      {/* {!isHorizontal ? <Drawer /> : <HorizontalBar />} */}
       <Box component="main" sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
         <Toolbar sx={{ mt: isHorizontal ? 8 : 'inherit' }} />
         <Container

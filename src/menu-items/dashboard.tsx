@@ -14,12 +14,12 @@ const icons = { ChromeOutlined };
 
 // ==============================|| MENU ITEMS - SAMPLE PAGE ||============================== //
 
-const samplePage: NavItemType = {
+const dashboard: NavItemType = {
   id: 'sample-page',
-  title: <FormattedMessage id="sample-page" />,
+  title: 'Dashboard',
   type: 'group',
-  url: '/sample-page',
+  url: '/dashboard',
   icon: icons.ChromeOutlined
 };
 
-export default samplePage;
+export default dashboard;

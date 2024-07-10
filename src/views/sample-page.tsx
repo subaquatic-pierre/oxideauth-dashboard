@@ -1,12 +1,16 @@
+'use client';
 // material-ui
+import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
 // project imports
 import MainCard from 'components/MainCard';
+import useNotify from 'hooks/useNotify';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
 export default function SamplePage() {
+  const notify = useNotify();
   return (
     <MainCard title="Sample Card">
       <Typography variant="body2">
@@ -15,6 +19,9 @@ export default function SamplePage() {
         reprehended in voltage veil esse colum doolie eu fujian bulla parian. Exceptive sin ocean cuspidate non president, sunk in culpa qui
         officiate descent molls anim id est labours.
       </Typography>
+      <Button onClick={() => notify('CHANGE GHTE TTEXT HERER!!!', 'error')} variant="contained">
+        CLICK
+      </Button>
     </MainCard>
   );
 }

@@ -14,9 +14,6 @@ export type AuthContextProps = {
 export type UserProfile = {
   id?: string;
   email?: string;
-  avatar?: string;
-  image?: string;
   name?: string;
-  role?: string;
-  tier?: string;
+  imageUrl?: string;
 };

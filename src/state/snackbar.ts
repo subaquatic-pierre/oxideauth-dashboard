@@ -8,7 +8,7 @@ export const endpoints = {
   key: 'snackbar'
 };
 
-const initialState: SnackbarProps = {
+export const initialState: SnackbarProps = {
   action: false,
   open: false,
   message: 'Note archived',
@@ -19,7 +19,8 @@ const initialState: SnackbarProps = {
   variant: 'default',
   alert: {
     color: 'primary',
-    variant: 'filled'
+    variant: 'filled',
+    severity: 'success'
   },
   transition: 'Fade',
   close: false,
@@ -41,7 +42,7 @@ export function useGetSnackbar() {
   return memoizedValue;
 }
 
-export function openSnackbar(snackbar: SnackbarProps) {
+export function openSnackbar(snackbar: Partial<SnackbarProps>) {
   // to update local state based on key
 
   const { action, open, message, anchorOrigin, variant, alert, transition, close, actionButton } = snackbar;
@@ -58,7 +59,8 @@ export function openSnackbar(snackbar: SnackbarProps) {
         variant: variant || initialState.variant,
         alert: {
           color: alert?.color || initialState.alert.color,
-          variant: alert?.variant || initialState.alert.variant
+          variant: alert?.variant || initialState.alert.variant,
+          severity: alert?.severity || initialState.alert.severity
         },
         transition: transition || initialState.transition,
         close: close || initialState.close,

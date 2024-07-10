@@ -38,14 +38,13 @@ import { fetcher } from 'utils/axios';
 // assets
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
-import { getGoogleUrl } from 'utils/getGoogleUrl';
+import OAuthProviders from './OAuthProviders';
 
 const Google = '/assets/images/icons/google.svg';
 
 // ============================|| AWS CONNITO - LOGIN ||============================ //
 
 export default function AuthLogin() {
-  const [from, setFrom] = useState('');
   const downSM = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   const [checked, setChecked] = useState(false);
   const [capsWarning, setCapsWarning] = useState(false);
@@ -74,12 +73,6 @@ export default function AuthLogin() {
       setCapsWarning(false);
     }
   };
-
-  useEffect(() => {
-    if (window) {
-      setFrom(window.location.href);
-    }
-  }, []);
 
   return (
     <>
@@ -201,27 +194,7 @@ export default function AuthLogin() {
           </form>
         )}
       </Formik>
-      <Stack
-        direction="row"
-        spacing={{ xs: 1, sm: 2 }}
-        justifyContent={{ xs: 'space-around', sm: 'space-between' }}
-        sx={{ mt: 3, '& .MuiButton-startIcon': { mr: { xs: 0, sm: 1 }, ml: { xs: 0, sm: -0.5 } } }}
-      >
-        <Box sx={{ width: '100%' }}>
-          <Divider sx={{ mt: 2 }}>
-            <Typography variant="caption"> Login with</Typography>
-          </Divider>
-          <Button
-            variant="outlined"
-            color="secondary"
-            fullWidth={!downSM}
-            startIcon={<Image src={Google} alt="Twitter" width={16} height={16} />}
-            href={getGoogleUrl(from)}
-          >
-            {!downSM && 'Google'}
-          </Button>
-        </Box>
-      </Stack>
+      <OAuthProviders />
     </>
   );
 }

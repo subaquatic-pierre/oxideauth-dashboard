@@ -21,7 +21,7 @@ import IconButton from 'components/@extended/IconButton';
 
 import { MenuOrientation, ThemeMode, NavActionType } from 'config';
 import useConfig from 'hooks/useConfig';
-import { handlerHorizontalActiveItem, handlerActiveItem, handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
+import { handlerHorizontalActiveItem, handlerActiveItem, handlerDrawerOpen, useGetMenuMaster } from 'state/menu';
 
 // types
 import { LinkTarget, NavItemType } from 'types/menu';

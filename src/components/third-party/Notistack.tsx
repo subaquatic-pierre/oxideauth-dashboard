@@ -6,7 +6,7 @@ import { SnackbarProvider } from 'notistack';
 
 // project import
 import Loader from 'components/Loader';
-import { useGetSnackbar } from 'api/snackbar';
+import { useGetSnackbar } from 'state/snackbar';
 
 // assets
 import CheckCircleOutlined from '@ant-design/icons/CheckCircleOutlined';

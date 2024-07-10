@@ -8,6 +8,7 @@ Dashboard for OxideAuth Api Server
 
 ### Header
 
+- mobile menu
 - documentation link
 
 ### Footer

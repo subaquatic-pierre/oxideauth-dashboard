@@ -91,10 +91,8 @@ export default function MobileSection() {
             <Paper sx={{ boxShadow: theme.customShadows.z1 }}>
               <ClickAwayListener onClickAway={handleClose}>
                 <AppBar color="inherit">
-                  <Toolbar>
-                    <Search />
-                    <Profile />
-                  </Toolbar>
+                  {/* <Search /> */}
+                  <Profile parentHandleClose={handleClose} parentOpen={open} parentRef={anchorRef.current} hideButton={true} />
                 </AppBar>
               </ClickAwayListener>
             </Paper>

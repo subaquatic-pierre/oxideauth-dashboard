@@ -17,7 +17,7 @@ import MenuItem from '@mui/material/MenuItem';
 
 // project import
 import Avatar from 'components/@extended/Avatar';
-import { useGetMenuMaster } from 'api/menu';
+import { useGetMenuMaster } from 'state/menu';
 
 // assets
 import RightOutlined from '@ant-design/icons/RightOutlined';
@@ -54,7 +54,6 @@ export default function NavUser() {
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
 
   const { user } = useAuth();
-  const router = useRouter();
 
   const handleLogout = () => {
     console.log('handle logout');
@@ -93,9 +92,9 @@ export default function NavUser() {
           sx={{ '& .MuiListItemSecondaryAction-root': { right: !drawerOpen ? -20 : -16 } }}
         >
           <ListItemAvatar>
-            {user && <Avatar alt="Avatar" src={user.avatar} sx={{ ...(drawerOpen && { width: 46, height: 46 }) }} />}
+            {user && <Avatar alt="Avatar" src={user.imageUrl} sx={{ ...(drawerOpen && { width: 46, height: 46 }) }} />}
           </ListItemAvatar>
-          {user && <ListItemText primary={user.name} secondary="UI/UX Designer" />}
+          {user && <ListItemText primary={user.name} />}
         </ListItem>
       </List>
       <Menu
@@ -116,9 +115,6 @@ export default function NavUser() {
         }}
       >
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
-        <MenuItem component={Link} href="/apps/profiles/user/personal" onClick={handleClose}>
-          Profile
-        </MenuItem>
         <MenuItem component={Link} href="/apps/profiles/account/basic" onClick={handleClose}>
           My account
         </MenuItem>

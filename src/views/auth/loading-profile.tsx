@@ -15,6 +15,10 @@ import CircularLoader from 'components/CircularLoader';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { apiReq } from 'lib/api';
+import { DESCRIBE_SELF } from 'lib/endpoints';
+import { openSnackbar } from 'state/snackbar';
+import useNotify from 'hooks/useNotify';
 
 // assets
 const construction = '/assets/images/maintenance/under-construction.svg';
@@ -22,24 +26,19 @@ const construction = '/assets/images/maintenance/under-construction.svg';
 // ==============================--|| UNDER CONSTRUCTION - MAIN ||--============================== //
 
 export default function LoadingProfile() {
+  const notify = useNotify();
   const router = useRouter();
   const params = useSearchParams();
   const handleLoad = async () => {
     const server = process.env.NEXT_PUBLIC_SERVER_ENDPOINT;
-    const getUserEndpoint = `${server}/accounts/describe-self`;
-
     const token = params.get('token');
 
-    console.log({ token });
-    let res = await axios.get(getUserEndpoint, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    if (!token) {
+      notify('Unable to get token', 'error');
+    }
 
-    console.log({ res });
-
-    // router.push(APP_DEFAULT_PATH);
+    window.localStorage.setItem('token', token as string);
+    router.push(APP_DEFAULT_PATH);
   };
 
   useEffect(() => {

@@ -10,7 +10,7 @@ import MuiSnackbar from '@mui/material/Snackbar';
 
 // project import
 import IconButton from './IconButton';
-import { closeSnackbar, useGetSnackbar } from 'api/snackbar';
+import { closeSnackbar, useGetSnackbar } from 'state/snackbar';
 
 // assets
 import CloseOutlined from '@ant-design/icons/CloseOutlined';
@@ -95,8 +95,9 @@ export default function Snackbar() {
           onClose={handleClose}
         >
           <Alert
+            severity={snackbar.alert.severity}
             variant={snackbar.alert.variant}
-            color={snackbar.alert.color}
+            // color={snackbar.alert.color}
             action={
               <>
                 {snackbar.actionButton !== false && (

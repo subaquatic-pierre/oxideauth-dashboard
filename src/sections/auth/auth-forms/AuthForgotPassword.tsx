@@ -20,7 +20,7 @@ import { Formik } from 'formik';
 import useScriptRef from 'hooks/useScriptRef';
 import AnimateButton from 'components/@extended/AnimateButton';
 
-import { openSnackbar } from 'api/snackbar';
+import { openSnackbar } from 'state/snackbar';
 
 // types
 import { SnackbarProps } from 'types/snackbar';

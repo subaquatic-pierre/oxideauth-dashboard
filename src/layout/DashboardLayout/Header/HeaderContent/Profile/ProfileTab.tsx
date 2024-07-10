@@ -31,9 +31,10 @@ export default function ProfileTab({ handleLogout }: Props) {
         <ListItemIcon>
           <EditOutlined />
         </ListItemIcon>
-        <ListItemText primary="Edit Profile" />
+        <ListItemText primary="View Account" />
       </ListItemButton>
-      <ListItemButton selected={selectedIndex === 1} onClick={(event: React.MouseEvent<HTMLDivElement>) => handleListItemClick(event, 1)}>
+
+      {/* <ListItemButton selected={selectedIndex === 1} onClick={(event: React.MouseEvent<HTMLDivElement>) => handleListItemClick(event, 1)}>
         <ListItemIcon>
           <UserOutlined />
         </ListItemIcon>
@@ -51,7 +52,8 @@ export default function ProfileTab({ handleLogout }: Props) {
           <WalletOutlined />
         </ListItemIcon>
         <ListItemText primary="Billing" />
-      </ListItemButton>
+      </ListItemButton> */}
+
       <ListItemButton selected={selectedIndex === 2} onClick={handleLogout}>
         <ListItemIcon>
           <LogoutOutlined />

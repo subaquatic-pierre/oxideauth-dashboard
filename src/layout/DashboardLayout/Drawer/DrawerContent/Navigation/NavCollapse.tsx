@@ -27,7 +27,7 @@ import Transitions from 'components/@extended/Transitions';
 
 import { MenuOrientation, ThemeMode } from 'config';
 import useConfig from 'hooks/useConfig';
-import { handlerActiveItem, useGetMenuMaster } from 'api/menu';
+import { handlerActiveItem, useGetMenuMaster } from 'state/menu';
 
 // assets
 import BorderOutlined from '@ant-design/icons/BorderOutlined';

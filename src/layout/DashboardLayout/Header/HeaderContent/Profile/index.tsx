@@ -1,4 +1,4 @@
-import { useRef, useState, ReactNode, SyntheticEvent } from 'react';
+import { useRef, useState, ReactNode, SyntheticEvent, Ref } from 'react';
 
 // next
 import { useRouter } from 'next/navigation';
@@ -60,7 +60,14 @@ function a11yProps(index: number) {
 
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
-export default function Profile() {
+interface Props {
+  parentOpen?: boolean;
+  parentRef?: React.Ref<HTMLElement>;
+  parentHandleClose?: (event: MouseEvent | TouchEvent) => void;
+  hideButton?: boolean;
+}
+
+const Profile: React.FC<Props> = ({ parentOpen, parentRef, parentHandleClose, hideButton }) => {
   const theme = useTheme();
   const { user } = useAuth();
   const router = useRouter();
@@ -72,7 +79,7 @@ export default function Profile() {
   };
 
   const anchorRef = useRef<any>(null);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(parentOpen ?? false);
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -94,36 +101,38 @@ export default function Profile() {
 
   return (
     <Box sx={{ flexShrink: 0, ml: 0.75 }}>
-      <ButtonBase
-        sx={{
-          p: 0.25,
-          bgcolor: open ? iconBackColorOpen : 'transparent',
-          borderRadius: 1,
-          '&:hover': { bgcolor: theme.palette.mode === ThemeMode.DARK ? 'secondary.light' : 'secondary.lighter' },
-          '&:focus-visible': {
-            outline: `2px solid ${theme.palette.secondary.dark}`,
-            outlineOffset: 2
-          }
-        }}
-        aria-label="open profile"
-        ref={anchorRef}
-        aria-controls={open ? 'profile-grow' : undefined}
-        aria-haspopup="true"
-        onClick={handleToggle}
-      >
-        {user && (
-          <Stack direction="row" spacing={1.25} alignItems="center" sx={{ p: 0.5 }}>
-            <Avatar alt={user.name} src={user.avatar} size="sm" />
-            <Typography variant="subtitle1" sx={{ textTransform: 'capitalize' }}>
-              {user.name && user.name}
-            </Typography>
-          </Stack>
-        )}
-      </ButtonBase>
+      {!hideButton && (
+        <ButtonBase
+          sx={{
+            p: 0.25,
+            bgcolor: open ? iconBackColorOpen : 'transparent',
+            borderRadius: 1,
+            '&:hover': { bgcolor: theme.palette.mode === ThemeMode.DARK ? 'secondary.light' : 'secondary.lighter' },
+            '&:focus-visible': {
+              outline: `2px solid ${theme.palette.secondary.dark}`,
+              outlineOffset: 2
+            }
+          }}
+          aria-label="open profile"
+          ref={anchorRef}
+          aria-controls={open ? 'profile-grow' : undefined}
+          aria-haspopup="true"
+          onClick={handleToggle}
+        >
+          {user && (
+            <Stack direction="row" spacing={1.25} alignItems="center" sx={{ p: 0.5 }}>
+              <Avatar alt={user.name} src={user.imageUrl} size="sm" />
+              <Typography variant="subtitle1" sx={{ textTransform: 'capitalize' }}>
+                {user.name && user.name}
+              </Typography>
+            </Stack>
+          )}
+        </ButtonBase>
+      )}
       <Popper
         placement="bottom-end"
         open={open}
-        anchorEl={anchorRef.current}
+        anchorEl={parentRef ?? anchorRef.current}
         role={undefined}
         transition
         disablePortal
@@ -148,19 +157,16 @@ export default function Profile() {
                 maxWidth: { xs: 250, md: 290 }
               }}
             >
-              <ClickAwayListener onClickAway={handleClose}>
+              <ClickAwayListener onClickAway={parentHandleClose ?? handleClose}>
                 <MainCard elevation={0} border={false} content={false}>
                   <CardContent sx={{ px: 2.5, pt: 3 }}>
                     <Grid container justifyContent="space-between" alignItems="center">
                       <Grid item>
                         {user && (
                           <Stack direction="row" spacing={1.25} alignItems="center">
-                            <Avatar alt={user.name} src={user.avatar} />
+                            <Avatar alt={user.name} src={user.imageUrl} />
                             <Stack>
                               <Typography variant="h6">{user.name}</Typography>
-                              <Typography variant="body2" color="text.secondary">
-                                UI/UX Designer
-                              </Typography>
                             </Stack>
                           </Stack>
                         )}
@@ -190,7 +196,7 @@ export default function Profile() {
                             label="Profile"
                             {...a11yProps(0)}
                           />
-                          <Tab
+                          {/* <Tab
                             sx={{
                               display: 'flex',
                               flexDirection: 'row',
@@ -201,15 +207,15 @@ export default function Profile() {
                             icon={<SettingOutlined style={{ marginBottom: 0, marginRight: '10px' }} />}
                             label="Setting"
                             {...a11yProps(1)}
-                          />
+                          /> */}
                         </Tabs>
                       </Box>
                       <TabPanel value={value} index={0} dir={theme.direction}>
                         <ProfileTab handleLogout={handleLogout} />
                       </TabPanel>
-                      <TabPanel value={value} index={1} dir={theme.direction}>
+                      {/* <TabPanel value={value} index={1} dir={theme.direction}>
                         <SettingTab />
-                      </TabPanel>
+                      </TabPanel> */}
                     </>
                   )}
                 </MainCard>
@@ -220,4 +226,6 @@ export default function Profile() {
       </Popper>
     </Box>
   );
-}
+};
+
+export default Profile;

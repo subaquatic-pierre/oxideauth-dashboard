@@ -25,7 +25,7 @@ import { Formik } from 'formik';
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
 
-import { openSnackbar } from 'api/snackbar';
+import { openSnackbar } from 'state/snackbar';
 import useScriptRef from 'hooks/useScriptRef';
 import { strengthColor, strengthIndicator } from 'utils/password-strength';
 

@@ -1,12 +1,14 @@
 'use client';
-import { createContext, ReactElement, useState } from 'react';
+import { createContext, ReactElement, useEffect, useState } from 'react';
 
 // project import
 import defaultConfig, { MenuOrientation, ThemeDirection, ThemeMode } from 'config';
 import useLocalStorage from 'hooks/useLocalStorage';
 
 // types
-import { AuthContextProps } from 'types/auth';
+import { AuthContextProps, UserProfile } from 'types/auth';
+import { apiReqWithAuth } from 'lib/api';
+import { DESCRIBE_SELF } from 'lib/endpoints';
 
 // initial state
 const initialState: AuthContextProps = {
@@ -23,11 +25,36 @@ type ConfigProviderProps = {
 };
 
 function AuthContextProvider({ children }: ConfigProviderProps) {
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const loadUser = async () => {
+    try {
+      const res = await apiReqWithAuth<{ account: any }>({ endpoint: DESCRIBE_SELF });
+      const apiUser = res.data.account;
+      const user: UserProfile = {
+        id: apiUser.id,
+        email: apiUser.email,
+        imageUrl: apiUser.imageUrl,
+        name: apiUser.name
+      };
+
+      setUser(user);
+    } catch (e) {
+      console.log(e);
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
-        user: null,
+        user,
         loading
       }}
     >

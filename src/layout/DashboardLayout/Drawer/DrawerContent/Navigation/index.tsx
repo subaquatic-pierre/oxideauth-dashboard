@@ -17,7 +17,7 @@ import menuItem from 'menu-items';
 
 import { HORIZONTAL_MAX_ITEM, MenuOrientation } from 'config';
 import useConfig from 'hooks/useConfig';
-import { useGetMenuMaster } from 'api/menu';
+import { useGetMenuMaster } from 'state/menu';
 
 // types
 import { NavItemType } from 'types/menu';

@@ -37,6 +37,9 @@ import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
 
 // types
 import { StringColorProps } from 'types/password';
+import { apiReq } from 'lib/api';
+import { REGISTER } from 'lib/endpoints';
+import OAuthProviders from './OAuthProviders';
 
 const Auth0 = '/assets/images/icons/auth0.svg';
 const Cognito = '/assets/images/icons/aws-cognito.svg';
@@ -44,7 +47,7 @@ const Google = '/assets/images/icons/google.svg';
 
 // ============================|| AWS CONNITO - LOGIN ||============================ //
 
-export default function AuthRegister({ providers, csrfToken }: any) {
+export default function AuthRegister() {
   const downSM = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
   const [level, setLevel] = React.useState<StringColorProps>();
@@ -66,7 +69,17 @@ export default function AuthRegister({ providers, csrfToken }: any) {
     changePassword('');
   }, []);
 
-  const handleSubmit = (values: any, { setErrors, setSubmitting }: any) => {
+  const handleSubmit = async (values: any, { setErrors, setSubmitting }: any) => {
+    // const name = `${values.firstName} ${values.lastName}`;
+
+    const data = {
+      // name,
+      email: values.email,
+      password: values.password
+    };
+
+    const res = await apiReq({ endpoint: REGISTER, method: 'POST', data });
+
     console.log('form values', values);
   };
 
@@ -74,16 +87,15 @@ export default function AuthRegister({ providers, csrfToken }: any) {
     <>
       <Formik
         initialValues={{
-          firstName: '',
-          lastName: '',
-          company: '',
+          // firstName: '',
+          // lastName: '',
           email: '',
           password: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          firstName: Yup.string().max(20).required('First Name is required'),
-          lastName: Yup.string().max(20).required('Last Name is required'),
+          // firstName: Yup.string().max(20).required('First Name is required'),
+          // lastName: Yup.string().max(20).required('Last Name is required'),
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
           password: Yup.string().max(255).required('Password is required')
         })}
@@ -91,9 +103,8 @@ export default function AuthRegister({ providers, csrfToken }: any) {
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit}>
-            <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
             <Grid container spacing={3}>
-              <Grid item xs={6}>
+              {/* <Grid item xs={6}>
                 <Stack spacing={1}>
                   <InputLabel htmlFor="first-login">First Name*</InputLabel>
                   <OutlinedInput
@@ -134,28 +145,7 @@ export default function AuthRegister({ providers, csrfToken }: any) {
                     {errors.lastName}
                   </FormHelperText>
                 )}
-              </Grid>
-              <Grid item xs={12}>
-                <Stack spacing={1}>
-                  <InputLabel htmlFor="company-login">Company</InputLabel>
-                  <OutlinedInput
-                    id="company-login"
-                    type="text"
-                    value={values.company}
-                    name="company"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    placeholder="Enter your name"
-                    fullWidth
-                    error={Boolean(touched.company && errors.company)}
-                  />
-                </Stack>
-                {touched.company && errors.company && (
-                  <FormHelperText error id="standard-weight-helper-text-name-login">
-                    {errors.company}
-                  </FormHelperText>
-                )}
-              </Grid>
+              </Grid> */}
               <Grid item xs={12}>
                 <Stack spacing={1}>
                   <InputLabel htmlFor="email-login">Email Address</InputLabel>
@@ -255,6 +245,7 @@ export default function AuthRegister({ providers, csrfToken }: any) {
           </form>
         )}
       </Formik>
+      <OAuthProviders />
     </>
   );
 }

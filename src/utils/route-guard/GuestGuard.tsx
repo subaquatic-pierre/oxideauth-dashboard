@@ -16,7 +16,19 @@ import { GuardProps } from 'types/auth';
 // ==============================|| GUEST GUARD ||============================== //
 
 export default function GuestGuard({ children }: GuardProps) {
-  const { loading } = useAuth();
+  const router = useRouter();
+  const { loading, user } = useAuth();
+
+  const fetchData = async () => {
+    console.log(user);
+    if (user) {
+      router.push(APP_DEFAULT_PATH);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [user]);
 
   if (loading) return <Loader />;
 

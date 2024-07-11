@@ -6,7 +6,8 @@ import defaultConfig, { APP_DEFAULT_PATH, MenuOrientation, ThemeDirection, Theme
 import useLocalStorage from 'hooks/useLocalStorage';
 
 // types
-import { AuthContextProps, UserProfile } from 'types/auth';
+import { Account } from 'types/account';
+import { AuthContextProps } from 'types/auth';
 import { apiReq, apiReqWithAuth } from 'lib/api';
 import { DESCRIBE_SELF } from 'lib/endpoints';
 import { useRouter } from 'next/navigation';
@@ -27,28 +28,32 @@ type ConfigProviderProps = {
   children: ReactElement;
 };
 
+const buildAccount = (apiUser: any): Account | null => {
+  const user: Account = {
+    id: apiUser.id,
+    email: apiUser.email,
+    imageUrl: apiUser.imageUrl,
+    name: apiUser.name,
+    type: apiUser.type ?? 'user',
+    provider: apiUser.provider ?? 'local',
+    description: apiUser.description ?? ''
+  };
+
+  return user;
+};
+
 function AuthContextProvider({ children }: ConfigProviderProps) {
   const router = useRouter();
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const [user, setUser] = useState<Account | null>(null);
   const [loading, setLoading] = useState(true);
 
   const login = async (token: string) => {
     setLoading(true);
     window.localStorage.setItem('token', token as string);
     try {
-      const res = await apiReq<{ account: any }>({ endpoint: DESCRIBE_SELF, headers: { Authorization: `Bearer ${token}` } });
-      const apiUser = res.data.account;
+      const data = await apiReq<{ account: Account }>({ endpoint: DESCRIBE_SELF, headers: { Authorization: `Bearer ${token}` } });
 
-      if (!res.error) {
-        const user: UserProfile = {
-          id: apiUser.id,
-          email: apiUser.email,
-          imageUrl: apiUser.imageUrl,
-          name: apiUser.name
-        };
-
-        setUser(user);
-      }
+      setUser(data.account);
     } catch (e) {
       console.log(e);
     }
@@ -64,19 +69,9 @@ function AuthContextProvider({ children }: ConfigProviderProps) {
 
   const loadUser = async () => {
     try {
-      const res = await apiReqWithAuth<{ account: any }>({ endpoint: DESCRIBE_SELF });
-      const apiUser = res.data.account;
+      const data = await apiReqWithAuth<{ account: Account }>({ endpoint: DESCRIBE_SELF });
 
-      if (!res.error) {
-        const user: UserProfile = {
-          id: apiUser.id,
-          email: apiUser.email,
-          imageUrl: apiUser.imageUrl,
-          name: apiUser.name
-        };
-
-        setUser(user);
-      }
+      setUser(data.account);
     } catch (e) {
       console.log(e);
     }

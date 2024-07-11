@@ -16,25 +16,22 @@ export type ApiRequest = {
   headers?: object;
 };
 
-export const apiReq = async <Model = object>({ endpoint, method = 'GET', data, headers }: ApiRequest): Promise<ApiResponse<Model>> => {
-  return axios.request<any, ApiResponse<Model>>({
+export const apiReq = async <Model = object>({ endpoint, method = 'GET', data, headers }: ApiRequest): Promise<Model> => {
+  const res = await axios.request<any, ApiResponse<Model>>({
     method: method,
     url: `${apiHost}${endpoint}`,
     data,
     headers
   });
+
+  return res.data;
 };
 
-export const apiReqWithAuth = async <Model = object>({
-  endpoint,
-  method = 'GET',
-  data,
-  headers
-}: ApiRequest): Promise<ApiResponse<Model>> => {
+export const apiReqWithAuth = async <Model = object>({ endpoint, method = 'GET', data, headers }: ApiRequest): Promise<Model> => {
   const token = window.localStorage.getItem('token');
 
   if (!token) {
-    return { data: {} as Model, error: { message: 'No auth token in client' } };
+    throw Error('No auth token in client');
   }
 
   const _headers = {

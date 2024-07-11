@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import { Account } from './account';
 
 // ==============================|| AUTH TYPES ||============================== //
 
@@ -7,15 +8,8 @@ export type GuardProps = {
 };
 
 export type AuthContextProps = {
-  user: UserProfile | null;
+  user: Account | null;
   loading: boolean;
   logout: () => void;
   login: (token: string) => void;
-};
-
-export type UserProfile = {
-  id?: string;
-  email?: string;
-  name?: string;
-  imageUrl?: string;
 };

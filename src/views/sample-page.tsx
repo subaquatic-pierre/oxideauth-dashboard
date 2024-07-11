@@ -5,11 +5,15 @@ import Typography from '@mui/material/Typography';
 
 // project imports
 import MainCard from 'components/MainCard';
+import useAuth from 'hooks/useAuth';
 import useNotify from 'hooks/useNotify';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
 export default function SamplePage() {
+  const { user } = useAuth();
+
+  console.log(user);
   const notify = useNotify();
   return (
     <MainCard title="Sample Card">

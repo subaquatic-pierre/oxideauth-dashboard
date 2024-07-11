@@ -19,6 +19,8 @@ import { apiReq } from 'lib/api';
 import { DESCRIBE_SELF } from 'lib/endpoints';
 import { openSnackbar } from 'state/snackbar';
 import useNotify from 'hooks/useNotify';
+import { sleep } from 'utils/sleep';
+import useAuth from 'hooks/useAuth';
 
 // assets
 const construction = '/assets/images/maintenance/under-construction.svg';
@@ -29,16 +31,17 @@ export default function LoadingProfile() {
   const notify = useNotify();
   const router = useRouter();
   const params = useSearchParams();
+  const { login } = useAuth();
+
   const handleLoad = async () => {
-    const server = process.env.NEXT_PUBLIC_SERVER_ENDPOINT;
     const token = params.get('token');
 
     if (!token) {
       notify('Unable to get token', 'error');
+      return;
     }
 
-    window.localStorage.setItem('token', token as string);
-    router.push(APP_DEFAULT_PATH);
+    login(token);
   };
 
   useEffect(() => {

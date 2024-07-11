@@ -19,6 +19,10 @@ export default function AuthGuard({ children }: GuardProps) {
   const router = useRouter();
 
   const fetchData = async () => {
+    console.log({ loading, user });
+    if (user) {
+      return;
+    }
     if (!user && !loading) {
       router.push('/login');
     }

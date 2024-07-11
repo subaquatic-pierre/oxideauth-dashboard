@@ -48,16 +48,13 @@ const ExpandMore = styled(IconButton, { shouldForwardProp: (prop) => prop !== 't
 // ==============================|| LIST - USER ||============================== //
 
 export default function NavUser() {
+  const { logout } = useAuth();
   const theme = useTheme();
 
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
 
   const { user } = useAuth();
-
-  const handleLogout = () => {
-    console.log('handle logout');
-  };
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -114,7 +111,7 @@ export default function NavUser() {
           horizontal: 'right'
         }}
       >
-        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        <MenuItem onClick={logout}>Logout</MenuItem>
         <MenuItem component={Link} href="/apps/profiles/account/basic" onClick={handleClose}>
           My account
         </MenuItem>

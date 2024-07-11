@@ -69,14 +69,7 @@ interface Props {
 
 const Profile: React.FC<Props> = ({ parentOpen, parentRef, parentHandleClose, hideButton }) => {
   const theme = useTheme();
-  const { user } = useAuth();
-  const router = useRouter();
-
-  const handleLogout = () => {
-    console.log('handle logout');
-
-    router.push('/login');
-  };
+  const { user, logout } = useAuth();
 
   const anchorRef = useRef<any>(null);
   const [open, setOpen] = useState(parentOpen ?? false);
@@ -173,7 +166,7 @@ const Profile: React.FC<Props> = ({ parentOpen, parentRef, parentHandleClose, hi
                       </Grid>
                       <Grid item>
                         <Tooltip title="Logout">
-                          <IconButton size="large" sx={{ color: 'text.primary' }} onClick={handleLogout}>
+                          <IconButton size="large" sx={{ color: 'text.primary' }} onClick={logout}>
                             <LogoutOutlined />
                           </IconButton>
                         </Tooltip>
@@ -211,7 +204,7 @@ const Profile: React.FC<Props> = ({ parentOpen, parentRef, parentHandleClose, hi
                         </Tabs>
                       </Box>
                       <TabPanel value={value} index={0} dir={theme.direction}>
-                        <ProfileTab handleLogout={handleLogout} />
+                        <ProfileTab handleLogout={logout} />
                       </TabPanel>
                       {/* <TabPanel value={value} index={1} dir={theme.direction}>
                         <SettingTab />

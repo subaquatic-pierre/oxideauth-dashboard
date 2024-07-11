@@ -12,6 +12,7 @@ import useAuth from 'hooks/useAuth';
 
 // types
 import { GuardProps } from 'types/auth';
+import { sleep } from 'utils/sleep';
 
 // ==============================|| GUEST GUARD ||============================== //
 
@@ -20,7 +21,7 @@ export default function GuestGuard({ children }: GuardProps) {
   const { loading, user } = useAuth();
 
   const fetchData = async () => {
-    console.log(user);
+    await sleep(0.5);
     if (user) {
       router.push(APP_DEFAULT_PATH);
     }

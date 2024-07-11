@@ -9,6 +9,8 @@ export type GuardProps = {
 export type AuthContextProps = {
   user: UserProfile | null;
   loading: boolean;
+  logout: () => void;
+  login: (token: string) => void;
 };
 
 export type UserProfile = {

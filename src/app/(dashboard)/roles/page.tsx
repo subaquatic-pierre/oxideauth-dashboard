@@ -1,7 +1,7 @@
-import SamplePage from 'views/sample-page';
+import RolesTable from 'views/roles';
 
 // ==============================|| PAGE ||============================== //
 
 export default function SampleViewPage() {
-  return <SamplePage />;
+  return <RolesTable />;
 }

@@ -1,5 +1,5 @@
 export type Service = {
-  id?: string;
+  id: string;
   endpoint?: string;
   name?: string;
   description?: string;

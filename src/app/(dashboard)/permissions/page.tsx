@@ -1,7 +1,7 @@
-import SamplePage from 'views/sample-page';
+import PermissionsTable from 'views/permissions';
 
 // ==============================|| PAGE ||============================== //
 
 export default function SampleViewPage() {
-  return <SamplePage />;
+  return <PermissionsTable />;
 }

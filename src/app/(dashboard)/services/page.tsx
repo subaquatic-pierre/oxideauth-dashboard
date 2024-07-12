@@ -1,7 +1,7 @@
-import SamplePage from 'views/sample-page';
+import ServicesTable from 'views/services';
 
 // ==============================|| PAGE ||============================== //
 
 export default function SampleViewPage() {
-  return <SamplePage />;
+  return <ServicesTable />;
 }

@@ -28,20 +28,6 @@ type ConfigProviderProps = {
   children: ReactElement;
 };
 
-const buildAccount = (apiUser: any): Account | null => {
-  const user: Account = {
-    id: apiUser.id,
-    email: apiUser.email,
-    imageUrl: apiUser.imageUrl,
-    name: apiUser.name,
-    type: apiUser.type ?? 'user',
-    provider: apiUser.provider ?? 'local',
-    description: apiUser.description ?? ''
-  };
-
-  return user;
-};
-
 function AuthContextProvider({ children }: ConfigProviderProps) {
   const router = useRouter();
   const [user, setUser] = useState<Account | null>(null);
@@ -68,6 +54,10 @@ function AuthContextProvider({ children }: ConfigProviderProps) {
   };
 
   const loadUser = async () => {
+    if (!window.localStorage.getItem('token')) {
+      setLoading(false);
+      return;
+    }
     try {
       const data = await apiReqWithAuth<{ account: Account }>({ endpoint: DESCRIBE_SELF });
 

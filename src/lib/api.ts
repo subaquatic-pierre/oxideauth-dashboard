@@ -1,18 +1,20 @@
 import axios from 'axios';
+
+import { Account } from '@/types/account';
+import { Role } from '@/types/role';
+import { Service } from '@/types/service';
+
 import {
-  LIST_ACCOUNTS,
-  DESCRIBE_ACCOUNT,
-  LIST_ROLES,
-  DESCRIBE_ROLE,
-  LIST_PERMISSIONS,
-  DESCRIBE_SERVICE,
-  LIST_SERVICES,
   CREATE_PERMISSIONS,
-  DELETE_PERMISSIONS
+  DELETE_PERMISSIONS,
+  DESCRIBE_ACCOUNT,
+  DESCRIBE_ROLE,
+  DESCRIBE_SERVICE,
+  LIST_ACCOUNTS,
+  LIST_PERMISSIONS,
+  LIST_ROLES,
+  LIST_SERVICES,
 } from './endpoints';
-import { Account } from 'types/account';
-import { Role } from 'types/role';
-import { Service } from 'types/service';
 
 export const listAccounts = async (): Promise<Account[]> => {
   const data = await apiReqWithAuth<{ accounts: Account[] }>({ endpoint: LIST_ACCOUNTS });
@@ -20,7 +22,11 @@ export const listAccounts = async (): Promise<Account[]> => {
 };
 
 export const describeAccount = async (id_or_name: string): Promise<Account> => {
-  const data = await apiReqWithAuth<{ account: Account }>({ endpoint: DESCRIBE_ACCOUNT, method: 'POST', data: { account: id_or_name } });
+  const data = await apiReqWithAuth<{ account: Account }>({
+    endpoint: DESCRIBE_ACCOUNT,
+    method: 'POST',
+    data: { account: id_or_name },
+  });
   return data.account;
 };
 
@@ -35,7 +41,11 @@ export const listPermissions = async (): Promise<string[]> => {
 };
 
 export const describeRole = async (id_or_name: string): Promise<Role> => {
-  const data = await apiReqWithAuth<{ role: Role }>({ endpoint: DESCRIBE_ROLE, method: 'POST', data: { role: id_or_name } });
+  const data = await apiReqWithAuth<{ role: Role }>({
+    endpoint: DESCRIBE_ROLE,
+    method: 'POST',
+    data: { role: id_or_name },
+  });
   return data.role;
 };
 
@@ -45,7 +55,11 @@ export const listServices = async (): Promise<Service[]> => {
 };
 
 export const describeService = async (id_or_name: string): Promise<Service> => {
-  const data = await apiReqWithAuth<{ service: Service }>({ endpoint: DESCRIBE_SERVICE, method: 'POST', data: { service: id_or_name } });
+  const data = await apiReqWithAuth<{ service: Service }>({
+    endpoint: DESCRIBE_SERVICE,
+    method: 'POST',
+    data: { service: id_or_name },
+  });
   return data.service;
 };
 
@@ -53,7 +67,7 @@ export const createPermissions = async (permissions: string[]): Promise<string[]
   const data = await apiReqWithAuth<{ createdPermissions: string[] }>({
     endpoint: CREATE_PERMISSIONS,
     method: 'POST',
-    data: { permissions }
+    data: { permissions },
   });
   return data.createdPermissions;
 };
@@ -62,7 +76,7 @@ export const deletePermissions = async (permissions: string[]): Promise<string[]
   const data = await apiReqWithAuth<{ createdPermissions: string[] }>({
     endpoint: DELETE_PERMISSIONS,
     method: 'POST',
-    data: { permissions }
+    data: { permissions },
   });
   return data.createdPermissions;
 };
@@ -83,27 +97,38 @@ export type ApiRequest = {
   headers?: object;
 };
 
-export const apiReq = async <Model = object>({ endpoint, method = 'GET', data, headers }: ApiRequest): Promise<Model> => {
+export const apiReq = async <Model = object>({
+  endpoint,
+  method = 'GET',
+  data,
+  headers,
+}: ApiRequest): Promise<Model> => {
   const res = await axios.request<any, ApiResponse<Model>>({
     method: method,
     url: `${apiHost}${endpoint}`,
     data,
-    headers
+    headers,
   });
 
   return res.data;
 };
 
-export const apiReqWithAuth = async <Model = object>({ endpoint, method = 'GET', data, headers }: ApiRequest): Promise<Model> => {
-  const token = window.localStorage.getItem('token');
+export const apiReqWithAuth = async <Model = object>({
+  endpoint,
+  method = 'GET',
+  data,
+  headers,
+}: ApiRequest): Promise<Model> => {
+  // const token = window.localStorage.getItem('token');
 
-  if (!token) {
-    throw Error('No auth token in client');
-  }
+  // if (!token) {
+  //   throw Error('No auth token in client');
+  // }
 
   const _headers = {
     ...headers,
-    Authorization: `Bearer ${token}`
+    // Authorization: `Bearer ${token}`,
+    // Authorization: `Bearer ${token}`,
   };
 
   return apiReq({ endpoint, method, data, headers: _headers });

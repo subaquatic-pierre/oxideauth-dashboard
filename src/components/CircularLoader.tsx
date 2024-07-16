@@ -2,7 +2,7 @@
 import Stack from '@mui/material/Stack';
 
 // project-import
-import CircularWithPath from './@extended/progress/CircularWithPath';
+import CircularWithPath from '@/components/extended/progress/CircularWithPath';
 
 // ==============================|| LOADER - CIRCULAR ||============================== //
 

@@ -1,20 +1,27 @@
-import type { Metadata } from 'next';
+import * as React from 'react';
+import type { Viewport } from 'next';
 
-import './globals.css';
+import '@/styles/global.css';
 
-// PROJECT IMPORTS
-import ProviderWrapper from './ProviderWrapper';
+import { UserProvider } from '@/contexts/userContext';
+import { LocalizationProvider } from '@/components/core/localizationProvider';
+import { ThemeProvider } from '@/components/core/themeProvider/themeProvider';
 
-export const metadata: Metadata = {
-  title: 'Mantis Material UI React Dashboard Template',
-  description: 'Mantis Material UI React Dashboard Template'
-};
+export const viewport = { width: 'device-width', initialScale: 1 } satisfies Viewport;
 
-export default function RootLayout({ children }: { children: React.ReactElement }) {
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+export default function Layout({ children }: LayoutProps): React.JSX.Element {
   return (
     <html lang="en">
       <body>
-        <ProviderWrapper>{children}</ProviderWrapper>
+        <LocalizationProvider>
+          <UserProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </UserProvider>
+        </LocalizationProvider>
       </body>
     </html>
   );

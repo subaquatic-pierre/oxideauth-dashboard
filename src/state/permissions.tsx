@@ -89,7 +89,9 @@ const ReactTable: React.FC<TableProps> = ({ data, columns, setDeleteOpen, setCre
 
     getRowId: (row) => row.name,
     enableRowSelection: true,
-    manualPagination: true
+    manualPagination: true,
+
+    debugTable: true
   });
 
   let headers: LabelKeyObject[] = [];

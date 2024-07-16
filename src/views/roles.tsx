@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 
 // material-ui
 import Box from '@mui/material/Box';
@@ -14,7 +14,7 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Stack from '@mui/material/Stack';
-import { IconButton, Tooltip, Typography } from '@mui/material';
+import { Button, IconButton, Tooltip, Typography } from '@mui/material';
 
 // third-party
 import {
@@ -27,7 +27,8 @@ import {
   getFilteredRowModel,
   getFacetedRowModel,
   getFacetedMinMaxValues,
-  getFacetedUniqueValues
+  getFacetedUniqueValues,
+  PaginationState
 } from '@tanstack/react-table';
 
 // project-import
@@ -38,41 +39,53 @@ import { CSVExport, TablePagination, Filter, DebouncedInput, IndeterminateCheckb
 // types
 import { LabelKeyObject } from 'react-csv/lib/core';
 import { listPermissions, listRoles } from 'lib/api';
-import { DeleteFilled, EditFilled } from '@ant-design/icons';
+import { CopyOutlined, DeleteFilled, EditFilled, PlusCircleOutlined } from '@ant-design/icons';
 import { useTheme, useThemeProps } from '@mui/system';
 import { Role } from 'types/role';
 
 // ==============================|| REACT TABLE ||============================== //
 
 interface TableProps {
-  handleDeleteClick: (names: string[]) => void;
   data: Role[];
   columns: ColumnDef<Role>[];
+  setDeleteOpen: (open: boolean) => void;
+  rowSelection: {};
+  setRowSelection: Dispatch<SetStateAction<{}>>;
+  handleCopyClick: () => void;
   top?: boolean;
 }
 
-const ReactTable: React.FC<TableProps> = ({ data, columns, top, handleDeleteClick }) => {
+const ReactTable: React.FC<TableProps> = ({ data, columns, top, setDeleteOpen, handleCopyClick, setRowSelection, rowSelection }) => {
   const theme = useTheme();
   const [globalFilter, setGlobalFilter] = useState('');
-  const [rowSelection, setRowSelection] = useState({});
+  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 50 });
+
+  const pagination = useMemo(
+    () => ({
+      pageIndex,
+      pageSize
+    }),
+    [pageIndex, pageSize]
+  );
 
   const table = useReactTable({
+    data: data.slice(pagination.pageIndex * pagination.pageSize, (pagination.pageIndex + 1) * pagination.pageSize),
+    pageCount: Math.ceil(data.length / pagination.pageSize),
     state: {
       globalFilter,
       rowSelection
     },
-    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onGlobalFilterChange: setGlobalFilter,
     onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
 
     getRowId: (row) => row.id,
     enableRowSelection: true,
-
-    debugTable: true
+    manualPagination: true
   });
 
   let headers: LabelKeyObject[] = [];
@@ -84,65 +97,65 @@ const ReactTable: React.FC<TableProps> = ({ data, columns, top, handleDeleteClic
     });
   });
 
-  useEffect(() => {
-    console.log(rowSelection);
-  }, [rowSelection]);
-
   return (
     <MainCard content={false}>
-      <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between" sx={{ padding: 2 }}>
-        <DebouncedInput
-          value={globalFilter ?? ''}
-          onFilterChange={(value) => setGlobalFilter(String(value))}
-          placeholder={`Search ${data.length} records...`}
-        />
-        {/* Action Buttons in table heading */}
-        <Box>
-          {Object.keys(rowSelection).length === 0 ? (
-            <Stack direction={'row'} alignItems={'center'}>
-              CREATE BUTTON
-            </Stack>
-          ) : (
-            <Stack direction="row" alignItems={'center'} spacing={2}>
-              <Typography color="text.secondary" variant="body2">
-                Selected: {Object.keys(rowSelection).length}
-              </Typography>
-              <Box>
-                <Tooltip title="Delete">
-                  <IconButton color="error" onClick={() => handleDeleteClick(Object.keys(rowSelection).map((el) => el))}>
-                    <DeleteFilled twoToneColor={theme.palette.error.main} />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-              <CSVExport
-                {...{
-                  data:
-                    table.getSelectedRowModel().flatRows.map((row) => row.original).length === 0
-                      ? table.getRowModel().rows.map((row) => row.original)
-                      : table.getSelectedRowModel().flatRows.map((row) => row.original),
-                  headers,
-                  filename: 'roles.csv'
-                }}
-              />
-            </Stack>
-          )}
-        </Box>
-      </Stack>
+      <Box p={2}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <DebouncedInput
+              value={globalFilter ?? ''}
+              onFilterChange={(value) => setGlobalFilter(String(value))}
+              placeholder={`Search ${data.length} records...`}
+            />
+          </Grid>
+          <Grid item xs={12} md={6} justifyContent={'flex-end'} display={'flex'}>
+            {/* Action Buttons in table heading */}
+            {Object.keys(rowSelection).length === 1 ? (
+              <Stack spacing={2} direction={{ xs: 'column', md: 'row' }}>
+                <Box>
+                  <Button size="large" color="success" onClick={handleCopyClick} startIcon={<CopyOutlined />}>
+                    CREATE FROM SELECTED
+                  </Button>
+                </Box>
+              </Stack>
+            ) : Object.keys(rowSelection).length > 1 ? (
+              <Stack direction={'row'} alignItems={'center'} spacing={2}>
+                <Typography color="text.secondary" variant="body2">
+                  Selected: {Object.keys(rowSelection).length}
+                </Typography>
+                <Box>
+                  <Tooltip title="Delete">
+                    <IconButton color="error" onClick={() => setDeleteOpen(true)}>
+                      <DeleteFilled twoToneColor={theme.palette.error.main} />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+                <CSVExport
+                  {...{
+                    data:
+                      table.getSelectedRowModel().flatRows.map((row) => row.original).length === 0
+                        ? table.getRowModel().rows.map((row) => row.original)
+                        : table.getSelectedRowModel().flatRows.map((row) => row.original),
+                    headers,
+                    filename: 'roles.csv'
+                  }}
+                />
+              </Stack>
+            ) : (
+              <Stack spacing={2} direction={{ xs: 'column', md: 'row' }}>
+                <Box>
+                  <Button size="large" color="success" onClick={handleCopyClick} startIcon={<PlusCircleOutlined />}>
+                    CREATE
+                  </Button>
+                </Box>
+              </Stack>
+            )}
+          </Grid>
+        </Grid>
+      </Box>
+
       <ScrollX>
         <Stack>
-          {top && (
-            <Box sx={{ p: 2 }}>
-              <TablePagination
-                {...{
-                  setPageSize: table.setPageSize,
-                  setPageIndex: table.setPageIndex,
-                  getState: table.getState,
-                  getPageCount: table.getPageCount
-                }}
-              />
-            </Box>
-          )}
-
           <TableContainer>
             <Table>
               <TableHead>
@@ -165,32 +178,34 @@ const ReactTable: React.FC<TableProps> = ({ data, columns, top, handleDeleteClic
               >
                 {table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} {...cell.column.columnDef.meta}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
+                    {row.getVisibleCells().map((cell) => {
+                      if (Object.keys(rowSelection).length > 0 && cell.column.id === 'actions') {
+                        return <TableCell key={cell.id}></TableCell>;
+                      }
+                      return (
+                        <TableCell key={cell.id} {...cell.column.columnDef.meta}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      );
+                    })}
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
 
-          {!top && (
-            <>
-              <Divider />
-              <Box sx={{ p: 2 }}>
-                <TablePagination
-                  {...{
-                    setPageSize: table.setPageSize,
-                    setPageIndex: table.setPageIndex,
-                    getState: table.getState,
-                    getPageCount: table.getPageCount
-                  }}
-                />
-              </Box>
-            </>
-          )}
+          <Divider />
+          <Box sx={{ p: 2 }}>
+            <TablePagination
+              {...{
+                initialPageSize: pagination.pageSize,
+                setPageSize: table.setPageSize,
+                setPageIndex: table.setPageIndex,
+                getState: table.getState,
+                getPageCount: table.getPageCount
+              }}
+            />
+          </Box>
         </Stack>
       </ScrollX>
     </MainCard>
@@ -202,10 +217,14 @@ const ReactTable: React.FC<TableProps> = ({ data, columns, top, handleDeleteClic
 export default function RolesTable() {
   const theme = useTheme();
   const [data, setData] = useState<Role[]>([]);
+  const [rowSelection, setRowSelection] = useState({});
+
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const handleEditClick = (name: string) => {
     console.log('hanle edit of', name);
   };
+
   const handleDeleteClick = (name: string[]) => {
     console.log('hanle delete of', name);
   };
@@ -282,6 +301,8 @@ export default function RolesTable() {
     setData(roles);
   };
 
+  const handleCopyClick = () => {};
+
   useEffect(() => {
     handleLoad();
   }, []);
@@ -289,7 +310,13 @@ export default function RolesTable() {
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-        <ReactTable handleDeleteClick={handleDeleteClick} {...{ data, columns }} />
+        <ReactTable
+          handleCopyClick={handleCopyClick}
+          rowSelection={rowSelection}
+          setRowSelection={setRowSelection}
+          setDeleteOpen={setDeleteOpen}
+          {...{ data, columns }}
+        />
       </Grid>
     </Grid>
   );

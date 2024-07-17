@@ -13,9 +13,9 @@ import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/di
 import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
 
 import { usePopover } from '@/hooks/usePopover';
+import { UserPopover } from '@/components/dashboard/layout/UserPopover';
 
-import { MobileNav } from './mobileNav';
-import { UserPopover } from './userPopover';
+import { MobileNav } from './MobileNav';
 
 export function MainNav(): React.JSX.Element {
   const [openNav, setOpenNav] = React.useState<boolean>(false);

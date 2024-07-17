@@ -6,7 +6,7 @@ import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/s
 
 import { createTheme } from '@/styles/theme/createTheme';
 
-import EmotionCache from './emotionCache';
+import EmotionCache from './EmotionCacheContext';
 
 export interface ThemeProviderProps {
   children: React.ReactNode;

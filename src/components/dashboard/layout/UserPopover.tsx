@@ -13,9 +13,9 @@ import { SignOut as SignOutIcon } from '@phosphor-icons/react/dist/ssr/SignOut';
 import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User';
 
 import { paths } from '@/paths';
-import { authClient } from '@/lib/auth/client';
+import { authClient } from '@/lib/api/auth';
 import { logger } from '@/lib/defaultLogger';
-import { useUser } from '@/hooks/useUser';
+import { useAuth } from '@/hooks/useAuth';
 
 export interface UserPopoverProps {
   anchorEl: Element | null;
@@ -24,11 +24,11 @@ export interface UserPopoverProps {
 }
 
 export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): React.JSX.Element {
-  const { checkSession } = useUser();
+  const { user } = useAuth();
 
   const router = useRouter();
 
-  const handleSignOut = React.useCallback(async (): Promise<void> => {
+  const handleSignOut = async (): Promise<void> => {
     try {
       const { error } = await authClient.signOut();
 
@@ -38,7 +38,6 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       }
 
       // Refresh the auth state
-      await checkSession?.();
 
       // UserProvider, for this case, will not refresh the router and we need to do it manually
       router.refresh();
@@ -46,7 +45,7 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
     } catch (err) {
       logger.error('Sign out error', err);
     }
-  }, [checkSession, router]);
+  };
 
   return (
     <Popover
@@ -70,12 +69,12 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem component={RouterLink} href={paths.dashboard.account} onClick={onClose}>
+        {/* <MenuItem component={RouterLink} href={paths.dashboard.account} onClick={onClose}>
           <ListItemIcon>
             <UserIcon fontSize="var(--icon-fontSize-md)" />
           </ListItemIcon>
           Profile
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem onClick={handleSignOut}>
           <ListItemIcon>
             <SignOutIcon fontSize="var(--icon-fontSize-md)" />

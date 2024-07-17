@@ -1,6 +1,7 @@
-'use client';
-
+import { Account } from '@/types/account';
 import type { User } from '@/types/user';
+
+import { BaseClient } from './client';
 
 function generateToken(): string {
   const arr = new Uint8Array(12);
@@ -36,7 +37,11 @@ export interface ResetPasswordParams {
   email: string;
 }
 
-class AuthClient {
+class AuthClient extends BaseClient {
+  constructor() {
+    super();
+  }
+
   async signUp(_: SignUpParams): Promise<{ error?: string }> {
     // Make API request
 
@@ -75,17 +80,17 @@ class AuthClient {
     return { error: 'Update reset not implemented' };
   }
 
-  async getUser(): Promise<{ data?: User | null; error?: string }> {
+  async getUser(): Promise<Account> {
     // Make API request
 
     // We do not handle the API, so just check if we have a token in localStorage.
     const token = localStorage.getItem('custom-auth-token');
 
     if (!token) {
-      return { data: null };
+      throw Error('No token found in local storage');
     }
 
-    return { data: user };
+    return {} as Account;
   }
 
   async signOut(): Promise<{ error?: string }> {

@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { paths } from '@/paths';
-import { DynamicLogo } from '@/components/core/logo';
+import { DynamicLogo } from '@/components/core/Logo';
 
 export interface LayoutProps {
   children: React.ReactNode;

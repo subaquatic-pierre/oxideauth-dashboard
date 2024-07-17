@@ -4,8 +4,9 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { config } from '@/config';
-import { Notifications } from '@/components/dashboard/settings/notifications';
-import { UpdatePasswordForm } from '@/components/dashboard/settings/updatePasswordForm';
+import { AccountDetailsForm } from '@/components/dashboard/settings/AccountDetailsForm';
+import { Notifications } from '@/components/dashboard/settings/Notifications';
+import { UpdatePasswordForm } from '@/components/dashboard/settings/UpdatePasswordForm';
 
 export const metadata = { title: `Settings | Dashboard | ${config.site.name}` } satisfies Metadata;
 
@@ -15,6 +16,7 @@ export default function Page(): React.JSX.Element {
       <div>
         <Typography variant="h4">Settings</Typography>
       </div>
+      <AccountDetailsForm />
       <Notifications />
       <UpdatePasswordForm />
     </Stack>

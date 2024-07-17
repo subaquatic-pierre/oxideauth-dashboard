@@ -1,7 +1,10 @@
 import type { ColorSystemOptions } from '@mui/material/styles';
+import createPalette from '@mui/material/styles/createPalette';
 
 import { california, kepple, neonBlue, nevada, redOrange, shakespeare, stormGrey } from './colors';
 import type { ColorScheme } from './types';
+
+const colors = createPalette({});
 
 export const colorSchemes = {
   dark: {
@@ -75,9 +78,9 @@ export const colorSchemes = {
     palette: {
       action: { disabledBackground: 'rgba(0, 0, 0, 0.06)' },
       background: {
-        default: 'var(--mui-palette-common-white)',
+        default: colors.common.white,
         defaultChannel: '255 255 255',
-        paper: 'var(--mui-palette-common-white)',
+        paper: colors.common.white,
         paperChannel: '255 255 255',
         level1: 'var(--mui-palette-neutral-50)',
         level2: 'var(--mui-palette-neutral-100)',
@@ -91,14 +94,14 @@ export const colorSchemes = {
         light: redOrange[400],
         main: redOrange[500],
         dark: redOrange[600],
-        contrastText: 'var(--mui-palette-common-white)',
+        contrastText: colors.common.white,
       },
       info: {
         ...shakespeare,
         light: shakespeare[400],
         main: shakespeare[500],
         dark: shakespeare[600],
-        contrastText: 'var(--mui-palette-common-white)',
+        contrastText: colors.common.white,
       },
       neutral: { ...stormGrey },
       primary: {
@@ -106,21 +109,21 @@ export const colorSchemes = {
         light: neonBlue[400],
         main: neonBlue[500],
         dark: neonBlue[600],
-        contrastText: 'var(--mui-palette-common-white)',
+        contrastText: colors.common.white,
       },
       secondary: {
         ...nevada,
         light: nevada[600],
         main: nevada[700],
         dark: nevada[800],
-        contrastText: 'var(--mui-palette-common-white)',
+        contrastText: colors.common.white,
       },
       success: {
         ...kepple,
         light: kepple[400],
         main: kepple[500],
         dark: kepple[600],
-        contrastText: 'var(--mui-palette-common-white)',
+        contrastText: colors.common.white,
       },
       text: {
         primary: 'var(--mui-palette-neutral-900)',
@@ -134,7 +137,7 @@ export const colorSchemes = {
         light: california[400],
         main: california[500],
         dark: california[600],
-        contrastText: 'var(--mui-palette-common-white)',
+        contrastText: colors.common.white,
       },
     },
   },

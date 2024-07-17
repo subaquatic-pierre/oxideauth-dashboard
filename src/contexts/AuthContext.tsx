@@ -1,0 +1,84 @@
+'use client';
+
+import { createContext, ReactElement, useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+import { Account } from '@/types/account';
+import { AuthContextProps } from '@/types/auth';
+import { authClient } from '@/lib/api/auth';
+import { apiReq } from '@/lib/api/client';
+import { DESCRIBE_SELF } from '@/lib/api/endpoints';
+
+// initial state
+const initialState: AuthContextProps = {
+  user: null,
+  loading: false,
+  logout: () => {},
+  login: () => {},
+};
+
+const AuthContext = createContext(initialState);
+
+function AuthContextProvider({ children }: React.PropsWithChildren): React.JSX.Element {
+  const router = useRouter();
+  const [user, setUser] = useState<Account | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const login = async (token: string) => {
+    setLoading(true);
+    window.localStorage.setItem('token', token as string);
+    try {
+      const data = await apiReq<{ account: Account }>({
+        endpoint: DESCRIBE_SELF,
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setUser(data.account);
+    } catch (e) {
+      console.log(e);
+    }
+    router.push('/dashboard');
+    setLoading(false);
+  };
+
+  const logout = () => {
+    setUser(null);
+    window.localStorage.removeItem('token');
+    router.push('/login');
+  };
+
+  const loadUser = async () => {
+    if (!window.localStorage.getItem('token')) {
+      setLoading(false);
+      return;
+    }
+    try {
+      const account = await authClient.getUser();
+
+      setUser(account);
+    } catch (e) {
+      console.log(e);
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        loading,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export { AuthContextProvider, AuthContext };

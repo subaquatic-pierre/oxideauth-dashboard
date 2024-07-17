@@ -14,10 +14,10 @@ import { CaretUpDown as CaretUpDownIcon } from '@phosphor-icons/react/dist/ssr/C
 import type { NavItemConfig } from '@/types/nav';
 import { paths } from '@/paths';
 import { isNavItemActive } from '@/lib/isNavItemActive';
-import { Logo } from '@/components/core/logo';
+import { Logo } from '@/components/core/Logo';
 
 import { navItems } from './config';
-import { navIcons } from './navIcons';
+import { navIcons } from './NavIcons';
 
 export function SideNav(): React.JSX.Element {
   const pathname = usePathname();

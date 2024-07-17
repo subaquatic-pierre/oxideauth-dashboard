@@ -24,24 +24,15 @@ export interface UserPopoverProps {
 }
 
 export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): React.JSX.Element {
-  const { user } = useAuth();
-
-  const router = useRouter();
+  const { checkSession, user } = useAuth();
 
   const handleSignOut = async (): Promise<void> => {
     try {
-      const { error } = await authClient.signOut();
+      await authClient.signOut();
 
-      if (error) {
-        logger.error('Sign out error', error);
-        return;
-      }
-
-      // Refresh the auth state
-
-      // UserProvider, for this case, will not refresh the router and we need to do it manually
-      router.refresh();
-      // After refresh, AuthGuard will handle the redirect
+      // reloads user in AuthContextProvider
+      // AuthGuard redirects to sign-in on user state change
+      checkSession();
     } catch (err) {
       logger.error('Sign out error', err);
     }
@@ -56,9 +47,9 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       slotProps={{ paper: { sx: { width: '240px' } } }}
     >
       <Box sx={{ p: '16px 20px ' }}>
-        <Typography variant="subtitle1">Sofia Rivers</Typography>
+        <Typography variant="subtitle1">{user?.name}</Typography>
         <Typography color="text.secondary" variant="body2">
-          sofia.rivers@devias.io
+          {user?.email}
         </Typography>
       </Box>
       <Divider />
@@ -69,12 +60,6 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
           </ListItemIcon>
           Settings
         </MenuItem>
-        {/* <MenuItem component={RouterLink} href={paths.dashboard.account} onClick={onClose}>
-          <ListItemIcon>
-            <UserIcon fontSize="var(--icon-fontSize-md)" />
-          </ListItemIcon>
-          Profile
-        </MenuItem> */}
         <MenuItem onClick={handleSignOut}>
           <ListItemIcon>
             <SignOutIcon fontSize="var(--icon-fontSize-md)" />

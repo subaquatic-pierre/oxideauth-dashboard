@@ -30,12 +30,12 @@ const schema = zod.object({
 
 type Values = zod.infer<typeof schema>;
 
-const defaultValues = { email: 'sofia@devias.io', password: 'Secret1' } satisfies Values;
+const defaultValues = { email: 'viewer@email.com', password: 'password' } satisfies Values;
 
 export function SignInForm(): React.JSX.Element {
   const router = useRouter();
+  const { checkSession } = useAuth();
   const notify = useNotify();
-  const { user } = useAuth();
 
   const [showPassword, setShowPassword] = React.useState<boolean>();
 
@@ -49,22 +49,17 @@ export function SignInForm(): React.JSX.Element {
   } = useForm<Values>({ defaultValues, resolver: zodResolver(schema) });
 
   const onSubmit = async (values: Values): Promise<void> => {
-    notify('There was a serious error', 'error');
-    setIsPending(true);
+    try {
+      await authClient.signInWithPassword(values);
 
-    const { error } = await authClient.signInWithPassword(values);
-
-    if (error) {
-      setError('root', { type: 'server', message: error });
+      // reloads user in AuthContextProvider
+      // GuestGuard redirects to dashboard on user state change
+      checkSession();
+    } catch (e: any) {
+      notify(e.message, 'error');
+      setError('root', { type: 'server', message: e.message });
       setIsPending(false);
-      return;
     }
-
-    // Refresh the auth state
-
-    // UserProvider, for this case, will not refresh the router
-    // After refresh, GuestGuard will handle the redirect
-    router.refresh();
   };
 
   return (

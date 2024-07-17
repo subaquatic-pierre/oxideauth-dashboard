@@ -1,4 +1,5 @@
 export const REGISTER = '/auth/register';
+export const LOGIN = '/auth/login';
 export const DESCRIBE_SELF = '/accounts/describe-self';
 
 export const LIST_ACCOUNTS = '/accounts/list-accounts';

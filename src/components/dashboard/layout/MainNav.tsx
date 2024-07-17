@@ -12,12 +12,14 @@ import { List as ListIcon } from '@phosphor-icons/react/dist/ssr/List';
 import { MagnifyingGlass as MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
 import { Users as UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
 
+import { useAuth } from '@/hooks/useAuth';
 import { usePopover } from '@/hooks/usePopover';
 import { UserPopover } from '@/components/dashboard/layout/UserPopover';
 
 import { MobileNav } from './MobileNav';
 
 export function MainNav(): React.JSX.Element {
+  const { user } = useAuth();
   const [openNav, setOpenNav] = React.useState<boolean>(false);
 
   const userPopover = usePopover<HTMLDivElement>();
@@ -48,29 +50,12 @@ export function MainNav(): React.JSX.Element {
             >
               <ListIcon />
             </IconButton>
-            {/* <Tooltip title="Search">
-              <IconButton>
-                <MagnifyingGlassIcon />
-              </IconButton>
-            </Tooltip> */}
           </Stack>
           <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-            {/* <Tooltip title="Contacts">
-              <IconButton>
-                <UsersIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Notifications">
-              <Badge badgeContent={4} color="success" variant="dot">
-                <IconButton>
-                  <BellIcon />
-                </IconButton>
-              </Badge>
-            </Tooltip> */}
             <Avatar
               onClick={userPopover.handleOpen}
               ref={userPopover.anchorRef}
-              src="/assets/avatar.png"
+              src={user?.imageUrl}
               sx={{ cursor: 'pointer' }}
             />
           </Stack>

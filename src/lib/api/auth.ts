@@ -2,7 +2,7 @@ import { Account } from '@/types/account';
 import type { User } from '@/types/user';
 
 import { BaseClient } from './client';
-import { DESCRIBE_SELF } from './endpoints';
+import { DESCRIBE_SELF, LOGIN } from './endpoints';
 
 function generateToken(): string {
   const arr = new Uint8Array(12);
@@ -57,20 +57,14 @@ class AuthClient extends BaseClient {
     return { error: 'Social authentication not implemented' };
   }
 
-  async signInWithPassword(params: SignInWithPasswordParams): Promise<{ error?: string }> {
+  async signInWithPassword(params: SignInWithPasswordParams): Promise<{ token: string }> {
     const { email, password } = params;
 
-    // Make API request
+    const data = await super.req<{ token: string }>({ endpoint: LOGIN, method: 'POST', data: { email, password } });
 
-    // We do not handle the API, so we'll check if the credentials match with the hardcoded ones.
-    if (email !== 'sofia@devias.io' || password !== 'Secret1') {
-      return { error: 'Invalid credentials' };
-    }
+    localStorage.setItem('token', data.token);
 
-    const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
-
-    return {};
+    return { token: data.token };
   }
 
   async resetPassword(_: ResetPasswordParams): Promise<{ error?: string }> {
@@ -82,7 +76,7 @@ class AuthClient extends BaseClient {
   }
 
   async getUser(): Promise<Account> {
-    const data = await this.req<{ account: Account }>({
+    const data = await super.req<{ account: Account }>({
       endpoint: DESCRIBE_SELF,
       auth: true,
     });
@@ -90,8 +84,8 @@ class AuthClient extends BaseClient {
     return data.account;
   }
 
-  async signOut(): Promise<{ error?: string }> {
-    localStorage.removeItem('custom-auth-token');
+  async signOut(): Promise<{}> {
+    localStorage.removeItem('token');
 
     return {};
   }

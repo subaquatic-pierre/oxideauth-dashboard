@@ -137,6 +137,13 @@ export default function PermissionsView() {
     resData.forEach((el) => data.push({ name: el }));
   }
 
+  useEffect(() => {
+    // if (error) {
+    //   notify(error.message, 'error');
+    // }
+    console.log(error);
+  }, [error, data, isLoading]);
+
   return (
     <Stack spacing={3}>
       {isLoading && (

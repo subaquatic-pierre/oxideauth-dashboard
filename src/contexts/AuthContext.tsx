@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { Account } from '@/types/account';
 import { AuthContextProps } from '@/types/auth';
+import { paths } from '@/paths';
 import { authClient } from '@/lib/api/auth';
 import { DESCRIBE_SELF } from '@/lib/api/endpoints';
 
@@ -12,50 +13,27 @@ import { DESCRIBE_SELF } from '@/lib/api/endpoints';
 const initialState: AuthContextProps = {
   user: null,
   loading: false,
-  logout: () => {},
-  login: () => {},
   error: null,
+  checkSession: () => {},
 };
 
 const AuthContext = createContext(initialState);
 
 function AuthContextProvider({ children }: React.PropsWithChildren): React.JSX.Element {
-  const router = useRouter();
   const [user, setUser] = useState<Account | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>('');
 
-  const login = async (token: string) => {
-    setLoading(true);
-    window.localStorage.setItem('token', token as string);
-    try {
-      const account = await authClient.getUser();
-
-      setUser(account);
-    } catch (e) {
-      console.log(e);
-    }
-
-    router.push('/dashboard');
-    setLoading(false);
-  };
-
-  const logout = () => {
-    setUser(null);
-    window.localStorage.removeItem('token');
-    router.push('/login');
-  };
-
   const loadUser = async () => {
     // return early if no token in localStorage
     if (!window.localStorage.getItem('token')) {
+      setUser(null);
       setLoading(false);
       return;
     }
 
     try {
       const account = await authClient.getUser();
-
       setUser(account);
     } catch (e) {
       setError(`${e}`);
@@ -63,6 +41,11 @@ function AuthContextProvider({ children }: React.PropsWithChildren): React.JSX.E
     }
 
     setLoading(false);
+  };
+
+  const checkSession = async () => {
+    setLoading(true);
+    await loadUser();
   };
 
   useEffect(() => {
@@ -73,10 +56,9 @@ function AuthContextProvider({ children }: React.PropsWithChildren): React.JSX.E
     <AuthContext.Provider
       value={{
         user,
-        login,
         loading,
-        logout,
         error,
+        checkSession,
       }}
     >
       {children}

@@ -11,7 +11,6 @@ export type GuardProps = {
 export type AuthContextProps = {
   user: Account | null;
   loading: boolean;
-  logout: () => void;
-  login: (token: string) => void;
   error: null | string;
+  checkSession: () => void;
 };

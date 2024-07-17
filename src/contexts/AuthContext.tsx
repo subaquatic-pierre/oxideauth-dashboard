@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { Account } from '@/types/account';
 import { AuthContextProps } from '@/types/auth';
 import { authClient } from '@/lib/api/auth';
-import { apiReq } from '@/lib/api/client';
 import { DESCRIBE_SELF } from '@/lib/api/endpoints';
 
 // initial state
@@ -15,6 +14,7 @@ const initialState: AuthContextProps = {
   loading: false,
   logout: () => {},
   login: () => {},
+  error: null,
 };
 
 const AuthContext = createContext(initialState);
@@ -23,20 +23,19 @@ function AuthContextProvider({ children }: React.PropsWithChildren): React.JSX.E
   const router = useRouter();
   const [user, setUser] = useState<Account | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>('');
 
   const login = async (token: string) => {
     setLoading(true);
     window.localStorage.setItem('token', token as string);
     try {
-      const data = await apiReq<{ account: Account }>({
-        endpoint: DESCRIBE_SELF,
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const account = await authClient.getUser();
 
-      setUser(data.account);
+      setUser(account);
     } catch (e) {
       console.log(e);
     }
+
     router.push('/dashboard');
     setLoading(false);
   };
@@ -48,15 +47,18 @@ function AuthContextProvider({ children }: React.PropsWithChildren): React.JSX.E
   };
 
   const loadUser = async () => {
+    // return early if no token in localStorage
     if (!window.localStorage.getItem('token')) {
       setLoading(false);
       return;
     }
+
     try {
       const account = await authClient.getUser();
 
       setUser(account);
     } catch (e) {
+      setError(`${e}`);
       console.log(e);
     }
 
@@ -74,6 +76,7 @@ function AuthContextProvider({ children }: React.PropsWithChildren): React.JSX.E
         login,
         loading,
         logout,
+        error,
       }}
     >
       {children}

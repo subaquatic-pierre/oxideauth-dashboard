@@ -10,10 +10,10 @@ export const metadata = { title: `Sign in | Auth | ${config.site.name}` } satisf
 
 export default function Page(): React.JSX.Element {
   return (
-    <Layout>
-      <GuestGuard>
+    <GuestGuard>
+      <Layout>
         <SignInForm />
-      </GuestGuard>
-    </Layout>
+      </Layout>
+    </GuestGuard>
   );
 }

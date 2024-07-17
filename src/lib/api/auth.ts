@@ -2,6 +2,7 @@ import { Account } from '@/types/account';
 import type { User } from '@/types/user';
 
 import { BaseClient } from './client';
+import { DESCRIBE_SELF } from './endpoints';
 
 function generateToken(): string {
   const arr = new Uint8Array(12);
@@ -81,16 +82,12 @@ class AuthClient extends BaseClient {
   }
 
   async getUser(): Promise<Account> {
-    // Make API request
+    const data = await this.req<{ account: Account }>({
+      endpoint: DESCRIBE_SELF,
+      auth: true,
+    });
 
-    // We do not handle the API, so just check if we have a token in localStorage.
-    const token = localStorage.getItem('custom-auth-token');
-
-    if (!token) {
-      throw Error('No token found in local storage');
-    }
-
-    return {} as Account;
+    return data.account;
   }
 
   async signOut(): Promise<{ error?: string }> {

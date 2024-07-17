@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+
 import { Account } from './account';
 
 // ==============================|| AUTH TYPES ||============================== //
@@ -12,4 +13,5 @@ export type AuthContextProps = {
   loading: boolean;
   logout: () => void;
   login: (token: string) => void;
+  error: null | string;
 };

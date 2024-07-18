@@ -45,15 +45,22 @@ import {
 interface TableProps {
   data: Role[];
   columns: ColumnDef<Role>[];
-  setDeleteOpen: (open: boolean) => void;
+  handleCopyClick: (id: string) => void;
   rowSelection: {};
   setRowSelection: Dispatch<SetStateAction<{}>>;
-  handleCopyClick: () => void;
+  globalFilter: string;
+  setGlobalFilter: Dispatch<SetStateAction<string>>;
 }
-const RolesTable: React.FC<TableProps> = ({ data, columns, setDeleteOpen }) => {
+
+const RolesTable: React.FC<TableProps> = ({
+  data,
+  columns,
+  globalFilter,
+  setGlobalFilter,
+  rowSelection,
+  setRowSelection,
+}) => {
   const theme = useTheme();
-  const [globalFilter, setGlobalFilter] = useState('');
-  const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
     state: {

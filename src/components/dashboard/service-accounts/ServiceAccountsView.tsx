@@ -1,33 +1,34 @@
 'use client';
 
+import crypto, { generateKey } from 'crypto';
+
 import { useMemo, useState } from 'react';
 import { Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material';
 // material-ui
 import Stack from '@mui/material/Stack';
-import { Copy, Pencil, Trash } from '@phosphor-icons/react';
+import { Copy, Download, Pencil, Trash } from '@phosphor-icons/react';
 // third-party
 import { ColumnDef } from '@tanstack/react-table';
 import useSWR from 'swr';
 
 import { Account } from '@/types/account';
 import { accountClient } from '@/lib/api/account';
-import { LIST_SERVICES } from '@/lib/api/endpoints';
-import { serviceClient } from '@/lib/api/service';
+import { LIST_ACCOUNTS, LIST_SERVICES } from '@/lib/api/endpoints';
 // types
 import useNotify from '@/hooks/useNotify';
 import CircularLoader from '@/components/CircularLoader';
 // project-import
 import { IndeterminateCheckbox } from '@/components/third-party/react-table';
 
-import ServicesButtons from './ServicesButtons';
-import ServicesDialog from './ServicesDialogs';
-import ServicesFilter from './ServicesFilter';
-import ServicesTable from './ServicesTable';
+import ServiceAccountsButtons from './ServiceAccountsButtons';
+import ServiceAccountsDialog from './ServiceAccountsDialog';
+import ServiceAccountsFilter from './ServiceAccountsFilter';
+import ServiceAccountsTable from './ServiceAccountsTable';
 
-const UsersView = () => {
+const ServiceAccountsView = () => {
   const notify = useNotify();
   const theme = useTheme();
-  const { data, isLoading, error, mutate } = useSWR(LIST_SERVICES, serviceClient.listServices);
+  const { data, isLoading, error, mutate } = useSWR(LIST_ACCOUNTS + '/sa', accountClient.listAccounts);
   const [globalFilter, setGlobalFilter] = useState('');
 
   const [rowSelection, setRowSelection] = useState({});
@@ -35,6 +36,30 @@ const UsersView = () => {
 
   const handleEditClick = (name: string) => {
     console.log('hanle edit of', name);
+  };
+
+  const handleDownloadClick = (name: string) => {
+    const key = crypto.randomBytes(8).toString('hex');
+    const data = {
+      serviceAccountName: name,
+      apiKey: key,
+    };
+    // create file in browser
+    const fileName = 'credentials';
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const href = URL.createObjectURL(blob);
+
+    // create "a" HTLM element with href to file
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = fileName + '.json';
+    document.body.appendChild(link);
+    link.click();
+
+    // clean up "a" element & remove ObjectURL
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
   };
 
   const handleDeleteClick = (name: string) => {
@@ -86,6 +111,11 @@ const UsersView = () => {
         accessorKey: 'name',
       },
       {
+        id: 'email',
+        header: 'Email',
+        accessorKey: 'email',
+      },
+      {
         id: 'description',
         header: 'Description',
         cell: ({ row }: any) => {
@@ -102,12 +132,17 @@ const UsersView = () => {
         cell: ({ row }: any) => {
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
-              <Tooltip title="Edit Service">
+              <Tooltip title="Edit Role">
                 <IconButton onClick={() => handleEditClick(row.original.name)}>
                   <Pencil />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Delete Service">
+              <Tooltip title="Download Credentials">
+                <IconButton color="error" onClick={() => handleDownloadClick(row.original.name)}>
+                  <Download color={theme.palette.secondary.main} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete Role">
                 <IconButton color="error" onClick={() => handleDeleteClick(row.original.name)}>
                   <Trash color={theme.palette.error.main} />
                 </IconButton>
@@ -128,20 +163,25 @@ const UsersView = () => {
         </Stack>
       ) : (
         <>
-          <Typography variant="h4">Services</Typography>
-          <ServicesButtons rowSelection={rowSelection} />
-          <ServicesFilter length={data?.length ?? 0} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
-          <ServicesTable
+          <Typography variant="h4">Service Accounts</Typography>
+          <ServiceAccountsButtons rowSelection={rowSelection} />
+          <ServiceAccountsFilter
+            length={data?.length ?? 0}
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+          />
+          <ServiceAccountsTable
             globalFilter={globalFilter}
             setGlobalFilter={setGlobalFilter}
             rowSelection={rowSelection}
             setRowSelection={setRowSelection}
-            data={data ?? []}
+            data={data?.filter((el) => el.type === 'service') ?? []}
+            // data={data?.filter((el) => el.type === 'service') ?? []}
             columns={columns}
           />
         </>
       )}
-      <ServicesDialog
+      <ServiceAccountsDialog
         cancelDelete={cancelDelete}
         setDeleteOpen={setDeleteOpen}
         deleteOpen={deleteOpen}
@@ -152,4 +192,4 @@ const UsersView = () => {
   );
 };
 
-export default UsersView;
+export default ServiceAccountsView;

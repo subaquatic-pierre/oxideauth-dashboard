@@ -1,7 +1,8 @@
 'use client';
 
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
-import { Button, Card } from '@mui/material';
+import { DeleteFilled, EditFilled, PlusCircleFilled, PlusCircleOutlined } from '@ant-design/icons';
+import { Button, Card, IconButton, Tooltip, Typography } from '@mui/material';
 // material-ui
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -29,27 +30,27 @@ import {
 import { LabelKeyObject } from 'react-csv/lib/core';
 
 import { Service } from '@/types/service';
+// types
+// project-import
 import ScrollX from '@/components/ScrollX';
-import { TablePagination } from '@/components/third-party/react-table';
+import {
+  CSVExport,
+  DebouncedInput,
+  Filter,
+  IndeterminateCheckbox,
+  TablePagination,
+} from '@/components/third-party/react-table';
 
 interface TableProps {
+  handleDeleteClick: (names: string[]) => void;
   data: Service[];
   columns: ColumnDef<Service>[];
-  rowSelection: {};
-  setRowSelection: Dispatch<SetStateAction<{}>>;
-  globalFilter: string;
-  setGlobalFilter: Dispatch<SetStateAction<string>>;
 }
 
-const ServicesTable: React.FC<TableProps> = ({
-  data,
-  columns,
-  globalFilter,
-  setGlobalFilter,
-  rowSelection,
-  setRowSelection,
-}) => {
+const ServicesTable: React.FC<TableProps> = ({ data, columns, handleDeleteClick }) => {
   const theme = useTheme();
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
     state: {

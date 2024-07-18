@@ -1,85 +1,56 @@
 'use client';
 
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
-import { DeleteFilled, EditFilled, PlusCircleFilled, PlusCircleOutlined } from '@ant-design/icons';
-import {
-  Box,
-  Button,
-  Card,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  OutlinedInput,
-  Tooltip,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material';
 // material-ui
-import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
-import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
-import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
-import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
-// third-party
+import { Copy, Pencil, Trash } from '@phosphor-icons/react';
 import { ColumnDef } from '@tanstack/react-table';
 import useSWR from 'swr';
 
 import { Role } from '@/types/role';
-import { Service } from '@/types/service';
-import { LIST_PERMISSIONS, LIST_ROLES, LIST_SERVICES } from '@/lib/api/endpoints';
+import { LIST_ROLES } from '@/lib/api/endpoints';
 // types
 import { roleClient } from '@/lib/api/role';
-import useNotify from '@/hooks/useNotify';
 import CircularLoader from '@/components/CircularLoader';
-// project-import
-import { IndeterminateCheckbox } from '@/components/third-party/react-table';
 
-import ServicesTable from '../services/ServicesTable';
+import RolesButtons from './RolesButtons';
+import RolesDialogs from './RolesDialogs';
+import RowFilter from './RolesFilter';
+import RolesTable from './RolesTable';
 
 const RolesView = () => {
   const theme = useTheme();
   const { data, isLoading, error, mutate } = useSWR(LIST_ROLES, roleClient.listRoles);
 
-  const [formData, setFormData] = useState('');
   const [rowSelection, setRowSelection] = useState({});
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [createOpen, setCreateOpen] = useState(false);
+  const [globalFilter, setGlobalFilter] = useState('');
 
   const handleEditClick = (name: string) => {
     console.log('hanle edit of', name);
   };
 
-  const handleDeleteClick = (name: string[]) => {
-    console.log('hanle delete of', name);
+  const handleDeleteClick = (name: string) => {
+    setRowSelection({ [name]: true });
+    setDeleteOpen(true);
+  };
+
+  const submitDelete = async () => {
+    console.log('submit delete');
+  };
+
+  const handleCopyClick = (name: string) => {
+    console.log('hanle copy of', name);
+  };
+
+  const cancelDelete = () => {
+    setRowSelection({});
+    setDeleteOpen(false);
   };
 
   const columns = useMemo<ColumnDef<Role>[]>(
     () => [
-      {
-        id: 'id',
-        header: ({ table }) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler(),
-            }}
-          />
-        ),
-        cell: ({ row }) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler(),
-            }}
-          />
-        ),
-        accessorKey: 'id',
-      },
       {
         id: 'name',
         header: 'Name',
@@ -88,7 +59,6 @@ const RolesView = () => {
       {
         id: 'description',
         header: 'Description',
-        accessorKey: 'id',
         cell: ({ row }: any) => {
           return <Box>{row.original.description ?? ''}</Box>;
         },
@@ -103,14 +73,19 @@ const RolesView = () => {
         cell: ({ row }: any) => {
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
-              <Tooltip title="Edit">
+              <Tooltip title="Edit Role">
                 <IconButton onClick={() => handleEditClick(row.original.name)}>
-                  <EditFilled twoToneColor={theme.palette.error.main} />
+                  <Pencil />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Delete">
+              <Tooltip title="Copy Role">
+                <IconButton color="error" onClick={() => handleCopyClick(row.original.name)}>
+                  <Copy color={theme.palette.secondary.main} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete Role">
                 <IconButton color="error" onClick={() => handleDeleteClick(row.original.name)}>
-                  <DeleteFilled twoToneColor={theme.palette.error.main} />
+                  <Trash color={theme.palette.error.main} />
                 </IconButton>
               </Tooltip>
             </Stack>
@@ -123,37 +98,33 @@ const RolesView = () => {
 
   return (
     <Stack spacing={3}>
-      {isLoading && (
+      {isLoading ? (
         <Stack minHeight="40vh" justifyContent={'center'}>
           <CircularLoader />
         </Stack>
-      )}
-      {!error && (
+      ) : (
         <>
-          <Stack direction="row" spacing={3}>
-            <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-              <Typography variant="h4">Roles</Typography>
-            </Stack>
-            <div>
-              <Button
-                onClick={() => setCreateOpen(true)}
-                startIcon={<PlusIcon fontSize="var(--icon-fontSize-md)" />}
-                variant="contained"
-              >
-                Add
-              </Button>
-            </div>
-          </Stack>
-          <ServicesTable
-            handleDeleteClick={() => {}}
-            // rowSelection={rowSelection}
-            // setRowSelection={setRowSelection}
-            // setDeleteOpen={setDeleteOpen}
+          <Typography variant="h4">Roles</Typography>
+          <RolesButtons rowSelection={rowSelection} setDeleteOpen={setDeleteOpen} />
+          <RowFilter globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} length={data?.length ?? 0} />
+          <RolesTable
+            rowSelection={rowSelection}
+            setRowSelection={setRowSelection}
             data={data ?? []}
+            handleCopyClick={handleCopyClick}
             columns={columns}
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
           />
         </>
       )}
+      <RolesDialogs
+        cancelDelete={cancelDelete}
+        setDeleteOpen={setDeleteOpen}
+        deleteOpen={deleteOpen}
+        submitDelete={submitDelete}
+        rowSelection={rowSelection}
+      />
     </Stack>
   );
 };

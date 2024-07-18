@@ -39,6 +39,12 @@ export function AuthGuard({ children }: AuthGuardProps): React.JSX.Element | nul
   };
 
   React.useEffect(() => {
+    if (error) {
+      window.localStorage.removeItem('token');
+      router.replace(paths.auth.signIn);
+
+      notify(error, 'error');
+    }
     checkPermissions().catch(() => {
       // noop
     });
@@ -47,10 +53,6 @@ export function AuthGuard({ children }: AuthGuardProps): React.JSX.Element | nul
 
   if (isChecking) {
     return null;
-  }
-
-  if (error) {
-    notify(error, 'error');
   }
 
   return <React.Fragment>{children}</React.Fragment>;

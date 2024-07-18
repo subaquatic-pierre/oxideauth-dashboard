@@ -28,20 +28,20 @@ import {
 } from '@tanstack/react-table';
 import { LabelKeyObject } from 'react-csv/lib/core';
 
-import { Service } from '@/types/service';
+import { Account } from '@/types/account';
 import ScrollX from '@/components/ScrollX';
 import { TablePagination } from '@/components/third-party/react-table';
 
 interface TableProps {
-  data: Service[];
-  columns: ColumnDef<Service>[];
+  data: Account[];
+  columns: ColumnDef<Account>[];
   rowSelection: {};
   setRowSelection: Dispatch<SetStateAction<{}>>;
   globalFilter: string;
   setGlobalFilter: Dispatch<SetStateAction<string>>;
 }
 
-const ServicesTable: React.FC<TableProps> = ({
+const ServiceAccountsTable: React.FC<TableProps> = ({
   data,
   columns,
   globalFilter,
@@ -145,4 +145,4 @@ const ServicesTable: React.FC<TableProps> = ({
   );
 };
 
-export default ServicesTable;
+export default ServiceAccountsTable;

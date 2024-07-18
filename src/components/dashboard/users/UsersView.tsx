@@ -11,23 +11,22 @@ import useSWR from 'swr';
 
 import { Account } from '@/types/account';
 import { accountClient } from '@/lib/api/account';
-import { LIST_SERVICES } from '@/lib/api/endpoints';
-import { serviceClient } from '@/lib/api/service';
+import { LIST_ACCOUNTS, LIST_SERVICES } from '@/lib/api/endpoints';
 // types
 import useNotify from '@/hooks/useNotify';
 import CircularLoader from '@/components/CircularLoader';
 // project-import
 import { IndeterminateCheckbox } from '@/components/third-party/react-table';
 
-import ServicesButtons from './ServicesButtons';
-import ServicesDialog from './ServicesDialogs';
-import ServicesFilter from './ServicesFilter';
-import ServicesTable from './ServicesTable';
+import UsersButtons from './UsersButtons';
+import UsersDialog from './UsersDialogs';
+import UsersFilter from './UsersFilter';
+import UsersTable from './UsersTable';
 
 const UsersView = () => {
   const notify = useNotify();
   const theme = useTheme();
-  const { data, isLoading, error, mutate } = useSWR(LIST_SERVICES, serviceClient.listServices);
+  const { data, isLoading, error, mutate } = useSWR(LIST_ACCOUNTS, accountClient.listAccounts);
   const [globalFilter, setGlobalFilter] = useState('');
 
   const [rowSelection, setRowSelection] = useState({});
@@ -86,12 +85,17 @@ const UsersView = () => {
         accessorKey: 'name',
       },
       {
-        id: 'description',
-        header: 'Description',
-        cell: ({ row }: any) => {
-          return <Box>{row.original.description ?? ''}</Box>;
-        },
+        id: 'email',
+        header: 'Email',
+        accessorKey: 'email',
       },
+      // {
+      //   id: 'description',
+      //   header: 'Description',
+      //   cell: ({ row }: any) => {
+      //     return <Box>{row.original.description ?? ''}</Box>;
+      //   },
+      // },
       {
         id: 'actions',
         header: 'Actions',
@@ -102,12 +106,12 @@ const UsersView = () => {
         cell: ({ row }: any) => {
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
-              <Tooltip title="Edit Service">
+              <Tooltip title="Edit Role">
                 <IconButton onClick={() => handleEditClick(row.original.name)}>
                   <Pencil />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Delete Service">
+              <Tooltip title="Delete Role">
                 <IconButton color="error" onClick={() => handleDeleteClick(row.original.name)}>
                   <Trash color={theme.palette.error.main} />
                 </IconButton>
@@ -128,20 +132,20 @@ const UsersView = () => {
         </Stack>
       ) : (
         <>
-          <Typography variant="h4">Services</Typography>
-          <ServicesButtons rowSelection={rowSelection} />
-          <ServicesFilter length={data?.length ?? 0} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
-          <ServicesTable
+          <Typography variant="h4">User Accounts</Typography>
+          <UsersButtons rowSelection={rowSelection} />
+          <UsersFilter length={data?.length ?? 0} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+          <UsersTable
             globalFilter={globalFilter}
             setGlobalFilter={setGlobalFilter}
             rowSelection={rowSelection}
             setRowSelection={setRowSelection}
-            data={data ?? []}
+            data={data?.filter((el) => el.type === 'user') ?? []}
             columns={columns}
           />
         </>
       )}
-      <ServicesDialog
+      <UsersDialog
         cancelDelete={cancelDelete}
         setDeleteOpen={setDeleteOpen}
         deleteOpen={deleteOpen}

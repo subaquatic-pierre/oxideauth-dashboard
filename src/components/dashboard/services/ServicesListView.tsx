@@ -1,6 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material';
 // material-ui
 import Stack from '@mui/material/Stack';
@@ -10,6 +12,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import useSWR from 'swr';
 
 import { Account } from '@/types/account';
+import { paths } from '@/paths';
 import { accountClient } from '@/lib/api/account';
 import { LIST_SERVICES } from '@/lib/api/endpoints';
 import { serviceClient } from '@/lib/api/service';
@@ -24,7 +27,8 @@ import ServicesDialog from './ServicesDialogs';
 import ServicesFilter from './ServicesFilter';
 import ServicesTable from './ServicesTable';
 
-const UsersView = () => {
+const ServicesListView = () => {
+  const router = useRouter();
   const notify = useNotify();
   const theme = useTheme();
   const { data, isLoading, error, mutate } = useSWR(LIST_SERVICES, serviceClient.listServices);
@@ -33,21 +37,29 @@ const UsersView = () => {
   const [rowSelection, setRowSelection] = useState({});
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const handleEditClick = (name: string) => {
-    console.log('hanle edit of', name);
-  };
-
   const handleDeleteClick = (name: string) => {
     setRowSelection({ [name]: true });
     setDeleteOpen(true);
   };
 
   const submitDelete = async () => {
-    console.log('submit delete');
-  };
+    try {
+      const serviceName = Object.keys(rowSelection)[0];
+      const res = await serviceClient.deleteService(serviceName);
 
-  const handleCopyClick = (name: string) => {
-    console.log('hanle copy of', name);
+      console.log(res);
+
+      notify(`Successfully deleted ${serviceName} service`, 'success');
+
+      const updated = data?.filter((el) => el.name !== serviceName);
+      mutate(updated);
+      setRowSelection({});
+      setDeleteOpen(false);
+    } catch (e: any) {
+      const message = e?.response?.data?.message ?? e.message;
+      notify(message, 'error');
+    }
+    console.log('submit delete');
   };
 
   const cancelDelete = () => {
@@ -93,6 +105,11 @@ const UsersView = () => {
         },
       },
       {
+        id: 'endpoint',
+        header: 'Endpoint',
+        accessorKey: 'endpoint',
+      },
+      {
         id: 'actions',
         header: 'Actions',
         meta: {
@@ -103,7 +120,7 @@ const UsersView = () => {
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
               <Tooltip title="Edit Service">
-                <IconButton onClick={() => handleEditClick(row.original.name)}>
+                <IconButton LinkComponent={Link} href={`${paths.dashboard.services}/${row.original.id}`}>
                   <Pencil />
                 </IconButton>
               </Tooltip>
@@ -152,4 +169,4 @@ const UsersView = () => {
   );
 };
 
-export default UsersView;
+export default ServicesListView;

@@ -12,13 +12,10 @@ import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 import dayjs from 'dayjs';
 
 import { config } from '@/config';
-import { IntegrationCard } from '@/components/dashboard/integrations/integrationsCards';
-import type { Integration } from '@/components/dashboard/integrations/integrationsCards';
-import { CompaniesFilters } from '@/components/dashboard/integrations/integrationsFilters';
-import ServicesView from '@/components/dashboard/services/ServicesView';
+import ServicesListView from '@/components/dashboard/services/ServicesListView';
 
 export const metadata = { title: `Integrations | Dashboard | ${config.site.name}` } satisfies Metadata;
 
 export default function Page(): React.JSX.Element {
-  return <ServicesView />;
+  return <ServicesListView />;
 }

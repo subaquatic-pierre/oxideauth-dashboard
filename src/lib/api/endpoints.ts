@@ -12,4 +12,7 @@ export const CREATE_PERMISSIONS = '/roles/create-permissions';
 export const DELETE_PERMISSIONS = '/roles/delete-permissions';
 
 export const DESCRIBE_SERVICE = '/services/describe-service';
+export const CREATE_SERVICE = '/services/create-service';
+export const UPDATE_SERVICE = '/services/update-service';
+export const DELETE_SERVICE = '/services/delete-service';
 export const LIST_SERVICES = '/services/list-services';

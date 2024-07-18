@@ -20,7 +20,7 @@ const ServicesButtons: React.FC<TableProps> = ({
 }) => {
   return (
     <Stack minHeight={44} direction={'row'} spacing={2}>
-      <Button component={Link} href={paths.dashboard.roles} startIcon={<PlusIcon />} variant="contained">
+      <Button component={Link} href={paths.dashboard.services + '/new'} startIcon={<PlusIcon />} variant="contained">
         New
       </Button>
       {Object.keys(rowSelection).length > 0 && (

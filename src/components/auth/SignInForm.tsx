@@ -4,6 +4,7 @@ import * as React from 'react';
 import RouterLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Divider } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
@@ -13,6 +14,7 @@ import Link from '@mui/material/Link';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { GoogleLogo } from '@phosphor-icons/react';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
 import { Controller, useForm } from 'react-hook-form';
@@ -20,6 +22,7 @@ import { z as zod } from 'zod';
 
 import { paths } from '@/paths';
 import { authClient } from '@/lib/api/auth';
+import { getGoogleUrl } from '@/lib/getGoogleUrl';
 import { useAuth } from '@/hooks/useAuth';
 import useNotify from '@/hooks/useNotify';
 
@@ -131,7 +134,8 @@ export function SignInForm(): React.JSX.Element {
           </Button>
         </Stack>
       </form>
-      <Alert color="warning">
+      {/* OAuth Buttons */}
+      {/* <Alert color="warning">
         Use{' '}
         <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">
           sofia@devias.io
@@ -140,7 +144,22 @@ export function SignInForm(): React.JSX.Element {
         <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">
           Secret1
         </Typography>
-      </Alert>
+      </Alert> */}
+      <Typography color="text.secondary" variant="body2">
+        Sign in with
+      </Typography>
+      <Stack>
+        <Button
+          href={getGoogleUrl()}
+          startIcon={<GoogleLogo />}
+          disabled={isPending}
+          type="submit"
+          color="secondary"
+          variant="contained"
+        >
+          Google
+        </Button>
+      </Stack>
     </Stack>
   );
 }

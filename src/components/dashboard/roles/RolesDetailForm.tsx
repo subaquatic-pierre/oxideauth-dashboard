@@ -1,8 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useParams } from 'next/navigation';
 import { Alert, FormHelperText } from '@mui/material';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -14,17 +13,14 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Controller, useForm } from 'react-hook-form';
+import { Control, Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
 
-import { Service } from '@/types/service';
-import { paths } from '@/paths';
-import { roleClient } from '@/lib/api/role';
-import { serviceClient } from '@/lib/api/service';
-import useNotify from '@/hooks/useNotify';
-
 interface Props {
-  initialData: Service;
+  control: Control<Values>;
+  handleSubmit: () => void;
+  getValues: (a: any) => any;
+  errors: any;
 }
 
 const schema = zod.object({
@@ -34,47 +30,16 @@ const schema = zod.object({
 
 type Values = zod.infer<typeof schema>;
 
-export function RolesDetailForm({ initialData }: Props): React.JSX.Element {
-  const isExisting = !!initialData.id;
-  const notify = useNotify();
-  const router = useRouter();
-  const {
-    control,
-    handleSubmit,
-    setError,
-    formState: { errors },
-  } = useForm<Values>({ defaultValues: initialData, resolver: zodResolver(schema) });
-
-  const onSubmit = async (formValues: Values) => {
-    try {
-      if (isExisting) {
-        const _ = await roleClient.updateRole({ role: initialData.id, ...formValues });
-
-        notify('Successfully updated role', 'success');
-
-        router.push(paths.dashboard.roles);
-      } else {
-        const res = await roleClient.createRole(formValues);
-
-        console.log(res);
-
-        notify('Successfully create new role', 'success');
-
-        router.push(paths.dashboard.roles);
-      }
-    } catch (e: any) {
-      const message = e.message;
-      notify(message, 'error');
-      setError('root', { type: 'server', message: message });
-    }
-  };
+export function RolesDetailForm({ control, handleSubmit, errors, getValues }: Props): React.JSX.Element {
+  const { role: roleId } = useParams();
+  const isExisting = roleId !== 'new';
 
   return (
     <>
       <Card>
         <CardHeader
-          title={isExisting ? initialData.name : 'New'}
-          subheader={isExisting ? initialData.id : 'Create a new role'}
+          title={isExisting ? getValues('name') : 'New'}
+          subheader={isExisting ? (roleId as string) : 'Create a new role'}
         />
         <Divider />
         <CardContent>
@@ -107,18 +72,7 @@ export function RolesDetailForm({ initialData }: Props): React.JSX.Element {
             </Grid>
           </Grid>
         </CardContent>
-        <Divider />
-        <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button onClick={handleSubmit(onSubmit)} variant="contained">
-            {isExisting ? 'Save details' : 'Create new'}
-          </Button>
-        </CardActions>
       </Card>
-      {errors.root && (
-        <Alert severity="error" color="error">
-          {errors.root.message}
-        </Alert>
-      )}
     </>
   );
 }

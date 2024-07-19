@@ -10,10 +10,11 @@ import useSWR from 'swr';
 import { LIST_PERMISSIONS } from '@/lib/api/endpoints';
 // types
 import { roleClient } from '@/lib/api/role';
+import { buildPermissionTableColumns } from '@/lib/tables';
 import useNotify from '@/hooks/useNotify';
 import CircularLoader from '@/components/CircularLoader';
+
 // project-import
-import { IndeterminateCheckbox } from '@/components/third-party/react-table';
 
 import PermissionsButtons from './PermissionsButtons';
 import PermissionsDialogs from './PermissionsDialogs';
@@ -87,38 +88,7 @@ export default function PermissionsView() {
     setCreateOpen(false);
   };
 
-  const columns = useMemo<ColumnDef<PermsTableRow>[]>(
-    () => [
-      {
-        id: 'id',
-        header: ({ table }) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler(),
-            }}
-          />
-        ),
-        cell: ({ row }) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler(),
-            }}
-          />
-        ),
-      },
-      {
-        id: 'name',
-        header: 'Name',
-        accessorKey: 'name',
-      },
-    ],
-    []
-  );
+  const columns = useMemo<ColumnDef<PermsTableRow>[]>(buildPermissionTableColumns, []);
 
   const data: PermsTableRow[] = [];
 

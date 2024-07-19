@@ -2,6 +2,7 @@ import { Role } from '@/types/role';
 
 import { BaseClient } from './client';
 import {
+  ASSIGN_PERMISSIONS,
   CREATE_PERMISSIONS,
   CREATE_ROLE,
   DELETE_PERMISSIONS,
@@ -9,8 +10,14 @@ import {
   DESCRIBE_ROLE,
   LIST_PERMISSIONS,
   LIST_ROLES,
+  REMOVE_PERMISSIONS,
   UPDATE_ROLE,
 } from './endpoints';
+
+interface AssignPermissionsParams {
+  role: string;
+  permissions: string[];
+}
 
 interface CreateRoleParams {
   name: string;
@@ -77,6 +84,25 @@ class RoleClient extends BaseClient {
 
   // Permissions
   // ---
+
+  async assignPermissions(assignPermsParams: AssignPermissionsParams): Promise<Role> {
+    const data = await super.req<{ role: Role }>({
+      endpoint: ASSIGN_PERMISSIONS,
+      method: 'POST',
+      auth: true,
+      data: assignPermsParams,
+    });
+    return data.role;
+  }
+  async removePermissions(removePermissionsParams: AssignPermissionsParams): Promise<Role> {
+    const data = await super.req<{ role: Role }>({
+      endpoint: REMOVE_PERMISSIONS,
+      method: 'POST',
+      auth: true,
+      data: removePermissionsParams,
+    });
+    return data.role;
+  }
 
   async listPermissions(): Promise<string[]> {
     const data = await super.req<{ permissions: string[] }>({ endpoint: LIST_PERMISSIONS });

@@ -6,8 +6,11 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography }
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 
+import { Account } from '@/types/account';
+
 interface Props {
   deleteOpen: boolean;
+  allAccounts: Account[];
   setDeleteOpen: Dispatch<SetStateAction<boolean>>;
   rowSelection: {};
   submitDelete: () => void;
@@ -19,6 +22,7 @@ const ServiceAccountsDialog: React.FC<Props> = ({
   setDeleteOpen,
   submitDelete,
   rowSelection,
+  allAccounts,
   cancelDelete,
 }) => {
   return (
@@ -28,8 +32,9 @@ const ServiceAccountsDialog: React.FC<Props> = ({
         <Divider />
         <DialogContent>
           <Stack>
+            {}
             {Object.keys(rowSelection).map((item, idx) => (
-              <Typography key={idx}>{item}</Typography>
+              <Typography key={idx}>{allAccounts.filter((el) => el.id === item)[0].name}</Typography>
             ))}
           </Stack>
         </DialogContent>

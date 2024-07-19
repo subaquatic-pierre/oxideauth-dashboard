@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Alert, FormHelperText } from '@mui/material';
@@ -128,6 +129,9 @@ export function ServiceDetailForm({ initialData }: Props): React.JSX.Element {
         <CardActions sx={{ justifyContent: 'flex-end' }}>
           <Button onClick={handleSubmit(onSubmit)} variant="contained">
             {isExistingService ? 'Save details' : 'Create new'}
+          </Button>
+          <Button LinkComponent={Link} href={paths.dashboard.services} color="warning" variant="contained">
+            Cancel
           </Button>
         </CardActions>
       </Card>

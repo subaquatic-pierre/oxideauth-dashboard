@@ -29,9 +29,15 @@ import CircularLoader from '@/components/CircularLoader';
 import { IndeterminateCheckbox } from '@/components/third-party/react-table';
 
 import { PermsTableRow } from '../permissions/PermissionsView';
-import { RolesDetailForm } from './RolesDetailForm';
-import RolesDetailsFormButtons from './RolesDetailsFormButtons';
-import RolesPermsTable from './RolesPermsTable';
+import ServiceAccountsDetailForm from './ServiceAccountsDetailForm';
+import ServiceAccountsDetailFormButtons from './ServiceAccountsDetailFormButtons';
+import ServiceAccountsRolesTable from './ServiceAccountsRolesTable';
+
+const blankSa: Account = {
+  id: '',
+  name: '',
+  description: '',
+};
 
 const blankRole: Role = {
   id: '',
@@ -47,15 +53,17 @@ const schema = zod.object({
 
 export type Values = zod.infer<typeof schema>;
 
-const RolesDetailView = () => {
-  const { role: roleId } = useParams();
-  const isExisting = roleId !== 'new';
+export type SelectedRoles = { [mapPos: string]: string };
+
+const ServiceAccountsDetailView = () => {
+  const { sa: saId } = useParams();
+  const isExisting = saId !== 'new';
   const notify = useNotify();
   const router = useRouter();
 
-  const [role, setRole] = useState(blankRole);
-  const [allPerms, setAllPerms] = useState<PermsTableRow[]>([]);
-  const [selectedPerms, setSelectedPerms] = useState({});
+  const [sa, setSa] = useState<Account>(blankSa);
+  const [allRoles, setAllRoles] = useState<Role[]>([]);
+  const [selectedRoles, setSelectedRoles] = useState<SelectedRoles>({});
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
 
@@ -65,46 +73,51 @@ const RolesDetailView = () => {
     setValue,
     setError,
     formState: { errors },
-  } = useForm<Values>({ defaultValues: blankRole, resolver: zodResolver(schema) });
+  } = useForm<Values>({ defaultValues: blankSa, resolver: zodResolver(schema) });
 
   const handleSubmit = async () => {
-    const permissions: string[] = Object.keys(selectedPerms);
+    // const permissions: string[] = Object.keys(selectedPerms);
     const formValues = {
       name: getValues('name'),
       description: getValues('description'),
     };
 
+    const selectedRolesIds = Object.values(selectedRoles);
+
     try {
       if (isExisting) {
-        const updatedRole = await roleClient.updateRole({ role: roleId as string, ...formValues });
+        const updatedAccount = await accountClient.updateAccount({ account: saId as string, ...formValues });
 
         // check if permissions changed
         // bind new permissions
 
-        if (updatedRole) {
+        if (updatedAccount && updatedAccount.roles) {
           // get perms to be removed
           const toBeRemoved: string[] = [];
-          for (const existingPerm of updatedRole.permissions) {
-            if (permissions.indexOf(existingPerm) === -1) {
-              toBeRemoved.push(existingPerm);
+          for (const existingPerm of updatedAccount.roles) {
+            if (selectedRolesIds.indexOf(existingPerm.id) === -1) {
+              toBeRemoved.push(existingPerm.id);
             }
           }
 
           const toBeAdded: string[] = [];
-          for (const perm of permissions) {
-            if (role.permissions.indexOf(perm) === -1) {
-              toBeAdded.push(perm);
+          for (const roleId of selectedRolesIds) {
+            if (updatedAccount.roles.findIndex((el) => el.id === roleId) === -1) {
+              toBeAdded.push(roleId);
             }
           }
 
-          await roleClient.removePermissions({ role: roleId as string, permissions: toBeRemoved });
+          await roleClient.removeRoles({ account: saId as string, roles: toBeRemoved });
 
-          await roleClient.assignPermissions({ role: roleId as string, permissions: toBeAdded });
+          await roleClient.assignRoles({ account: saId as string, roles: toBeAdded });
         }
 
         notify('Successfully updated role', 'success');
       } else {
-        const res = await roleClient.createRole({ ...formValues, permissions });
+        const email = `${formValues.name.split(' ').join('')}@email.com`;
+        const newAccount = await accountClient.createServiceAccount({ ...formValues, email });
+
+        await roleClient.assignRoles({ account: newAccount.id as string, roles: selectedRolesIds });
 
         notify('Successfully create new role', 'success');
       }
@@ -113,45 +126,40 @@ const RolesDetailView = () => {
       notify(message, 'error');
       setError('root', { type: 'server', message: message });
     } finally {
-      router.push(paths.dashboard.roles);
+      router.push(paths.dashboard.serviceAccounts);
     }
   };
 
   const handleLoad = async () => {
-    if (roleId !== 'new') {
+    if (saId !== 'new') {
       try {
         // get all data
-        const role = await roleClient.describeRole(roleId as string);
+        const sa = await accountClient.describeAccount(saId as string);
 
         // set all data
-        setValue('name', role.name ?? '');
-        setValue('description', role.description ?? '');
-        setRole(role);
+        setValue('name', sa.name ?? '');
+        setValue('description', sa.description ?? '');
+        setSa(sa);
+        const currentRoles = sa.roles?.map((el) => el.id) ?? [];
 
-        const selected = role.permissions?.reduce((obj: { [key: string]: boolean }, cur) => {
-          obj[cur] = true;
-          return obj;
-        }, {});
+        const selected: SelectedRoles = {};
 
-        if (selected) {
-          setSelectedPerms(selected);
+        for (let i = 0; i < currentRoles.length; i++) {
+          selected[i] = currentRoles[i];
         }
+
+        setSelectedRoles(selected);
       } catch (e) {
         setLoadError('There was an error fetching role');
       }
     } else {
-      setRole(blankRole);
+      setSa(blankSa);
     }
 
     try {
-      const allPerms = await roleClient.listPermissions();
+      const allRoles = await roleClient.listRoles();
 
-      const data: PermsTableRow[] = [];
-
-      if (allPerms) {
-        allPerms.forEach((el) => data.push({ name: el }));
-      }
-      setAllPerms(data);
+      setAllRoles(allRoles);
     } catch (e: any) {
       notify(e.message, 'error');
     }
@@ -168,13 +176,13 @@ const RolesDetailView = () => {
       <Stack direction={'row'} alignItems={'center'} spacing={1}>
         <Box>
           <Tooltip title="Back">
-            <IconButton LinkComponent={Link} href={paths.dashboard.roles}>
+            <IconButton LinkComponent={Link} href={paths.dashboard.serviceAccounts}>
               <SkipBack />
             </IconButton>
           </Tooltip>
         </Box>
 
-        <Typography variant="h4">Role Details</Typography>
+        <Typography variant="h4">Service Account Details</Typography>
       </Stack>
       {loading ? (
         <Stack minHeight="40vh" justifyContent={'center'}>
@@ -186,9 +194,18 @@ const RolesDetailView = () => {
         </Alert>
       ) : (
         <>
-          <RolesDetailForm control={control} errors={errors} handleSubmit={handleSubmit} getValues={getValues} />
-          <RolesPermsTable selectedPerms={selectedPerms} setSelectedPerms={setSelectedPerms} allPerms={allPerms} />
-          <RolesDetailsFormButtons handleSubmit={handleSubmit} />
+          <ServiceAccountsDetailForm
+            control={control}
+            errors={errors}
+            handleSubmit={handleSubmit}
+            getValues={getValues}
+          />
+          <ServiceAccountsRolesTable
+            selectedRoles={selectedRoles}
+            setSelectedRoles={setSelectedRoles}
+            allRoles={allRoles}
+          />
+          <ServiceAccountsDetailFormButtons handleSubmit={handleSubmit} />
           {!isExisting && errors.root && (
             <Alert severity="error" color="error">
               {errors.root.message}
@@ -200,4 +217,4 @@ const RolesDetailView = () => {
   );
 };
 
-export default RolesDetailView;
+export default ServiceAccountsDetailView;

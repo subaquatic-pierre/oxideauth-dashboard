@@ -31,12 +31,11 @@ import { PermsTableRow } from '../permissions/PermissionsView';
 
 interface Props {
   allPerms: PermsTableRow[];
-  handleSubmit: () => void;
   selectedPerms: { [name: string]: boolean };
   setSelectedPerms: Dispatch<SetStateAction<{ [name: string]: boolean }>>;
 }
 
-const RolesPermsTable = ({ handleSubmit, allPerms, selectedPerms, setSelectedPerms }: Props) => {
+const RolesPermsTable = ({ allPerms, selectedPerms, setSelectedPerms }: Props) => {
   const { role: roleId } = useParams();
   const [globalFilter, setGlobalFilter] = useState('');
 
@@ -64,12 +63,12 @@ const RolesPermsTable = ({ handleSubmit, allPerms, selectedPerms, setSelectedPer
           columns={columns}
         />
       </Stack>
-      <Divider />
+      {/* <Divider />
       <CardActions sx={{ justifyContent: 'flex-end' }}>
         <Button onClick={() => handleSubmit()} variant="contained">
           {isExisting ? 'Save details' : 'Create new'}
         </Button>
-      </CardActions>
+      </CardActions> */}
     </Card>
   );
 };

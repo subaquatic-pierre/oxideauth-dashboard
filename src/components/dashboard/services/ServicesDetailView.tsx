@@ -1,17 +1,20 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Alert, Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material';
 // material-ui
 import Stack from '@mui/material/Stack';
 import { Copy, Pencil, Trash } from '@phosphor-icons/react';
+import { SkipBack } from '@phosphor-icons/react/dist/ssr';
 // third-party
 import { ColumnDef } from '@tanstack/react-table';
 import useSWR from 'swr';
 
 import { Account } from '@/types/account';
 import { Service } from '@/types/service';
+import { paths } from '@/paths';
 import { accountClient } from '@/lib/api/account';
 import { LIST_SERVICES } from '@/lib/api/endpoints';
 import { serviceClient } from '@/lib/api/service';
@@ -58,7 +61,17 @@ const ServicesDetailView = () => {
 
   return (
     <Stack spacing={3}>
-      <Typography variant="h4">Service Details</Typography>
+      <Stack direction={'row'} alignItems={'center'} spacing={1}>
+        <Box>
+          <Tooltip title="Back">
+            <IconButton LinkComponent={Link} href={paths.dashboard.services}>
+              <SkipBack />
+            </IconButton>
+          </Tooltip>
+        </Box>
+
+        <Typography variant="h4">Service Details</Typography>
+      </Stack>
       {loading ? (
         <Stack minHeight="40vh" justifyContent={'center'}>
           <CircularLoader />

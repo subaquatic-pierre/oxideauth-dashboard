@@ -12,10 +12,10 @@ import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 import dayjs from 'dayjs';
 
 import { config } from '@/config';
-import ServiceAccountsListView from '@/components/dashboard/service-accounts/ServiceAccountsListView';
+import ServiceAccountsDetailView from '@/components/dashboard/service-accounts/ServiceAccountsDetailView';
 
 export const metadata = { title: `Integrations | Dashboard | ${config.site.name}` } satisfies Metadata;
 
 export default function Page(): React.JSX.Element {
-  return <ServiceAccountsListView />;
+  return <ServiceAccountsDetailView />;
 }

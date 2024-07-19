@@ -3,6 +3,7 @@
 import crypto, { generateKey } from 'crypto';
 
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import { Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material';
 // material-ui
 import Stack from '@mui/material/Stack';
@@ -12,6 +13,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import useSWR from 'swr';
 
 import { Account } from '@/types/account';
+import { paths } from '@/paths';
 import { accountClient } from '@/lib/api/account';
 import { LIST_ACCOUNTS, LIST_SERVICES } from '@/lib/api/endpoints';
 // types
@@ -25,7 +27,7 @@ import ServiceAccountsDialog from './ServiceAccountsDialog';
 import ServiceAccountsFilter from './ServiceAccountsFilter';
 import ServiceAccountsTable from './ServiceAccountsTable';
 
-const ServiceAccountsView = () => {
+const ServiceAccountsListView = () => {
   const notify = useNotify();
   const theme = useTheme();
   const { data, isLoading, error, mutate } = useSWR(LIST_ACCOUNTS + '/sa', accountClient.listAccounts);
@@ -68,7 +70,22 @@ const ServiceAccountsView = () => {
   };
 
   const submitDelete = async () => {
-    console.log('submit delete');
+    try {
+      const accountId = Object.keys(rowSelection)[0];
+      const accountName = data?.filter((el) => el.id === accountId)[0].name;
+      const _ = await accountClient.deleteAccount(accountId);
+
+      notify(`Successfully deleted ${accountName} account`, 'success');
+
+      const updated = data?.filter((el) => el.name !== accountName);
+
+      mutate(updated);
+    } catch (e: any) {
+      notify(e.message, 'error');
+    } finally {
+      setRowSelection({});
+      setDeleteOpen(false);
+    }
   };
 
   const handleCopyClick = (name: string) => {
@@ -132,8 +149,8 @@ const ServiceAccountsView = () => {
         cell: ({ row }: any) => {
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
-              <Tooltip title="Edit Role">
-                <IconButton onClick={() => handleEditClick(row.original.name)}>
+              <Tooltip title="Edit Service Account">
+                <IconButton LinkComponent={Link} href={`${paths.dashboard.serviceAccounts}/${row.original.id}`}>
                   <Pencil />
                 </IconButton>
               </Tooltip>
@@ -142,8 +159,8 @@ const ServiceAccountsView = () => {
                   <Download color={theme.palette.secondary.main} />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Delete Role">
-                <IconButton color="error" onClick={() => handleDeleteClick(row.original.name)}>
+              <Tooltip title="Delete Service Account">
+                <IconButton color="error" onClick={() => handleDeleteClick(row.original.id)}>
                   <Trash color={theme.palette.error.main} />
                 </IconButton>
               </Tooltip>
@@ -182,6 +199,7 @@ const ServiceAccountsView = () => {
         </>
       )}
       <ServiceAccountsDialog
+        allAccounts={data ?? []}
         cancelDelete={cancelDelete}
         setDeleteOpen={setDeleteOpen}
         deleteOpen={deleteOpen}
@@ -192,4 +210,4 @@ const ServiceAccountsView = () => {
   );
 };
 
-export default ServiceAccountsView;
+export default ServiceAccountsListView;

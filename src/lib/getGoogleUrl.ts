@@ -10,7 +10,7 @@ export const getGoogleUrl = (from?: string) => {
     scope: ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email'].join(
       ' '
     ),
-    state: from ?? '',
+    state: 'redirectUrl=http://localhost:8081/loading-profile&CsrfToken=secretToken',
   };
 
   const qs = new URLSearchParams(options);

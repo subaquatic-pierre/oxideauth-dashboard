@@ -1,17 +1,20 @@
 'use client';
 
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
-import { Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material';
+import { useMemo, useState } from 'react';
 // material-ui
+import Link from 'next/link';
+import { Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { Copy, Pencil, Trash } from '@phosphor-icons/react';
 import { ColumnDef } from '@tanstack/react-table';
 import useSWR from 'swr';
 
 import { Role } from '@/types/role';
+import { paths } from '@/paths';
 import { LIST_ROLES } from '@/lib/api/endpoints';
 // types
 import { roleClient } from '@/lib/api/role';
+import useNotify from '@/hooks/useNotify';
 import CircularLoader from '@/components/CircularLoader';
 
 import RolesButtons from './RolesButtons';
@@ -19,7 +22,8 @@ import RolesDialogs from './RolesDialogs';
 import RowFilter from './RolesFilter';
 import RolesTable from './RolesTable';
 
-const RolesView = () => {
+const RolesListView = () => {
+  const notify = useNotify();
   const theme = useTheme();
   const { data, isLoading, error, mutate } = useSWR(LIST_ROLES, roleClient.listRoles);
 
@@ -27,17 +31,27 @@ const RolesView = () => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('');
 
-  const handleEditClick = (name: string) => {
-    console.log('hanle edit of', name);
-  };
-
   const handleDeleteClick = (name: string) => {
     setRowSelection({ [name]: true });
     setDeleteOpen(true);
   };
 
   const submitDelete = async () => {
-    console.log('submit delete');
+    try {
+      const roleName = Object.keys(rowSelection)[0];
+      const _ = await roleClient.deleteRole(roleName);
+
+      notify(`Successfully deleted ${roleName} role`, 'success');
+
+      const updated = data?.filter((el) => el.name !== roleName);
+
+      mutate(updated);
+    } catch (e: any) {
+      notify(e.message, 'error');
+    } finally {
+      setRowSelection({});
+      setDeleteOpen(false);
+    }
   };
 
   const handleCopyClick = (name: string) => {
@@ -74,7 +88,7 @@ const RolesView = () => {
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
               <Tooltip title="Edit Role">
-                <IconButton onClick={() => handleEditClick(row.original.name)}>
+                <IconButton LinkComponent={Link} href={`${paths.dashboard.roles}/${row.original.id}`}>
                   <Pencil />
                 </IconButton>
               </Tooltip>
@@ -129,4 +143,4 @@ const RolesView = () => {
   );
 };
 
-export default RolesView;
+export default RolesListView;

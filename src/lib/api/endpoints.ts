@@ -7,6 +7,9 @@ export const DESCRIBE_ACCOUNT = '/accounts/describe-account';
 
 export const LIST_ROLES = '/roles/list-roles';
 export const DESCRIBE_ROLE = '/roles/describe-role';
+export const CREATE_ROLE = '/roles/create-role';
+export const DELETE_ROLE = '/roles/delete-role';
+export const UPDATE_ROLE = '/roles/update-role';
 export const LIST_PERMISSIONS = '/roles/list-permissions';
 export const CREATE_PERMISSIONS = '/roles/create-permissions';
 export const DELETE_PERMISSIONS = '/roles/delete-permissions';

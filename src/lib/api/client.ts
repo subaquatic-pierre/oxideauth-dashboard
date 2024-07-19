@@ -30,14 +30,19 @@ export class BaseClient {
       }
       _headers['Authorization'] = `Bearer ${token}`;
     }
-    const res = await axios.request<any, ApiResponse<Model>>({
-      method: method,
-      url: `${apiHost}${endpoint}`,
-      data,
-      headers: _headers,
-    });
+    try {
+      const res = await axios.request<any, ApiResponse<Model>>({
+        method: method,
+        url: `${apiHost}${endpoint}`,
+        data,
+        headers: _headers,
+      });
 
-    return res.data;
+      return res.data;
+    } catch (e: any) {
+      const message = e?.response?.data?.message ?? e.message;
+      throw Error(message);
+    }
   }
 }
 

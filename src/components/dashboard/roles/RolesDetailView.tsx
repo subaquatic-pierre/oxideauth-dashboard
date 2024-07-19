@@ -14,6 +14,7 @@ import { Account } from '@/types/account';
 import { Service } from '@/types/service';
 import { accountClient } from '@/lib/api/account';
 import { LIST_SERVICES } from '@/lib/api/endpoints';
+import { roleClient } from '@/lib/api/role';
 import { serviceClient } from '@/lib/api/service';
 // types
 import useNotify from '@/hooks/useNotify';
@@ -21,11 +22,7 @@ import CircularLoader from '@/components/CircularLoader';
 // project-import
 import { IndeterminateCheckbox } from '@/components/third-party/react-table';
 
-import { ServiceDetailForm } from './ServiceDetailForm';
-import ServicesButtons from './ServicesButtons';
-import ServicesDialog from './ServicesDialogs';
-import ServicesFilter from './ServicesFilter';
-import ServicesTable from './ServicesTable';
+import { RolesDetailForm } from './RolesDetailForm';
 
 const blankService: Service = {
   id: '',
@@ -34,19 +31,19 @@ const blankService: Service = {
   endpoint: '',
 };
 
-const ServicesDetailView = () => {
-  const { service: serviceId } = useParams();
+const RolesDetailView = () => {
+  const { role: roleId } = useParams();
   const [data, setData] = useState(blankService);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const handleLoad = async () => {
-    if (serviceId !== 'new') {
+    if (roleId !== 'new') {
       try {
-        const data = await serviceClient.describeService(serviceId as string);
+        const data = await roleClient.describeRole(roleId as string);
         setData(data);
       } catch (e) {
-        setError('There was an error fetching service');
+        setError('There was an error fetching role');
       }
     }
     setLoading(false);
@@ -58,7 +55,7 @@ const ServicesDetailView = () => {
 
   return (
     <Stack spacing={3}>
-      <Typography variant="h4">Service Details</Typography>
+      <Typography variant="h4">Role Details</Typography>
       {loading ? (
         <Stack minHeight="40vh" justifyContent={'center'}>
           <CircularLoader />
@@ -69,11 +66,11 @@ const ServicesDetailView = () => {
         </Alert>
       ) : (
         <>
-          <ServiceDetailForm initialData={data} />
+          <RolesDetailForm initialData={data} />
         </>
       )}
     </Stack>
   );
 };
 
-export default ServicesDetailView;
+export default RolesDetailView;

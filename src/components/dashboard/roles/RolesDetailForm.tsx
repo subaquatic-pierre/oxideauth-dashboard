@@ -19,6 +19,7 @@ import { z as zod } from 'zod';
 
 import { Service } from '@/types/service';
 import { paths } from '@/paths';
+import { roleClient } from '@/lib/api/role';
 import { serviceClient } from '@/lib/api/service';
 import useNotify from '@/hooks/useNotify';
 
@@ -28,14 +29,13 @@ interface Props {
 
 const schema = zod.object({
   name: zod.string().min(1, { message: 'Name is required' }),
-  endpoint: zod.string().min(1, { message: 'Endpoint is required' }),
   description: zod.string(),
 });
 
 type Values = zod.infer<typeof schema>;
 
-export function ServiceDetailForm({ initialData }: Props): React.JSX.Element {
-  const isExistingService = !!initialData.id;
+export function RolesDetailForm({ initialData }: Props): React.JSX.Element {
+  const isExisting = !!initialData.id;
   const notify = useNotify();
   const router = useRouter();
   const {
@@ -47,29 +47,25 @@ export function ServiceDetailForm({ initialData }: Props): React.JSX.Element {
 
   const onSubmit = async (formValues: Values) => {
     try {
-      if (isExistingService) {
-        const res = await serviceClient.updateService({ service: initialData.id, ...formValues });
+      if (isExisting) {
+        const _ = await roleClient.updateRole({ role: initialData.id, ...formValues });
 
-        console.log(res);
+        notify('Successfully updated role', 'success');
 
-        notify('Successfully updated service', 'success');
-
-        router.push(paths.dashboard.services);
+        router.push(paths.dashboard.roles);
       } else {
-        const res = await serviceClient.createService(formValues);
+        const res = await roleClient.createRole(formValues);
 
         console.log(res);
 
-        notify('Successfully create new service', 'success');
+        notify('Successfully create new role', 'success');
 
-        router.push(paths.dashboard.services);
+        router.push(paths.dashboard.roles);
       }
     } catch (e: any) {
       const message = e.message;
       notify(message, 'error');
       setError('root', { type: 'server', message: message });
-
-      // router.push(paths.dashboard.services)
     }
   };
 
@@ -77,8 +73,8 @@ export function ServiceDetailForm({ initialData }: Props): React.JSX.Element {
     <>
       <Card>
         <CardHeader
-          title={isExistingService ? initialData.name : 'New'}
-          subheader={isExistingService ? initialData.id : 'Create a new service'}
+          title={isExisting ? initialData.name : 'New'}
+          subheader={isExisting ? initialData.id : 'Create a new role'}
         />
         <Divider />
         <CardContent>
@@ -89,7 +85,7 @@ export function ServiceDetailForm({ initialData }: Props): React.JSX.Element {
                 name="name"
                 render={({ field }) => (
                   <FormControl fullWidth error={Boolean(errors.name)}>
-                    <InputLabel>Service Name</InputLabel>
+                    <InputLabel>Role Name</InputLabel>
                     <OutlinedInput {...field} label="Service name" />
                     {errors.name ? <FormHelperText>{errors.name.message}</FormHelperText> : null}
                   </FormControl>
@@ -99,24 +95,11 @@ export function ServiceDetailForm({ initialData }: Props): React.JSX.Element {
             <Grid md={6} xs={12}>
               <Controller
                 control={control}
-                name="endpoint"
-                render={({ field }) => (
-                  <FormControl fullWidth error={Boolean(errors.endpoint)}>
-                    <InputLabel>Endpoint</InputLabel>
-                    <OutlinedInput {...field} label="Endpoint" />
-                    {errors.endpoint ? <FormHelperText>{errors.endpoint.message}</FormHelperText> : null}
-                  </FormControl>
-                )}
-              />
-            </Grid>
-            <Grid xs={12}>
-              <Controller
-                control={control}
                 name="description"
                 render={({ field }) => (
                   <FormControl fullWidth error={Boolean(errors.description)}>
                     <InputLabel>Description</InputLabel>
-                    <OutlinedInput multiline rows={2} {...field} label="Description" />
+                    <OutlinedInput {...field} label="Description" />
                     {errors.description ? <FormHelperText>{errors.description.message}</FormHelperText> : null}
                   </FormControl>
                 )}
@@ -127,7 +110,7 @@ export function ServiceDetailForm({ initialData }: Props): React.JSX.Element {
         <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
           <Button onClick={handleSubmit(onSubmit)} variant="contained">
-            {isExistingService ? 'Save details' : 'Create new'}
+            {isExisting ? 'Save details' : 'Create new'}
           </Button>
         </CardActions>
       </Card>

@@ -9,11 +9,11 @@ class AccountClient extends BaseClient {
     return data.accounts;
   }
 
-  async describeAccount(id_or_name: string): Promise<Account> {
+  async describeAccount(idOrName: string): Promise<Account> {
     const data = await super.req<{ account: Account }>({
       endpoint: DESCRIBE_ACCOUNT,
       method: 'POST',
-      data: { account: id_or_name },
+      data: { account: idOrName },
     });
     return data.account;
   }

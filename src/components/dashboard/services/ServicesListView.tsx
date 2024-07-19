@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material';
 // material-ui
 import Stack from '@mui/material/Stack';
@@ -13,14 +12,13 @@ import useSWR from 'swr';
 
 import { Account } from '@/types/account';
 import { paths } from '@/paths';
-import { accountClient } from '@/lib/api/account';
 import { LIST_SERVICES } from '@/lib/api/endpoints';
 import { serviceClient } from '@/lib/api/service';
 // types
 import useNotify from '@/hooks/useNotify';
 import CircularLoader from '@/components/CircularLoader';
+
 // project-import
-import { IndeterminateCheckbox } from '@/components/third-party/react-table';
 
 import ServicesButtons from './ServicesButtons';
 import ServicesDialog from './ServicesDialogs';
@@ -28,7 +26,6 @@ import ServicesFilter from './ServicesFilter';
 import ServicesTable from './ServicesTable';
 
 const ServicesListView = () => {
-  const router = useRouter();
   const notify = useNotify();
   const theme = useTheme();
   const { data, isLoading, error, mutate } = useSWR(LIST_SERVICES, serviceClient.listServices);
@@ -45,21 +42,18 @@ const ServicesListView = () => {
   const submitDelete = async () => {
     try {
       const serviceName = Object.keys(rowSelection)[0];
-      const res = await serviceClient.deleteService(serviceName);
-
-      console.log(res);
+      const _ = await serviceClient.deleteService(serviceName);
 
       notify(`Successfully deleted ${serviceName} service`, 'success');
 
       const updated = data?.filter((el) => el.name !== serviceName);
       mutate(updated);
+    } catch (e: any) {
+      notify(e.message, 'error');
+    } finally {
       setRowSelection({});
       setDeleteOpen(false);
-    } catch (e: any) {
-      const message = e?.response?.data?.message ?? e.message;
-      notify(message, 'error');
     }
-    console.log('submit delete');
   };
 
   const cancelDelete = () => {

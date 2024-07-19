@@ -20,7 +20,7 @@ interface TableProps {
 const RolesButtons: React.FC<TableProps> = ({ setDeleteOpen, rowSelection }) => {
   return (
     <Stack minHeight={44} direction={'row'} spacing={2}>
-      <Button component={Link} href={paths.dashboard.roles} startIcon={<PlusIcon />} variant="contained">
+      <Button component={Link} href={paths.dashboard.roles + '/new'} startIcon={<PlusIcon />} variant="contained">
         New
       </Button>
       {Object.keys(rowSelection).length > 0 && (

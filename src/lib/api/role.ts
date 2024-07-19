@@ -1,7 +1,27 @@
 import { Role } from '@/types/role';
 
 import { BaseClient } from './client';
-import { CREATE_PERMISSIONS, DELETE_PERMISSIONS, DESCRIBE_ROLE, LIST_PERMISSIONS, LIST_ROLES } from './endpoints';
+import {
+  CREATE_PERMISSIONS,
+  CREATE_ROLE,
+  DELETE_PERMISSIONS,
+  DELETE_ROLE,
+  DESCRIBE_ROLE,
+  LIST_PERMISSIONS,
+  LIST_ROLES,
+  UPDATE_ROLE,
+} from './endpoints';
+
+interface CreateRoleParams {
+  name: string;
+  description?: string;
+  permissions?: string[];
+}
+interface UpdateRoleParams {
+  role: string;
+  name?: string;
+  description?: string;
+}
 
 class RoleClient extends BaseClient {
   constructor() {
@@ -13,18 +33,54 @@ class RoleClient extends BaseClient {
     return data.roles;
   }
 
-  async listPermissions(): Promise<string[]> {
-    const data = await super.req<{ permissions: string[] }>({ endpoint: LIST_PERMISSIONS });
-    return data.permissions;
-  }
-
-  async describeRole(id_or_name: string): Promise<Role> {
+  async describeRole(idOrName: string): Promise<Role> {
     const data = await super.req<{ role: Role }>({
       endpoint: DESCRIBE_ROLE,
       method: 'POST',
-      data: { role: id_or_name },
+      data: { role: idOrName },
     });
     return data.role;
+  }
+
+  async createRole(newRoleData: CreateRoleParams): Promise<Role> {
+    const data = await super.req<{ role: Role }>({
+      endpoint: CREATE_ROLE,
+      data: newRoleData,
+      auth: true,
+      method: 'POST',
+    });
+
+    return data.role;
+  }
+
+  async updateRole(updateRoleData: UpdateRoleParams): Promise<Role> {
+    const data = await super.req<{ role: Role }>({
+      endpoint: UPDATE_ROLE,
+      data: updateRoleData,
+      auth: true,
+      method: 'POST',
+    });
+
+    return data.role;
+  }
+
+  async deleteRole(idOrName: string): Promise<string> {
+    const data = await super.req<{ deleted_role: string }>({
+      endpoint: DELETE_ROLE,
+      data: { role: idOrName },
+      auth: true,
+      method: 'POST',
+    });
+
+    return data.deleted_role;
+  }
+
+  // Permissions
+  // ---
+
+  async listPermissions(): Promise<string[]> {
+    const data = await super.req<{ permissions: string[] }>({ endpoint: LIST_PERMISSIONS });
+    return data.permissions;
   }
 
   async createPermissions(permissions: string[]): Promise<string[]> {
@@ -33,16 +89,18 @@ class RoleClient extends BaseClient {
       method: 'POST',
       data: { permissions },
     });
+
     return data.createdPermissions;
   }
 
   async deletePermissions(permissions: string[]): Promise<string[]> {
-    const data = await super.req<{ createdPermissions: string[] }>({
+    const data = await super.req<{ deletedPermissions: string[] }>({
       endpoint: DELETE_PERMISSIONS,
       method: 'POST',
       data: { permissions },
     });
-    return data.createdPermissions;
+
+    return data.deletedPermissions;
   }
 }
 

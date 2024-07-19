@@ -22,11 +22,11 @@ export class ServiceClient extends BaseClient {
     return data.services;
   }
 
-  async describeService(id_or_name: string): Promise<Service> {
+  async describeService(idOrName: string): Promise<Service> {
     const data = await super.req<{ service: Service }>({
       endpoint: DESCRIBE_SERVICE,
       method: 'POST',
-      data: { service: id_or_name },
+      data: { service: idOrName },
       auth: true,
     });
     return data.service;
@@ -52,11 +52,11 @@ export class ServiceClient extends BaseClient {
     return data.service;
   }
 
-  async deleteService(id_or_name: string): Promise<Service> {
+  async deleteService(idOrName: string): Promise<Service> {
     const data = await super.req<{ service: Service }>({
       endpoint: DELETE_SERVICE,
       method: 'POST',
-      data: { service: id_or_name },
+      data: { service: idOrName },
       auth: true,
     });
     return data.service;

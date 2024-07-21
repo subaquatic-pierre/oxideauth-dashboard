@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import { Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material';
 // material-ui
 import Stack from '@mui/material/Stack';
@@ -10,6 +11,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import useSWR from 'swr';
 
 import { Account } from '@/types/account';
+import { paths } from '@/paths';
 import { accountClient } from '@/lib/api/account';
 import { LIST_ACCOUNTS, LIST_SERVICES } from '@/lib/api/endpoints';
 // types
@@ -23,18 +25,15 @@ import UsersDialog from './UsersDialogs';
 import UsersFilter from './UsersFilter';
 import UsersTable from './UsersTable';
 
-const UsersView = () => {
+const UsersListView = () => {
   const notify = useNotify();
   const theme = useTheme();
-  const { data, isLoading, error, mutate } = useSWR(LIST_ACCOUNTS, accountClient.listAccounts);
+  const { data: allAccounts, isLoading, error, mutate } = useSWR(LIST_ACCOUNTS, accountClient.listAccounts);
+  const data = allAccounts?.filter((el) => el.type === 'user');
   const [globalFilter, setGlobalFilter] = useState('');
 
   const [rowSelection, setRowSelection] = useState({});
   const [deleteOpen, setDeleteOpen] = useState(false);
-
-  const handleEditClick = (name: string) => {
-    console.log('hanle edit of', name);
-  };
 
   const handleDeleteClick = (name: string) => {
     setRowSelection({ [name]: true });
@@ -42,11 +41,22 @@ const UsersView = () => {
   };
 
   const submitDelete = async () => {
-    console.log('submit delete');
-  };
+    try {
+      const accountId = Object.keys(rowSelection)[0];
+      const accountName = data?.filter((el) => el.id === accountId)[0].name;
+      const _ = await accountClient.deleteAccount(accountId);
 
-  const handleCopyClick = (name: string) => {
-    console.log('hanle copy of', name);
+      notify(`Successfully deleted ${accountName} account`, 'success');
+
+      const updated = data?.filter((el) => el.name !== accountName);
+
+      mutate(updated);
+    } catch (e: any) {
+      notify(e.message, 'error');
+    } finally {
+      setRowSelection({});
+      setDeleteOpen(false);
+    }
   };
 
   const cancelDelete = () => {
@@ -106,13 +116,13 @@ const UsersView = () => {
         cell: ({ row }: any) => {
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
-              <Tooltip title="Edit Role">
-                <IconButton onClick={() => handleEditClick(row.original.name)}>
+              <Tooltip title="Edit User">
+                <IconButton LinkComponent={Link} href={`${paths.dashboard.users}/${row.original.id}`}>
                   <Pencil />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Delete Role">
-                <IconButton color="error" onClick={() => handleDeleteClick(row.original.name)}>
+              <Tooltip title="Delete User Account">
+                <IconButton color="error" onClick={() => handleDeleteClick(row.original.id)}>
                   <Trash color={theme.palette.error.main} />
                 </IconButton>
               </Tooltip>
@@ -140,12 +150,13 @@ const UsersView = () => {
             setGlobalFilter={setGlobalFilter}
             rowSelection={rowSelection}
             setRowSelection={setRowSelection}
-            data={data?.filter((el) => el.type === 'user') ?? []}
+            data={data ?? []}
             columns={columns}
           />
         </>
       )}
       <UsersDialog
+        allAccounts={data ?? []}
         cancelDelete={cancelDelete}
         setDeleteOpen={setDeleteOpen}
         deleteOpen={deleteOpen}
@@ -156,4 +167,4 @@ const UsersView = () => {
   );
 };
 
-export default UsersView;
+export default UsersListView;

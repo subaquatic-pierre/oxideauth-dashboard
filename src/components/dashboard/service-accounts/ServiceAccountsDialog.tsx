@@ -32,7 +32,6 @@ const ServiceAccountsDialog: React.FC<Props> = ({
         <Divider />
         <DialogContent>
           <Stack>
-            {}
             {Object.keys(rowSelection).map((item, idx) => (
               <Typography key={idx}>{allAccounts.filter((el) => el.id === item)[0].name}</Typography>
             ))}

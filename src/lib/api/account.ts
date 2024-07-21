@@ -1,12 +1,30 @@
 import { Account } from '@/types/account';
 
 import { BaseClient } from './client';
-import { CREATE_SERVICE_ACCOUNT, DELETE_ACCOUNT, DESCRIBE_ACCOUNT, LIST_ACCOUNTS, UPDATE_ACCOUNT } from './endpoints';
+import {
+  CREATE_ACCOUNT,
+  CREATE_SERVICE_ACCOUNT,
+  DELETE_ACCOUNT,
+  DESCRIBE_ACCOUNT,
+  LIST_ACCOUNTS,
+  UPDATE_ACCOUNT,
+  UPDATE_SELF,
+} from './endpoints';
+
+interface UpdateSelfParams {
+  name: string;
+}
 
 interface CreateServiceAccountParams {
   email: string;
   name: string;
   description: string;
+}
+
+export interface CreateUserAccountParams {
+  name: string;
+  email: string;
+  password: string;
 }
 
 interface UpdateAccountParams {
@@ -40,6 +58,16 @@ class AccountClient extends BaseClient {
     return data.account;
   }
 
+  async updateSelf(updateParams: UpdateSelfParams): Promise<Account> {
+    const data = await super.req<{ account: Account }>({
+      endpoint: UPDATE_SELF,
+      method: 'POST',
+      data: updateParams,
+      auth: true,
+    });
+    return data.account;
+  }
+
   async deleteAccount(idOrName: string): Promise<boolean> {
     const data = await super.req<{ deleted: boolean }>({
       endpoint: DELETE_ACCOUNT,
@@ -56,6 +84,16 @@ class AccountClient extends BaseClient {
       endpoint: CREATE_SERVICE_ACCOUNT,
       method: 'POST',
       data: updateParams,
+      auth: true,
+    });
+    return data.account;
+  }
+
+  async createUserAccount(createAccountParams: CreateUserAccountParams): Promise<Account> {
+    const data = await super.req<{ account: Account }>({
+      endpoint: CREATE_ACCOUNT,
+      method: 'POST',
+      data: createAccountParams,
       auth: true,
     });
     return data.account;

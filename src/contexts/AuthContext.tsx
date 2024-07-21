@@ -37,6 +37,7 @@ function AuthContextProvider({ children }: React.PropsWithChildren): React.JSX.E
       setUser(account);
     } catch (e) {
       setError(`${e}`);
+      window.localStorage.removeItem('token');
       console.log(e);
     }
 

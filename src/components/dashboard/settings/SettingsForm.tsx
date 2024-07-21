@@ -13,59 +13,55 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Grid from '@mui/material/Unstable_Grid2';
+import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
+import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
 import { Control, Controller, useForm } from 'react-hook-form';
-import { z as zod } from 'zod';
+
+import { useAuth } from '@/hooks/useAuth';
+
+import { SettingsFormSchema } from './SettingsView';
 
 interface Props {
-  control: Control<Values>;
-  handleSubmit: () => void;
+  control: Control<SettingsFormSchema>;
   getValues: (a: any) => any;
   errors: any;
 }
 
-const schema = zod.object({
-  name: zod.string().min(1, { message: 'Name is required' }),
-  description: zod.string(),
-});
-
-type Values = zod.infer<typeof schema>;
-
-const ServiceAccountsDetailForm: React.FC<Props> = ({ control, handleSubmit, errors, getValues }) => {
-  const { sa: saId } = useParams();
-  const isExisting = saId !== 'new';
+const SettingsForm: React.FC<Props> = ({ control, errors, getValues }) => {
+  const { user } = useAuth();
+  const { user: userId } = useParams();
+  const isExisting = userId !== 'new';
+  const [showPassword, setShowPassword] = React.useState<boolean>();
 
   return (
     <>
       <Card>
-        <CardHeader
-          title={isExisting ? getValues('name') : 'New'}
-          subheader={isExisting ? (saId as string) : 'Create a new service account'}
-        />
+        <CardHeader title={user?.name} subheader={user?.id} />
         <Divider />
         <CardContent>
           <Grid container spacing={3}>
-            <Grid xs={12}>
+            <Grid xs={12} md={6}>
               <Controller
                 control={control}
                 name="name"
                 render={({ field }) => (
                   <FormControl fullWidth error={Boolean(errors.name)}>
-                    <InputLabel>Service Account Name</InputLabel>
-                    <OutlinedInput {...field} autoFocus label="Service Account name" />
+                    <InputLabel>Full name</InputLabel>
+                    <OutlinedInput {...field} autoFocus label="Full name" />
                     {errors.name ? <FormHelperText>{errors.name.message}</FormHelperText> : null}
                   </FormControl>
                 )}
               />
             </Grid>
-            <Grid md={12} xs={12}>
+            <Grid md={6} xs={12}>
               <Controller
                 control={control}
-                name="description"
+                name="email"
                 render={({ field }) => (
-                  <FormControl fullWidth error={Boolean(errors.description)}>
-                    <InputLabel>Description</InputLabel>
-                    <OutlinedInput multiline rows={2} {...field} label="Description" />
-                    {errors.description ? <FormHelperText>{errors.description.message}</FormHelperText> : null}
+                  <FormControl fullWidth disabled={isExisting} error={Boolean(errors.email)}>
+                    <InputLabel>Email</InputLabel>
+                    <OutlinedInput {...field} label="Email" />
+                    {errors.email ? <FormHelperText>{errors.email.message}</FormHelperText> : null}
                   </FormControl>
                 )}
               />
@@ -77,4 +73,4 @@ const ServiceAccountsDetailForm: React.FC<Props> = ({ control, handleSubmit, err
   );
 };
 
-export default ServiceAccountsDetailForm;
+export default SettingsForm;

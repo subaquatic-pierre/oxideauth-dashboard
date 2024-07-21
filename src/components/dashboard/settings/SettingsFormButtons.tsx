@@ -11,17 +11,17 @@ import { paths } from '@/paths';
 interface Props {
   handleSubmit: () => void;
 }
-const ServiceAccountsDetailFormButtons: React.FC<Props> = ({ handleSubmit }) => {
-  const { sa: saId } = useParams();
+const SettingsFormButtons: React.FC<Props> = ({ handleSubmit }) => {
+  const { user: accountId } = useParams();
 
-  const isExisting = saId !== 'new';
+  const isExisting = accountId !== 'new';
   return (
     <Card>
       <CardActions sx={{ justifyContent: 'flex-end' }}>
         <Button onClick={() => handleSubmit()} variant="contained">
           {isExisting ? 'Save details' : 'Create new'}
         </Button>
-        <Button LinkComponent={Link} href={paths.dashboard.serviceAccounts} color="warning" variant="contained">
+        <Button LinkComponent={Link} href={paths.dashboard.users} color="warning" variant="contained">
           Cancel
         </Button>
       </CardActions>
@@ -29,4 +29,4 @@ const ServiceAccountsDetailFormButtons: React.FC<Props> = ({ handleSubmit }) => 
   );
 };
 
-export default ServiceAccountsDetailFormButtons;
+export default SettingsFormButtons;

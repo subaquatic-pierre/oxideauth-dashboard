@@ -30,17 +30,18 @@ import ServiceAccountsTable from './ServiceAccountsTable';
 const ServiceAccountsListView = () => {
   const notify = useNotify();
   const theme = useTheme();
-  const { data, isLoading, error, mutate } = useSWR(LIST_ACCOUNTS + '/sa', accountClient.listAccounts);
+  const { data: allAccounts, isLoading, error, mutate } = useSWR(LIST_ACCOUNTS + '/sa', accountClient.listAccounts);
+  const data = allAccounts?.filter((el) => el.type === 'service');
+
   const [globalFilter, setGlobalFilter] = useState('');
 
   const [rowSelection, setRowSelection] = useState({});
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const handleEditClick = (name: string) => {
-    console.log('hanle edit of', name);
-  };
-
   const handleDownloadClick = (name: string) => {
+    // TODO: get actual token from API to be used
+    // in all service account client requests,
+    // added to header "Authorization: Bearer {token}"
     const key = crypto.randomBytes(8).toString('hex');
     const data = {
       serviceAccountName: name,

@@ -6,15 +6,25 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography }
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 
+import { Account } from '@/types/account';
+
 interface Props {
   deleteOpen: boolean;
   setDeleteOpen: Dispatch<SetStateAction<boolean>>;
   rowSelection: {};
   submitDelete: () => void;
+  allAccounts: Account[];
   cancelDelete: () => void;
 }
 
-const UsersDialogs: React.FC<Props> = ({ deleteOpen, setDeleteOpen, submitDelete, rowSelection, cancelDelete }) => {
+const UsersDialogs: React.FC<Props> = ({
+  allAccounts,
+  deleteOpen,
+  setDeleteOpen,
+  submitDelete,
+  rowSelection,
+  cancelDelete,
+}) => {
   return (
     <>
       <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)}>
@@ -23,7 +33,7 @@ const UsersDialogs: React.FC<Props> = ({ deleteOpen, setDeleteOpen, submitDelete
         <DialogContent>
           <Stack>
             {Object.keys(rowSelection).map((item, idx) => (
-              <Typography key={idx}>{item}</Typography>
+              <Typography key={idx}>{allAccounts.filter((el) => el.id === item)[0].name}</Typography>
             ))}
           </Stack>
         </DialogContent>

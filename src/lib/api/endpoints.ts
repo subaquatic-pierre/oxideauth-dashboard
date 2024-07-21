@@ -5,6 +5,8 @@ export const DESCRIBE_SELF = '/accounts/describe-self';
 export const LIST_ACCOUNTS = '/accounts/list-accounts';
 export const DELETE_ACCOUNT = '/accounts/delete-account';
 export const CREATE_SERVICE_ACCOUNT = '/accounts/create-service-account';
+export const CREATE_ACCOUNT = '/accounts/create-user-account';
+export const UPDATE_SELF = '/accounts/update-self';
 export const DESCRIBE_ACCOUNT = '/accounts/describe-account';
 export const UPDATE_ACCOUNT = '/accounts/update-account';
 

@@ -2,7 +2,7 @@ import { Account } from '@/types/account';
 import type { User } from '@/types/user';
 
 import { BaseClient } from './client';
-import { DESCRIBE_SELF, LOGIN } from './endpoints';
+import { DESCRIBE_SELF, LOGIN, REGISTER } from './endpoints';
 
 function generateToken(): string {
   const arr = new Uint8Array(12);
@@ -10,23 +10,10 @@ function generateToken(): string {
   return Array.from(arr, (v) => v.toString(16).padStart(2, '0')).join('');
 }
 
-const user = {
-  id: 'USR-000',
-  avatar: '/assets/avatar.png',
-  firstName: 'Sofia',
-  lastName: 'Rivers',
-  email: 'sofia@devias.io',
-} satisfies User;
-
 export interface SignUpParams {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   password: string;
-}
-
-export interface SignInWithOAuthParams {
-  provider: 'google' | 'discord';
 }
 
 export interface SignInWithPasswordParams {
@@ -43,18 +30,18 @@ class AuthClient extends BaseClient {
     super();
   }
 
-  async signUp(_: SignUpParams): Promise<{ error?: string }> {
-    // Make API request
+  async signUp(params: SignUpParams): Promise<{ token: string; account: Account }> {
+    const { name, email, password } = params;
 
-    // We do not handle the API, so we'll just generate a token and store it in localStorage.
-    const token = generateToken();
-    localStorage.setItem('custom-auth-token', token);
+    const data = await super.req<{ token: string; user: Account }>({
+      endpoint: REGISTER,
+      method: 'POST',
+      data: { name, email, password },
+    });
 
-    return {};
-  }
+    localStorage.setItem('token', data.token);
 
-  async signInWithOAuth(_: SignInWithOAuthParams): Promise<{ error?: string }> {
-    return { error: 'Social authentication not implemented' };
+    return { token: data.token, account: data.user };
   }
 
   async signInWithPassword(params: SignInWithPasswordParams): Promise<{ token: string }> {

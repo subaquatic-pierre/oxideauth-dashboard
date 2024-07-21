@@ -30,7 +30,7 @@ import useNotify from '@/hooks/useNotify';
 import PermissionsFilter from '../permissions/PermissionsFilter';
 import PermissionsTable from '../permissions/PermissionsTable';
 import { PermsTableRow } from '../permissions/PermissionsView';
-import { SelectedRoles } from './ServiceAccountsDetailView';
+import { SelectedRoles } from './UsersDetailView';
 
 interface SelectProps {
   allRoles: Role[];
@@ -99,7 +99,7 @@ interface Props {
   allRoles: Role[];
 }
 
-const ServiceAccountsRolesTable: React.FC<Props> = ({ setSelectedRoles, selectedRoles, allRoles }: Props) => {
+const UsersDetailRoleTable: React.FC<Props> = ({ setSelectedRoles, selectedRoles, allRoles }: Props) => {
   const { sa: saId } = useParams();
   const isExisting = saId !== 'new';
 
@@ -174,4 +174,4 @@ const ServiceAccountsRolesTable: React.FC<Props> = ({ setSelectedRoles, selected
   );
 };
 
-export default ServiceAccountsRolesTable;
+export default UsersDetailRoleTable;

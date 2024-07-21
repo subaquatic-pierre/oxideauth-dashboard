@@ -9,7 +9,9 @@ import { Alert, Box, IconButton, Tooltip, Typography, useTheme } from '@mui/mate
 import Stack from '@mui/material/Stack';
 import { Copy, Pencil, SkipBack, Trash } from '@phosphor-icons/react';
 // third-party
+import { ColumnDef } from '@tanstack/react-table';
 import { useForm } from 'react-hook-form';
+import useSWR from 'swr';
 import { z as zod } from 'zod';
 
 import { Account } from '@/types/account';
@@ -17,46 +19,53 @@ import { Role } from '@/types/role';
 import { Service } from '@/types/service';
 import { paths } from '@/paths';
 import { accountClient } from '@/lib/api/account';
+import { LIST_PERMISSIONS, LIST_SERVICES } from '@/lib/api/endpoints';
 import { roleClient } from '@/lib/api/role';
+import { serviceClient } from '@/lib/api/service';
 // types
 import useNotify from '@/hooks/useNotify';
 import CircularLoader from '@/components/CircularLoader';
 // project-import
 import { IndeterminateCheckbox } from '@/components/third-party/react-table';
 
-import ServiceAccountsDetailForm from './ServiceAccountsDetailForm';
-import ServiceAccountsDetailFormButtons from './ServiceAccountsDetailFormButtons';
-import ServiceAccountsRolesTable from './ServiceAccountsRolesTable';
+import { PermsTableRow } from '../permissions/PermissionsView';
+import UsersDetailForm from './UsersDetailForm';
+import UsersDetailFormButtons from './UsersDetailFormButtons';
+import UsersDetailRoleTable from './UsersDetailRolesTable';
 
-const blankSa: Account = {
+const blankAccount: Account = {
   id: '',
   name: '',
-  description: '',
+  email: '',
 };
 
-const blankRole: Role = {
-  id: '',
-  name: '',
-  description: '',
-  permissions: [],
-};
+const schema = zod
+  .object({
+    name: zod.string().min(1, { message: 'Name is required' }),
+    email: zod.string().min(1, { message: 'Email is required' }),
+    password: zod.string().min(6, { message: 'Password should be at least 6 characters' }),
+    confirmPassword: zod.string().min(6, { message: 'Password should be at least 6 characters' }),
+  })
+  .superRefine(({ confirmPassword, password }, ctx) => {
+    if (confirmPassword !== password) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'The passwords did not match',
+        path: ['confirmPassword'],
+      });
+    }
+  });
 
-const schema = zod.object({
-  name: zod.string().min(1, { message: 'Name is required' }),
-  description: zod.string(),
-});
-
-export type Values = zod.infer<typeof schema>;
+export type UsersDetailFormSchema = zod.infer<typeof schema>;
 
 export type SelectedRoles = { [mapPos: string]: string };
 
-const ServiceAccountsDetailView = () => {
-  const { sa: saId } = useParams();
-  const isExisting = saId !== 'new';
+const UsersDetailView = () => {
+  const { user: accountId } = useParams();
+  const isExisting = accountId !== 'new';
   const notify = useNotify();
   const router = useRouter();
 
-  const [sa, setSa] = useState<Account>(blankSa);
   const [allRoles, setAllRoles] = useState<Role[]>([]);
   const [selectedRoles, setSelectedRoles] = useState<SelectedRoles>({});
   const [loading, setLoading] = useState(true);
@@ -67,25 +76,37 @@ const ServiceAccountsDetailView = () => {
     getValues,
     setValue,
     setError,
-    formState: { errors },
-  } = useForm<Values>({ defaultValues: blankSa, resolver: zodResolver(schema) });
+    trigger,
+    formState: { errors, isValid },
+  } = useForm<UsersDetailFormSchema>({
+    defaultValues: { ...blankAccount, password: '', confirmPassword: '' },
+    resolver: zodResolver(schema),
+  });
 
   const handleSubmit = async () => {
+    trigger();
+    if (!isValid && !isExisting) {
+      return;
+    }
+    // const permissions: string[] = Object.keys(selectedPerms);
     const formValues = {
       name: getValues('name'),
-      description: getValues('description'),
+      email: getValues('email'),
+      password: getValues('password'),
+      confirmPassword: getValues('confirmPassword'),
     };
 
     const selectedRolesIds = Object.values(selectedRoles);
 
     try {
       if (isExisting) {
-        const updatedAccount = await accountClient.updateAccount({ account: saId as string, ...formValues });
+        const updatedAccount = await accountClient.updateAccount({ account: accountId as string, ...formValues });
 
-        // check if roles changed
-        // bind new roles
+        // check if permissions changed
+        // bind new permissions
+
         if (updatedAccount && updatedAccount.roles) {
-          // get roles to be removed
+          // get perms to be removed
           const toBeRemoved: string[] = [];
           for (const existingPerm of updatedAccount.roles) {
             if (selectedRolesIds.indexOf(existingPerm.id) === -1) {
@@ -100,40 +121,38 @@ const ServiceAccountsDetailView = () => {
             }
           }
 
-          await roleClient.removeRoles({ account: saId as string, roles: toBeRemoved });
+          await roleClient.removeRoles({ account: accountId as string, roles: toBeRemoved });
 
-          await roleClient.assignRoles({ account: saId as string, roles: toBeAdded });
+          await roleClient.assignRoles({ account: accountId as string, roles: toBeAdded });
         }
 
-        notify('Successfully updated service account', 'success');
+        notify('Successfully updated user account', 'success');
       } else {
-        const email = `${formValues.name.split(' ').join('')}@email.com`;
-        const newAccount = await accountClient.createServiceAccount({ ...formValues, email });
+        const newAccount = await accountClient.createUserAccount({ ...formValues });
 
         await roleClient.assignRoles({ account: newAccount.id as string, roles: selectedRolesIds });
 
-        notify('Successfully create new service account', 'success');
+        notify('Successfully create new user account', 'success');
       }
     } catch (e: any) {
       const message = e.message;
       notify(message, 'error');
       setError('root', { type: 'server', message: message });
     } finally {
-      router.push(paths.dashboard.serviceAccounts);
+      router.push(paths.dashboard.users);
     }
   };
 
   const handleLoad = async () => {
-    if (saId !== 'new') {
+    if (accountId !== 'new') {
       try {
         // get all data
-        const sa = await accountClient.describeAccount(saId as string);
+        const account = await accountClient.describeAccount(accountId as string);
 
         // set all data
-        setValue('name', sa.name ?? '');
-        setValue('description', sa.description ?? '');
-        setSa(sa);
-        const currentRoles = sa.roles?.map((el) => el.id) ?? [];
+        setValue('name', account.name ?? '');
+        setValue('email', account.email ?? '');
+        const currentRoles = account.roles?.map((el) => el.id) ?? [];
 
         const selected: SelectedRoles = {};
 
@@ -143,10 +162,8 @@ const ServiceAccountsDetailView = () => {
 
         setSelectedRoles(selected);
       } catch (e) {
-        setLoadError('There was an error fetching role');
+        setLoadError('There was an error fetching account');
       }
-    } else {
-      setSa(blankSa);
     }
 
     try {
@@ -169,13 +186,13 @@ const ServiceAccountsDetailView = () => {
       <Stack direction={'row'} alignItems={'center'} spacing={1}>
         <Box>
           <Tooltip title="Back">
-            <IconButton LinkComponent={Link} href={paths.dashboard.serviceAccounts}>
+            <IconButton LinkComponent={Link} href={paths.dashboard.users}>
               <SkipBack />
             </IconButton>
           </Tooltip>
         </Box>
 
-        <Typography variant="h4">Service Account Details</Typography>
+        <Typography variant="h4">User Account Details</Typography>
       </Stack>
       {loading ? (
         <Stack minHeight="40vh" justifyContent={'center'}>
@@ -187,18 +204,9 @@ const ServiceAccountsDetailView = () => {
         </Alert>
       ) : (
         <>
-          <ServiceAccountsDetailForm
-            control={control}
-            errors={errors}
-            handleSubmit={handleSubmit}
-            getValues={getValues}
-          />
-          <ServiceAccountsRolesTable
-            selectedRoles={selectedRoles}
-            setSelectedRoles={setSelectedRoles}
-            allRoles={allRoles}
-          />
-          <ServiceAccountsDetailFormButtons handleSubmit={handleSubmit} />
+          <UsersDetailForm control={control} errors={errors} getValues={getValues} />
+          <UsersDetailRoleTable selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} allRoles={allRoles} />
+          <UsersDetailFormButtons handleSubmit={handleSubmit} />
           {!isExisting && errors.root && (
             <Alert severity="error" color="error">
               {errors.root.message}
@@ -210,4 +218,4 @@ const ServiceAccountsDetailView = () => {
   );
 };
 
-export default ServiceAccountsDetailView;
+export default UsersDetailView;

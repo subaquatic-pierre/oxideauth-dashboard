@@ -19,6 +19,7 @@ import { Role } from '@/types/role';
 import { Service } from '@/types/service';
 import { paths } from '@/paths';
 import { accountClient } from '@/lib/api/account';
+import { authClient } from '@/lib/api/auth';
 import { LIST_PERMISSIONS, LIST_SERVICES } from '@/lib/api/endpoints';
 import { roleClient } from '@/lib/api/role';
 import { serviceClient } from '@/lib/api/service';
@@ -95,6 +96,7 @@ const SettingsView = () => {
 
   const handleLoad = async () => {
     try {
+      const account = await authClient.getUser();
       // get all data
 
       // set all data

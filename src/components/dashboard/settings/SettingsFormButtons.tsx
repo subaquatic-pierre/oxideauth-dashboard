@@ -21,9 +21,9 @@ const SettingsFormButtons: React.FC<Props> = ({ handleSubmit }) => {
         <Button onClick={() => handleSubmit()} variant="contained">
           {isExisting ? 'Save details' : 'Create new'}
         </Button>
-        <Button LinkComponent={Link} href={paths.dashboard.users} color="warning" variant="contained">
+        {/* <Button LinkComponent={Link} href={paths.dashboard.users} color="warning" variant="contained">
           Cancel
-        </Button>
+        </Button> */}
       </CardActions>
     </Card>
   );

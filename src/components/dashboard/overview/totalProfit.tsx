@@ -10,6 +10,7 @@ import { Receipt as ReceiptIcon } from '@phosphor-icons/react/dist/ssr/Receipt';
 export interface TotalProfitProps {
   sx?: SxProps;
   value: string;
+  heading: string;
 }
 
 export function TotalProfit({ value, sx }: TotalProfitProps): React.JSX.Element {
@@ -19,7 +20,7 @@ export function TotalProfit({ value, sx }: TotalProfitProps): React.JSX.Element 
         <Stack direction="row" sx={{ alignItems: 'flex-start', justifyContent: 'space-between' }} spacing={3}>
           <Stack spacing={1}>
             <Typography color="text.secondary" variant="overline">
-              Total Profit
+              {heading}
             </Typography>
             <Typography variant="h4">{value}</Typography>
           </Stack>

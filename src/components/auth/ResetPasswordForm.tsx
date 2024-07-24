@@ -14,6 +14,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
 
 import { authClient } from '@/lib/api/auth';
+import useNotify from '@/hooks/useNotify';
 
 const schema = zod.object({ email: zod.string().min(1, { message: 'Email is required' }).email() });
 
@@ -22,6 +23,8 @@ type Values = zod.infer<typeof schema>;
 const defaultValues = { email: '' } satisfies Values;
 
 export function ResetPasswordForm(): React.JSX.Element {
+  const notify = useNotify();
+  const [message, setMessage] = React.useState('');
   const [isPending, setIsPending] = React.useState<boolean>(false);
 
   const {
@@ -34,17 +37,17 @@ export function ResetPasswordForm(): React.JSX.Element {
   const onSubmit = async (values: Values): Promise<void> => {
     setIsPending(true);
 
-    const { error } = await authClient.resetPassword(values);
+    try {
+      const { success } = await authClient.resetPassword(values);
+      setMessage('A reset link has been sent to your inbox.');
 
-    if (error) {
-      setError('root', { type: 'server', message: error });
+      notify('A reset link has been sent to your inbox', 'success');
+    } catch (e: any) {
+      notify(e.message, 'error');
+      setError('root', { type: 'server', message: e.message });
+    } finally {
       setIsPending(false);
-      return;
     }
-
-    setIsPending(false);
-
-    // Redirect to confirm password reset
   };
 
   return (
@@ -64,6 +67,7 @@ export function ResetPasswordForm(): React.JSX.Element {
             )}
           />
           {errors.root ? <Alert color="error">{errors.root.message}</Alert> : null}
+          {message ? <Alert color="success">{message}</Alert> : null}
           <Button disabled={isPending} type="submit" variant="contained">
             Send recovery link
           </Button>

@@ -5,6 +5,8 @@ type AccountProvider = 'local' | 'google';
 
 export type Account = {
   id: string;
+  verified: boolean;
+  enabled: boolean;
   email?: string;
   name?: string;
   imageUrl?: string;

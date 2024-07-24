@@ -2,7 +2,7 @@ import { Account } from '@/types/account';
 import type { User } from '@/types/user';
 
 import { BaseClient } from './client';
-import { DESCRIBE_SELF, LOGIN, REGISTER } from './endpoints';
+import { DESCRIBE_SELF, LOGIN, REGISTER, RESEND_CONFIRM_LINK, RESET_PASSWORD, UPDATE_PASSWORD } from './endpoints';
 
 function generateToken(): string {
   const arr = new Uint8Array(12);
@@ -25,6 +25,15 @@ export interface ResetPasswordParams {
   email: string;
 }
 
+export interface UpdatePasswordParams {
+  password: string;
+  token: string;
+}
+
+export interface ResendLinkParams {
+  email: string;
+}
+
 class AuthClient extends BaseClient {
   constructor() {
     super();
@@ -39,27 +48,49 @@ class AuthClient extends BaseClient {
       data: { name, email, password },
     });
 
-    localStorage.setItem('token', data.token);
-
     return { token: data.token, account: data.user };
   }
 
-  async signInWithPassword(params: SignInWithPasswordParams): Promise<{ token: string }> {
+  async signInWithPassword(params: SignInWithPasswordParams): Promise<{ account: Account; token: string }> {
     const { email, password } = params;
 
-    const data = await super.req<{ token: string }>({ endpoint: LOGIN, method: 'POST', data: { email, password } });
+    const data = await super.req<{ token: string; account: Account }>({
+      endpoint: LOGIN,
+      method: 'POST',
+      data: { email, password },
+    });
 
-    localStorage.setItem('token', data.token);
-
-    return { token: data.token };
+    return { token: data.token, account: data.account };
   }
 
-  async resetPassword(_: ResetPasswordParams): Promise<{ error?: string }> {
-    return { error: 'Password reset not implemented' };
+  async resetPassword(params: ResetPasswordParams): Promise<{ success: boolean }> {
+    const { email } = params;
+
+    // TODO: update redirect url which is sent in email to user
+    // will need to be public url
+    const redirectUrl = `${process.env.NEXT_PUBLIC_CLIENT_ENDPOINT}/auth/update-password`;
+
+    const data = await super.req<{ success: boolean }>({
+      endpoint: RESET_PASSWORD,
+      method: 'POST',
+      data: { email, redirectUrl },
+    });
+
+    return { success: data.success };
   }
 
-  async updatePassword(_: ResetPasswordParams): Promise<{ error?: string }> {
-    return { error: 'Update reset not implemented' };
+  async updatePassword(params: UpdatePasswordParams): Promise<{ account: Account }> {
+    const { password, token } = params;
+
+    // TODO: update redirect url which is sent in email to user
+    // will need to be public url
+
+    const data = await super.req<{ account: Account }>({
+      endpoint: UPDATE_PASSWORD,
+      method: 'POST',
+      data: { password, token },
+    });
+    return { account: data.account };
   }
 
   async getUser(): Promise<Account> {
@@ -69,6 +100,17 @@ class AuthClient extends BaseClient {
     });
 
     return data.account;
+  }
+
+  async resendLink(params: ResendLinkParams): Promise<{ success: boolean }> {
+    const { email } = params;
+    const data = await super.req<{ success: boolean }>({
+      endpoint: RESEND_CONFIRM_LINK,
+      method: 'POST',
+      data: { email },
+    });
+
+    return { success: data.success };
   }
 
   async signOut(): Promise<{}> {

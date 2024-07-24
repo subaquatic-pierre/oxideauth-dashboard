@@ -25,7 +25,7 @@ import { sleep } from '@/lib/sleep';
 import { useAuth } from '@/hooks/useAuth';
 import useNotify from '@/hooks/useNotify';
 
-export function LoadingProfile(): React.JSX.Element {
+export default function LoadingProfile(): React.JSX.Element {
   const { checkSession } = useAuth();
   const notify = useNotify();
   const params = useSearchParams();

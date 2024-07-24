@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Alert from '@mui/material/Alert';
 
 import { paths } from '@/paths';
@@ -14,6 +14,7 @@ export interface GuestGuardProps {
 }
 
 export function GuestGuard({ children }: GuestGuardProps): React.JSX.Element | null {
+  const params: any = useSearchParams();
   const notify = useNotify();
   const router = useRouter();
   const { user, error, loading } = useAuth();

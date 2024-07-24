@@ -11,9 +11,7 @@ export const metadata = { title: `Reset password | Auth | ${config.site.name}` }
 export default function Page(): React.JSX.Element {
   return (
     <Layout>
-      <GuestGuard>
-        <ResetPasswordForm />
-      </GuestGuard>
+      <ResetPasswordForm />
     </Layout>
   );
 }

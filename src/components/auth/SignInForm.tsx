@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import RouterLink from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Divider } from '@mui/material';
 import Alert from '@mui/material/Alert';
@@ -36,6 +36,8 @@ type Values = zod.infer<typeof schema>;
 const defaultValues = { email: 'viewer@email.com', password: 'password' } satisfies Values;
 
 export function SignInForm(): React.JSX.Element {
+  const params: any = useSearchParams();
+  const email = params.get('email');
   const router = useRouter();
   const { checkSession } = useAuth();
   const notify = useNotify();
@@ -43,6 +45,10 @@ export function SignInForm(): React.JSX.Element {
   const [showPassword, setShowPassword] = React.useState<boolean>();
 
   const [isPending, setIsPending] = React.useState<boolean>(false);
+
+  if (email) {
+    defaultValues.email = email;
+  }
 
   const {
     control,
@@ -53,17 +59,22 @@ export function SignInForm(): React.JSX.Element {
 
   const onSubmit = async (values: Values): Promise<void> => {
     try {
-      await authClient.signInWithPassword(values);
+      const { token, account } = await authClient.signInWithPassword(values);
 
-      // reloads user in AuthContextProvider
-      // GuestGuard redirects to dashboard on user state change
-      checkSession();
+      if (account.verified) {
+        localStorage.setItem('token', token);
+        checkSession();
+      } else {
+        router.push(`${paths.auth.confirmAccount}?email=${account.email}`);
+      }
     } catch (e: any) {
       notify(e.message, 'error');
       setError('root', { type: 'server', message: e.message });
       setIsPending(false);
     }
   };
+
+  const message = params.get('message');
 
   return (
     <Stack spacing={4}>
@@ -76,6 +87,7 @@ export function SignInForm(): React.JSX.Element {
           </Link>
         </Typography>
       </Stack>
+      {message && <Alert color="success">{message}</Alert>}
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2}>
           <Controller

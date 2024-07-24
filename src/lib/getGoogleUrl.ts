@@ -10,6 +10,9 @@ export const getGoogleUrl = (from?: string) => {
     scope: ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email'].join(
       ' '
     ),
+    // TODO: change loading profile to /auth/loading-profile
+    // in both server and Google console
+    // move page under auth in app directory
     state: 'redirectUrl=http://localhost:8081/loading-profile&CsrfToken=secretToken',
   };
 

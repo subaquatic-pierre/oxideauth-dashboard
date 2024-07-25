@@ -1,0 +1,41 @@
+FROM node:18 as builder
+
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+ARG IS_BUILD_ENV=true
+
+ENV NEXT_SHARP_PATH /app/node_modules/sharp
+
+WORKDIR /app
+COPY . .
+RUN npm config set fetch-retry-maxtimeout 600000 -g && npm install --only=production
+
+# Change prod env for env
+RUN mv .env.prod .env
+
+RUN npm run build
+
+# Creating final production image
+FROM node:18-alpine
+
+ENV PATH /app/node_modules/.bin:$PATH
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
+WORKDIR /app
+RUN mkdir .next
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+ARG PORT=8081
+ENV PORT=${PORT}
+
+EXPOSE ${PORT}
+
+# set hostname to localhost
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"]

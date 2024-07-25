@@ -1,4 +1,5 @@
 export const getGoogleUrl = (from?: string) => {
+  const clientEndpoint = process.env.NEXT_PUBLIC_CLIENT_ENDPOINT;
   const rootUrl = `https://accounts.google.com/o/oauth2/v2/auth`;
 
   const options = {
@@ -11,7 +12,7 @@ export const getGoogleUrl = (from?: string) => {
     // TODO: change loading profile to /auth/loading-profile
     // in both server and Google console
     // move page under auth in app directory
-    state: 'redirectUrl=http://localhost:8081/loading-profile&CsrfToken=secretToken'
+    state: `redirectUrl=${clientEndpoint}/loading-profile&CsrfToken=secretToken`
   };
 
   const qs = new URLSearchParams(options);

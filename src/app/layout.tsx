@@ -1,13 +1,13 @@
 import * as React from 'react';
 import type { Viewport } from 'next';
 
-import '@/styles/global.css';
+import 'styles/global.css';
 
-import { AuthContextProvider } from '@/contexts/AuthContext';
-import NextAppDirEmotionCacheProvider from '@/contexts/EmotionCacheContext';
-import { LocalizationProvider } from '@/contexts/LocalizationContext';
-import NotificationContextProvider from '@/contexts/NotificationContext';
-import { ThemeProvider } from '@/contexts/ThemeContext';
+import { AuthContextProvider } from 'contexts/AuthContext';
+import NextAppDirEmotionCacheProvider from 'contexts/EmotionCacheContext';
+import { LocalizationProvider } from 'contexts/LocalizationContext';
+import NotificationContextProvider from 'contexts/NotificationContext';
+import { ThemeProvider } from 'contexts/ThemeContext';
 
 export const viewport = { width: 'device-width', initialScale: 1 } satisfies Viewport;
 

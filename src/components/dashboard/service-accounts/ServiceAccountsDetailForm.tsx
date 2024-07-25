@@ -25,7 +25,7 @@ interface Props {
 
 const schema = zod.object({
   name: zod.string().min(1, { message: 'Name is required' }),
-  description: zod.string(),
+  description: zod.string()
 });
 
 type Values = zod.infer<typeof schema>;

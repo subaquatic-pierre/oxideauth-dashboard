@@ -1,4 +1,4 @@
-import { Account } from '@/types/account';
+import { Account } from 'types/account';
 
 export const checkIsAdmin = (user: Account | null): boolean => {
   if (!user) {

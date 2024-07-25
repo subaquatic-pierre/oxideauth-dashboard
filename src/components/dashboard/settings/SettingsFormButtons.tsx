@@ -5,8 +5,7 @@ import { useParams } from 'next/navigation';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
-
-import { paths } from '@/paths';
+import { paths } from 'paths';
 
 interface Props {
   handleSubmit: () => void;

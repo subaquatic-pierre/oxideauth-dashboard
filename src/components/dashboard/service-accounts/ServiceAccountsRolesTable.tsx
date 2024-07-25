@@ -17,15 +17,14 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { Plus } from '@phosphor-icons/react';
 import { Minus, Trash } from '@phosphor-icons/react/dist/ssr';
 import { ColumnDef } from '@tanstack/react-table';
+import useNotify from 'hooks/useNotify';
+import { roleClient } from 'lib/api/role';
+import { buildPermissionTableColumns } from 'lib/tables';
+import { paths } from 'paths';
 import { Controller, useForm } from 'react-hook-form';
+import { Role } from 'types/role';
+import { Service } from 'types/service';
 import { z as zod } from 'zod';
-
-import { Role } from '@/types/role';
-import { Service } from '@/types/service';
-import { paths } from '@/paths';
-import { roleClient } from '@/lib/api/role';
-import { buildPermissionTableColumns } from '@/lib/tables';
-import useNotify from '@/hooks/useNotify';
 
 import PermissionsFilter from '../permissions/PermissionsFilter';
 import PermissionsTable from '../permissions/PermissionsTable';
@@ -42,15 +41,7 @@ interface SelectProps {
   handleAutoCompleteBlur: (e: any, mapPos: string, roleId: string) => void;
 }
 
-const RoleSelect: React.FC<SelectProps> = ({
-  allRoles,
-  mapPos,
-  selectedRoles,
-  addRole,
-  removeRole,
-  roleId,
-  handleAutoCompleteBlur,
-}) => {
+const RoleSelect: React.FC<SelectProps> = ({ allRoles, mapPos, selectedRoles, addRole, removeRole, roleId, handleAutoCompleteBlur }) => {
   const [value, setValue] = useState<Role | null>(allRoles.filter((el) => el.id === roleId)[0] || null);
 
   useEffect(() => {
@@ -76,12 +67,7 @@ const RoleSelect: React.FC<SelectProps> = ({
         getOptionLabel={(option: Role) => option.name as string}
         getOptionDisabled={(option) => Object.values(selectedRoles).indexOf(option.id) !== -1}
         renderInput={(params: any) => (
-          <TextField
-            {...params}
-            autoFocus={roleId === ''}
-            onBlur={(e) => handleAutoCompleteBlur(e, mapPos, roleId)}
-            label="Role"
-          />
+          <TextField {...params} autoFocus={roleId === ''} onBlur={(e) => handleAutoCompleteBlur(e, mapPos, roleId)} label="Role" />
         )}
       />
       <Box minWidth={200}>

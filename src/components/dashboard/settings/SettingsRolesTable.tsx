@@ -11,8 +11,7 @@ import CardHeader from '@mui/material/CardHeader';
 import Divider from '@mui/material/Divider';
 import { Plus } from '@phosphor-icons/react';
 import { Minus, Trash } from '@phosphor-icons/react/dist/ssr';
-
-import { Role } from '@/types/role';
+import { Role } from 'types/role';
 
 import { SelectedRoles } from './SettingsView';
 
@@ -26,15 +25,7 @@ interface SelectProps {
   handleAutoCompleteBlur: (e: any, mapPos: string, roleId: string) => void;
 }
 
-const RoleSelect: React.FC<SelectProps> = ({
-  allRoles,
-  mapPos,
-  selectedRoles,
-  addRole,
-  removeRole,
-  roleId,
-  handleAutoCompleteBlur,
-}) => {
+const RoleSelect: React.FC<SelectProps> = ({ allRoles, mapPos, selectedRoles, addRole, removeRole, roleId, handleAutoCompleteBlur }) => {
   const [value, setValue] = useState<Role | null>(allRoles.filter((el) => el.id === roleId)[0] || null);
 
   useEffect(() => {
@@ -52,8 +43,8 @@ const RoleSelect: React.FC<SelectProps> = ({
       <Autocomplete
         sx={{
           '.MuiAutocomplete-endAdornment': {
-            display: 'none',
-          },
+            display: 'none'
+          }
         }}
         disabled
         fullWidth
@@ -66,12 +57,7 @@ const RoleSelect: React.FC<SelectProps> = ({
         getOptionLabel={(option: Role) => option.name as string}
         getOptionDisabled={(option) => Object.values(selectedRoles).indexOf(option.id) !== -1}
         renderInput={(params: any) => (
-          <TextField
-            {...params}
-            autoFocus={roleId === ''}
-            onBlur={(e) => handleAutoCompleteBlur(e, mapPos, roleId)}
-            label="Role"
-          />
+          <TextField {...params} autoFocus={roleId === ''} onBlur={(e) => handleAutoCompleteBlur(e, mapPos, roleId)} label="Role" />
         )}
       />
       {/* <Box minWidth={200}>

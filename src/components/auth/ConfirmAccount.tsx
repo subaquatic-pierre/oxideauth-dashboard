@@ -18,14 +18,13 @@ import { ArrowRight } from '@phosphor-icons/react';
 import { ArrowLeft } from '@phosphor-icons/react/dist/ssr';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
+import { useAuth } from 'hooks/useAuth';
+import useNotify from 'hooks/useNotify';
+import { authClient } from 'lib/api/auth';
+import { sleep } from 'lib/sleep';
+import { paths } from 'paths';
 import { Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
-
-import { paths } from '@/paths';
-import { authClient } from '@/lib/api/auth';
-import { sleep } from '@/lib/sleep';
-import { useAuth } from '@/hooks/useAuth';
-import useNotify from '@/hooks/useNotify';
 
 export default function ConfirmAccount(): React.JSX.Element {
   const params = useSearchParams();

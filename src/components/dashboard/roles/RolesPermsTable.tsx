@@ -15,15 +15,14 @@ import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Grid from '@mui/material/Unstable_Grid2';
 import { ColumnDef } from '@tanstack/react-table';
+import useNotify from 'hooks/useNotify';
+import { roleClient } from 'lib/api/role';
+import { buildPermissionTableColumns } from 'lib/tables';
+import { paths } from 'paths';
 import { Controller, useForm } from 'react-hook-form';
+import { Role } from 'types/role';
+import { Service } from 'types/service';
 import { z as zod } from 'zod';
-
-import { Role } from '@/types/role';
-import { Service } from '@/types/service';
-import { paths } from '@/paths';
-import { roleClient } from '@/lib/api/role';
-import { buildPermissionTableColumns } from '@/lib/tables';
-import useNotify from '@/hooks/useNotify';
 
 import PermissionsFilter from '../permissions/PermissionsFilter';
 import PermissionsTable from '../permissions/PermissionsTable';

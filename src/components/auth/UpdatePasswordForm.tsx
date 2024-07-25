@@ -13,24 +13,23 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
+import useNotify from 'hooks/useNotify';
+import { authClient, UpdatePasswordParams } from 'lib/api/auth';
+import { paths } from 'paths';
 import { Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
-
-import { paths } from '@/paths';
-import { authClient } from '@/lib/api/auth';
-import useNotify from '@/hooks/useNotify';
 
 const schema = zod
   .object({
     password: zod.string().min(6, { message: 'Password should be at least 6 characters' }),
-    confirmPassword: zod.string().min(6, { message: 'Password should be at least 6 characters' }),
+    confirmPassword: zod.string().min(6, { message: 'Password should be at least 6 characters' })
   })
   .superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password) {
       ctx.addIssue({
         code: 'custom',
         message: 'The passwords did not match',
-        path: ['confirmPassword'],
+        path: ['confirmPassword']
       });
     }
   });
@@ -50,7 +49,7 @@ export default function UpdatePasswordForm(): React.JSX.Element {
     control,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors }
   } = useForm<Values>({ defaultValues, resolver: zodResolver(schema) });
 
   const onSubmit = async (values: Values): Promise<void> => {
@@ -60,7 +59,7 @@ export default function UpdatePasswordForm(): React.JSX.Element {
 
     if (token) {
       try {
-        const { account } = await authClient.updatePassword({ ...values, token });
+        const { account } = await authClient.updatePassword({ ...values, token } as UpdatePasswordParams);
         router.push(`${paths.auth.signIn}?message=Password successfully reset&email=${account.email}`);
       } catch (e: any) {
         notify(e.message, 'error');

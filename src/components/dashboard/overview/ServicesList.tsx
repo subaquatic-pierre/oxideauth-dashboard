@@ -13,9 +13,8 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
-
-import { Service } from '@/types/service';
-import { paths } from '@/paths';
+import { paths } from 'paths';
+import { Service } from 'types/service';
 
 export interface ServicesListProps {
   services?: Service[];

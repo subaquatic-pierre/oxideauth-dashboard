@@ -5,9 +5,8 @@ import { Button } from '@mui/material';
 // material-ui
 import Stack from '@mui/material/Stack';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
-
-import { Role } from '@/types/role';
-import { paths } from '@/paths';
+import { paths } from 'paths';
+import { Role } from 'types/role';
 
 interface TableProps {
   // setDeleteOpen: (open: boolean) => void;
@@ -16,16 +15,11 @@ interface TableProps {
 
 const ServiceAccountsButtons: React.FC<TableProps> = ({
   // setDeleteOpen,
-  rowSelection,
+  rowSelection
 }) => {
   return (
     <Stack minHeight={44} direction={'row'} spacing={2}>
-      <Button
-        component={Link}
-        href={paths.dashboard.serviceAccounts + '/new'}
-        startIcon={<PlusIcon />}
-        variant="contained"
-      >
+      <Button component={Link} href={paths.dashboard.serviceAccounts + '/new'} startIcon={<PlusIcon />} variant="contained">
         New
       </Button>
       {Object.keys(rowSelection).length > 0 && (

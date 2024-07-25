@@ -13,10 +13,9 @@ import Fade from '@mui/material/Fade';
 import Grow from '@mui/material/Grow';
 import Slide, { SlideProps } from '@mui/material/Slide';
 import MuiSnackbar from '@mui/material/Snackbar';
-
 // types
-import { KeyedObject } from '@/types/root';
-import { SnackbarProps } from '@/types/snackbar';
+import { KeyedObject } from 'types/root';
+import { SnackbarProps } from 'types/snackbar';
 
 // animation function
 function TransitionSlideLeft(props: SlideProps) {
@@ -46,7 +45,7 @@ const animation: KeyedObject = {
   SlideRight: TransitionSlideRight,
   SlideDown: TransitionSlideDown,
   Grow: GrowTransition,
-  Fade,
+  Fade
 };
 
 interface SnackbarState {
@@ -60,20 +59,20 @@ export const initialState: SnackbarProps = {
   message: 'Note archived',
   anchorOrigin: {
     vertical: 'bottom',
-    horizontal: 'right',
+    horizontal: 'right'
   },
   variant: 'default',
   alert: {
     color: 'success',
     variant: 'filled',
-    severity: 'success',
+    severity: 'success'
   },
   transition: 'Fade',
   close: false,
   actionButton: false,
   maxStack: 3,
   dense: false,
-  iconVariant: 'usedefault',
+  iconVariant: 'usedefault'
 };
 
 export const NotificationContext = createContext({ snackbar: initialState, setSnackbar: (state: any) => {} });
@@ -135,13 +134,7 @@ export default function NotificationContextProvider({ children }: React.PropsWit
                   </Button>
                 )}
                 {snackbar.close && (
-                  <IconButton
-                    sx={{ mt: 0.25 }}
-                    size="small"
-                    aria-label="close"
-                    color={snackbar.alert.color}
-                    onClick={handleClose}
-                  >
+                  <IconButton sx={{ mt: 0.25 }} size="small" aria-label="close" color={snackbar.alert.color} onClick={handleClose}>
                     <CloseOutlined />
                   </IconButton>
                 )}
@@ -149,8 +142,8 @@ export default function NotificationContextProvider({ children }: React.PropsWit
             }
             sx={{
               ...(snackbar.alert.variant === 'outlined' && {
-                bgcolor: 'grey.0',
-              }),
+                bgcolor: 'grey.0'
+              })
             }}
           >
             {snackbar.message}

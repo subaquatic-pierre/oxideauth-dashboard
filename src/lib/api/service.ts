@@ -1,15 +1,15 @@
-import { Service } from '@/types/service';
+import { Service } from 'types/service';
 
 import { BaseClient } from './client';
 import { CREATE_SERVICE, DELETE_SERVICE, DESCRIBE_SERVICE, LIST_SERVICES, UPDATE_SERVICE } from './endpoints';
 
-interface CreateServiceParams {
+export interface CreateServiceParams {
   name: string;
   endpoint: string;
   description: string;
 }
 
-interface UpdateServiceParams {
+export interface UpdateServiceParams {
   service: string;
   name?: string;
   endpoint?: string;
@@ -27,7 +27,7 @@ export class ServiceClient extends BaseClient {
       endpoint: DESCRIBE_SERVICE,
       method: 'POST',
       data: { service: idOrName },
-      auth: true,
+      auth: true
     });
     return data.service;
   }
@@ -37,7 +37,7 @@ export class ServiceClient extends BaseClient {
       endpoint: CREATE_SERVICE,
       method: 'POST',
       data: newServiceData,
-      auth: true,
+      auth: true
     });
     return data.service;
   }
@@ -47,7 +47,7 @@ export class ServiceClient extends BaseClient {
       endpoint: UPDATE_SERVICE,
       method: 'POST',
       data: updateServiceData,
-      auth: true,
+      auth: true
     });
     return data.service;
   }
@@ -57,7 +57,7 @@ export class ServiceClient extends BaseClient {
       endpoint: DELETE_SERVICE,
       method: 'POST',
       data: { service: idOrName },
-      auth: true,
+      auth: true
     });
     return data.service;
   }

@@ -10,6 +10,6 @@ export const MuiButton = {
     sizeLarge: { padding: '11px 24px' },
     textSizeSmall: { padding: '7px 12px' },
     textSizeMedium: { padding: '9px 16px' },
-    textSizeLarge: { padding: '12px 16px' },
-  },
+    textSizeLarge: { padding: '12px 16px' }
+  }
 } satisfies Components<Theme>['MuiButton'];

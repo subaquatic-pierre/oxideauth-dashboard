@@ -11,7 +11,7 @@ export const california = {
   700: '#b84d05',
   800: '#953b0b',
   900: '#7b310c',
-  950: '#471701',
+  950: '#471701'
 } satisfies PaletteRange;
 
 export const kepple = {
@@ -25,7 +25,7 @@ export const kepple = {
   700: '#107569',
   800: '#115e56',
   900: '#134e48',
-  950: '#042f2c',
+  950: '#042f2c'
 } satisfies PaletteRange;
 
 export const neonBlue = {
@@ -39,7 +39,7 @@ export const neonBlue = {
   700: '#432ad8',
   800: '#3725ae',
   900: '#302689',
-  950: '#1e1650',
+  950: '#1e1650'
 } satisfies PaletteRange;
 
 export const nevada = {
@@ -53,7 +53,7 @@ export const nevada = {
   700: '#32383e',
   800: '#202427',
   900: '#121517',
-  950: '#090a0b',
+  950: '#090a0b'
 } satisfies PaletteRange;
 
 export const redOrange = {
@@ -67,7 +67,7 @@ export const redOrange = {
   700: '#bb241a',
   800: '#9a221a',
   900: '#80231c',
-  950: '#460d09',
+  950: '#460d09'
 } satisfies PaletteRange;
 
 export const shakespeare = {
@@ -81,7 +81,7 @@ export const shakespeare = {
   700: '#0d6d91',
   800: '#145876',
   900: '#154964',
-  950: '#082f44',
+  950: '#082f44'
 } satisfies PaletteRange;
 
 export const stormGrey = {
@@ -95,5 +95,5 @@ export const stormGrey = {
   700: '#434a60',
   800: '#313749',
   900: '#212636',
-  950: '#121621',
+  950: '#121621'
 } satisfies PaletteRange;

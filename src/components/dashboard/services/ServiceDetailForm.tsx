@@ -15,13 +15,12 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Grid from '@mui/material/Unstable_Grid2';
+import useNotify from 'hooks/useNotify';
+import { CreateServiceParams, serviceClient } from 'lib/api/service';
+import { paths } from 'paths';
 import { Controller, useForm } from 'react-hook-form';
+import { Service } from 'types/service';
 import { z as zod } from 'zod';
-
-import { Service } from '@/types/service';
-import { paths } from '@/paths';
-import { serviceClient } from '@/lib/api/service';
-import useNotify from '@/hooks/useNotify';
 
 interface Props {
   initialData: Service;
@@ -30,7 +29,7 @@ interface Props {
 const schema = zod.object({
   name: zod.string().min(1, { message: 'Name is required' }),
   endpoint: zod.string().min(1, { message: 'Endpoint is required' }),
-  description: zod.string(),
+  description: zod.string()
 });
 
 type Values = zod.infer<typeof schema>;
@@ -43,7 +42,7 @@ export function ServiceDetailForm({ initialData }: Props): React.JSX.Element {
     control,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors }
   } = useForm<Values>({ defaultValues: initialData, resolver: zodResolver(schema) });
 
   const onSubmit = async (formValues: Values) => {
@@ -57,7 +56,7 @@ export function ServiceDetailForm({ initialData }: Props): React.JSX.Element {
 
         router.push(paths.dashboard.services);
       } else {
-        const res = await serviceClient.createService(formValues);
+        const res = await serviceClient.createService(formValues as CreateServiceParams);
 
         console.log(res);
 

@@ -35,7 +35,7 @@ export class BaseClient {
         method: method,
         url: `${apiHost}${endpoint}`,
         data,
-        headers: _headers,
+        headers: _headers
       });
 
       return res.data;

@@ -73,11 +73,7 @@ export default function NextAppDirEmotionCacheProvider(props: NextAppDirEmotionC
       <React.Fragment>
         {globals.map(
           ({ name, style }): React.JSX.Element => (
-            <style
-              dangerouslySetInnerHTML={{ __html: style }}
-              data-emotion={`${registry.cache.key}-global ${name}`}
-              key={name}
-            />
+            <style dangerouslySetInnerHTML={{ __html: style }} data-emotion={`${registry.cache.key}-global ${name}`} key={name} />
           )
         )}
         {styles ? <style dangerouslySetInnerHTML={{ __html: styles }} data-emotion={dataEmotionAttribute} /> : null}

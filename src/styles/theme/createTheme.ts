@@ -43,7 +43,7 @@ export function createTheme(): Theme {
     colorSchemes,
     shadows,
     shape: { borderRadius: 8 },
-    typography,
+    typography
   });
 
   return theme;

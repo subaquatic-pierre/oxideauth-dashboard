@@ -8,9 +8,8 @@ import { useTheme } from '@mui/system';
 import { Trash } from '@phosphor-icons/react';
 import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
-
-import { Role } from '@/types/role';
-import { paths } from '@/paths';
+import { paths } from 'paths';
+import { Role } from 'types/role';
 
 interface TableProps {
   setDeleteOpen: (open: boolean) => void;

@@ -7,13 +7,11 @@ export const getGoogleUrl = (from?: string) => {
     access_type: 'offline',
     response_type: 'code',
     prompt: 'consent',
-    scope: ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email'].join(
-      ' '
-    ),
+    scope: ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email'].join(' '),
     // TODO: change loading profile to /auth/loading-profile
     // in both server and Google console
     // move page under auth in app directory
-    state: 'redirectUrl=http://localhost:8081/loading-profile&CsrfToken=secretToken',
+    state: 'redirectUrl=http://localhost:8081/loading-profile&CsrfToken=secretToken'
   };
 
   const qs = new URLSearchParams(options);

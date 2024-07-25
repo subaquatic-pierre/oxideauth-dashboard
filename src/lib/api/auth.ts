@@ -1,5 +1,5 @@
-import { Account } from '@/types/account';
-import type { User } from '@/types/user';
+import { Account } from 'types/account';
+import type { User } from 'types/user';
 
 import { BaseClient } from './client';
 import { DESCRIBE_SELF, LOGIN, REGISTER, RESEND_CONFIRM_LINK, RESET_PASSWORD, UPDATE_PASSWORD } from './endpoints';
@@ -45,7 +45,7 @@ class AuthClient extends BaseClient {
     const data = await super.req<{ token: string; user: Account }>({
       endpoint: REGISTER,
       method: 'POST',
-      data: { name, email, password },
+      data: { name, email, password }
     });
 
     return { token: data.token, account: data.user };
@@ -57,7 +57,7 @@ class AuthClient extends BaseClient {
     const data = await super.req<{ token: string; account: Account }>({
       endpoint: LOGIN,
       method: 'POST',
-      data: { email, password },
+      data: { email, password }
     });
 
     return { token: data.token, account: data.account };
@@ -73,7 +73,7 @@ class AuthClient extends BaseClient {
     const data = await super.req<{ success: boolean }>({
       endpoint: RESET_PASSWORD,
       method: 'POST',
-      data: { email, redirectUrl },
+      data: { email, redirectUrl }
     });
 
     return { success: data.success };
@@ -88,7 +88,7 @@ class AuthClient extends BaseClient {
     const data = await super.req<{ account: Account }>({
       endpoint: UPDATE_PASSWORD,
       method: 'POST',
-      data: { password, token },
+      data: { password, token }
     });
     return { account: data.account };
   }
@@ -96,7 +96,7 @@ class AuthClient extends BaseClient {
   async getUser(): Promise<Account> {
     const data = await super.req<{ account: Account }>({
       endpoint: DESCRIBE_SELF,
-      auth: true,
+      auth: true
     });
 
     return data.account;
@@ -107,7 +107,7 @@ class AuthClient extends BaseClient {
     const data = await super.req<{ success: boolean }>({
       endpoint: RESEND_CONFIRM_LINK,
       method: 'POST',
-      data: { email },
+      data: { email }
     });
 
     return { success: data.success };

@@ -25,22 +25,15 @@ import {
   getPaginationRowModel,
   HeaderGroup,
   PaginationState,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
-import { LabelKeyObject } from 'react-csv/lib/core';
-
-import { Role } from '@/types/role';
-import { Service } from '@/types/service';
 // types
 // project-import
-import ScrollX from '@/components/ScrollX';
-import {
-  CSVExport,
-  DebouncedInput,
-  Filter,
-  IndeterminateCheckbox,
-  TablePagination,
-} from '@/components/third-party/react-table';
+import ScrollX from 'components/ScrollX';
+import { CSVExport, DebouncedInput, Filter, IndeterminateCheckbox, TablePagination } from 'components/third-party/react-table';
+import { LabelKeyObject } from 'react-csv/lib/core';
+import { Role } from 'types/role';
+import { Service } from 'types/service';
 
 interface TableProps {
   data: Role[];
@@ -52,20 +45,13 @@ interface TableProps {
   setGlobalFilter: Dispatch<SetStateAction<string>>;
 }
 
-const RolesTable: React.FC<TableProps> = ({
-  data,
-  columns,
-  globalFilter,
-  setGlobalFilter,
-  rowSelection,
-  setRowSelection,
-}) => {
+const RolesTable: React.FC<TableProps> = ({ data, columns, globalFilter, setGlobalFilter, rowSelection, setRowSelection }) => {
   const theme = useTheme();
 
   const table = useReactTable({
     state: {
       globalFilter,
-      rowSelection,
+      rowSelection
     },
     data,
     columns,
@@ -78,7 +64,7 @@ const RolesTable: React.FC<TableProps> = ({
     getRowId: (row) => row.id,
     enableRowSelection: true,
 
-    debugTable: true,
+    debugTable: true
   });
 
   let headers: LabelKeyObject[] = [];
@@ -86,7 +72,7 @@ const RolesTable: React.FC<TableProps> = ({
     headers.push({
       label: typeof columns.columnDef.header === 'string' ? columns.columnDef.header : '#',
       // @ts-ignore
-      key: columns.columnDef.accessorKey,
+      key: columns.columnDef.accessorKey
     });
   });
 
@@ -105,14 +91,8 @@ const RolesTable: React.FC<TableProps> = ({
                   {table.getHeaderGroups().map((headerGroup: HeaderGroup<any>) => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map((header) => (
-                        <TableCell
-                          sx={{ ...(header.id === 'id' && { width: 20 }) }}
-                          key={header.id}
-                          {...header.column.columnDef.meta}
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(header.column.columnDef.header, header.getContext())}
+                        <TableCell sx={{ ...(header.id === 'id' && { width: 20 }) }} key={header.id} {...header.column.columnDef.meta}>
+                          {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                         </TableCell>
                       ))}
                     </TableRow>
@@ -121,8 +101,8 @@ const RolesTable: React.FC<TableProps> = ({
                 <TableBody
                   sx={{
                     '& .MuiTableRow-root:hover': {
-                      backgroundColor: 'transparent',
-                    },
+                      backgroundColor: 'transparent'
+                    }
                   }}
                 >
                   {table.getRowModel().rows.map((row) => (
@@ -145,7 +125,7 @@ const RolesTable: React.FC<TableProps> = ({
                   setPageSize: table.setPageSize,
                   setPageIndex: table.setPageIndex,
                   getState: table.getState,
-                  getPageCount: table.getPageCount,
+                  getPageCount: table.getPageCount
                 }}
               />
             </Box>

@@ -1,8 +1,7 @@
 // material-ui
 import Stack from '@mui/material/Stack';
-
 // project-import
-import CircularWithPath from '@/components/extended/progress/CircularWithPath';
+import CircularWithPath from 'components/extended/progress/CircularWithPath';
 
 // ==============================|| LOADER - CIRCULAR ||============================== //
 

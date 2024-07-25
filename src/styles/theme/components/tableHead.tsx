@@ -9,8 +9,8 @@ export const MuiTableHead = {
       [`& .${tableCellClasses.root}`]: {
         backgroundColor: 'var(--mui-palette-background-level1)',
         color: 'var(--mui-palette-text-secondary)',
-        lineHeight: 1,
-      },
-    },
-  },
+        lineHeight: 1
+      }
+    }
+  }
 } satisfies Components<Theme>['MuiTableHead'];

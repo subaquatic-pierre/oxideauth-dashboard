@@ -1,10 +1,9 @@
 // material-ui
 import { TableCellProps } from '@mui/material/TableCell';
-
-// types
-import { KeyedObject } from '@/types/root';
 // project import
-import { Gender } from '@/config';
+import { Gender } from 'config';
+// types
+import { KeyedObject } from 'types/root';
 
 export type ArrangementOrder = 'asc' | 'desc' | undefined;
 

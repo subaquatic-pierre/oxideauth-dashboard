@@ -1,5 +1,5 @@
-import type { NavItemConfig } from '@/types/nav';
-import { paths } from '@/paths';
+import { paths } from 'paths';
+import type { NavItemConfig } from 'types/nav';
 
 export const navItems = [
   { key: 'overview', title: 'Overview', href: paths.dashboard.overview, icon: 'chart-pie' },
@@ -8,6 +8,6 @@ export const navItems = [
   { key: 'serviceAccounts', title: 'Service Accounts', href: paths.dashboard.serviceAccounts, icon: 'service-account' },
   { key: 'roles', title: 'Roles', href: paths.dashboard.roles, icon: 'role' },
   { key: 'permissions', title: 'Permissions', href: paths.dashboard.permissions, icon: 'cert' },
-  { key: 'settings', title: 'Settings', href: paths.dashboard.settings, icon: 'gear-six' },
+  { key: 'settings', title: 'Settings', href: paths.dashboard.settings, icon: 'gear-six' }
   // { key: 'error', title: 'Error', href: paths.errors.notFound, icon: 'x-square' },
 ] satisfies NavItemConfig[];

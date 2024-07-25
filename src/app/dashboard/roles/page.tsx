@@ -1,8 +1,7 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
-
-import { config } from '@/config';
-import RolesListView from '@/components/dashboard/roles/RolesListView';
+import RolesListView from 'components/dashboard/roles/RolesListView';
+import { config } from 'config';
 
 export const metadata = { title: `Integrations | Dashboard | ${config.site.name}` } satisfies Metadata;
 

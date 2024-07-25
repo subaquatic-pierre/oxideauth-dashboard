@@ -15,9 +15,8 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
+import { useAuth } from 'hooks/useAuth';
 import { Control, Controller, useForm } from 'react-hook-form';
-
-import { useAuth } from '@/hooks/useAuth';
 
 import { SettingsFormSchema } from './SettingsView';
 

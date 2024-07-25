@@ -17,5 +17,5 @@ export const navIcons = {
   'service-account': HardHat,
 
   user: UserIcon,
-  users: UsersIcon,
+  users: UsersIcon
 } as Record<string, Icon>;

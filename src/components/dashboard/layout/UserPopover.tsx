@@ -11,11 +11,10 @@ import Typography from '@mui/material/Typography';
 import { GearSix as GearSixIcon } from '@phosphor-icons/react/dist/ssr/GearSix';
 import { SignOut as SignOutIcon } from '@phosphor-icons/react/dist/ssr/SignOut';
 import { User as UserIcon } from '@phosphor-icons/react/dist/ssr/User';
-
-import { paths } from '@/paths';
-import { authClient } from '@/lib/api/auth';
-import { logger } from '@/lib/defaultLogger';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from 'hooks/useAuth';
+import { authClient } from 'lib/api/auth';
+import { logger } from 'lib/defaultLogger';
+import { paths } from 'paths';
 
 export interface UserPopoverProps {
   anchorEl: Element | null;

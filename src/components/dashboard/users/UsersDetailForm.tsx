@@ -135,9 +135,7 @@ const UsersDetailForm: React.FC<Props> = ({ control, errors, getValues }) => {
                             )
                           }
                         />
-                        {errors.confirmPassword ? (
-                          <FormHelperText>{errors.confirmPassword.message}</FormHelperText>
-                        ) : null}
+                        {errors.confirmPassword ? <FormHelperText>{errors.confirmPassword.message}</FormHelperText> : null}
                       </FormControl>
                     )}
                   />

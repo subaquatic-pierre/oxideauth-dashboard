@@ -12,7 +12,7 @@ export const MuiTab = {
       paddingLeft: 0,
       paddingRight: 0,
       textTransform: 'none',
-      '& + &': { marginLeft: '24px' },
-    },
-  },
+      '& + &': { marginLeft: '24px' }
+    }
+  }
 } satisfies Components<Theme>['MuiTab'];

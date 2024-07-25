@@ -1,5 +1,5 @@
-import { Account } from '@/types/account';
-import { Role } from '@/types/role';
+import { Account } from 'types/account';
+import { Role } from 'types/role';
 
 import { BaseClient } from './client';
 import {
@@ -14,7 +14,7 @@ import {
   LIST_ROLES,
   REMOVE_PERMISSIONS,
   REMOVE_ROLES,
-  UPDATE_ROLE,
+  UPDATE_ROLE
 } from './endpoints';
 
 interface AssignPermissionsParams {
@@ -52,7 +52,7 @@ class RoleClient extends BaseClient {
     const data = await super.req<{ role: Role }>({
       endpoint: DESCRIBE_ROLE,
       method: 'POST',
-      data: { role: idOrName },
+      data: { role: idOrName }
     });
     return data.role;
   }
@@ -62,7 +62,7 @@ class RoleClient extends BaseClient {
       endpoint: CREATE_ROLE,
       data: newRoleData,
       auth: true,
-      method: 'POST',
+      method: 'POST'
     });
 
     return data.role;
@@ -73,7 +73,7 @@ class RoleClient extends BaseClient {
       endpoint: UPDATE_ROLE,
       data: updateRoleData,
       auth: true,
-      method: 'POST',
+      method: 'POST'
     });
 
     return data.role;
@@ -84,7 +84,7 @@ class RoleClient extends BaseClient {
       endpoint: DELETE_ROLE,
       data: { role: idOrName },
       auth: true,
-      method: 'POST',
+      method: 'POST'
     });
 
     return data.deleted_role;
@@ -95,7 +95,7 @@ class RoleClient extends BaseClient {
       endpoint: REMOVE_ROLES,
       method: 'POST',
       data: removeRolesParams,
-      auth: true,
+      auth: true
     });
     return data.account;
   }
@@ -105,7 +105,7 @@ class RoleClient extends BaseClient {
       endpoint: ASSIGN_ROLES,
       method: 'POST',
       data: assignRolesParams,
-      auth: true,
+      auth: true
     });
     return data.account;
   }
@@ -118,7 +118,7 @@ class RoleClient extends BaseClient {
       endpoint: ASSIGN_PERMISSIONS,
       method: 'POST',
       auth: true,
-      data: assignPermsParams,
+      data: assignPermsParams
     });
     return data.role;
   }
@@ -128,7 +128,7 @@ class RoleClient extends BaseClient {
       endpoint: REMOVE_PERMISSIONS,
       method: 'POST',
       auth: true,
-      data: removePermissionsParams,
+      data: removePermissionsParams
     });
     return data.role;
   }
@@ -142,7 +142,7 @@ class RoleClient extends BaseClient {
     const data = await super.req<{ createdPermissions: string[] }>({
       endpoint: CREATE_PERMISSIONS,
       method: 'POST',
-      data: { permissions },
+      data: { permissions }
     });
 
     return data.createdPermissions;
@@ -152,7 +152,7 @@ class RoleClient extends BaseClient {
     const data = await super.req<{ deletedPermissions: string[] }>({
       endpoint: DELETE_PERMISSIONS,
       method: 'POST',
-      data: { permissions },
+      data: { permissions }
     });
 
     return data.deletedPermissions;

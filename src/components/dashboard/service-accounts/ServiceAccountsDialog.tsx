@@ -5,8 +5,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography }
 // material-ui
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
-
-import { Account } from '@/types/account';
+import { Account } from 'types/account';
 
 interface Props {
   deleteOpen: boolean;
@@ -17,14 +16,7 @@ interface Props {
   cancelDelete: () => void;
 }
 
-const ServiceAccountsDialog: React.FC<Props> = ({
-  deleteOpen,
-  setDeleteOpen,
-  submitDelete,
-  rowSelection,
-  allAccounts,
-  cancelDelete,
-}) => {
+const ServiceAccountsDialog: React.FC<Props> = ({ deleteOpen, setDeleteOpen, submitDelete, rowSelection, allAccounts, cancelDelete }) => {
   return (
     <>
       <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)}>

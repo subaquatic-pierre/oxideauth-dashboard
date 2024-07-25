@@ -10,11 +10,10 @@ import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import useNotify from 'hooks/useNotify';
+import { authClient, ResetPasswordParams } from 'lib/api/auth';
 import { Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
-
-import { authClient } from '@/lib/api/auth';
-import useNotify from '@/hooks/useNotify';
 
 const schema = zod.object({ email: zod.string().min(1, { message: 'Email is required' }).email() });
 
@@ -31,14 +30,14 @@ export function ResetPasswordForm(): React.JSX.Element {
     control,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors }
   } = useForm<Values>({ defaultValues, resolver: zodResolver(schema) });
 
   const onSubmit = async (values: Values): Promise<void> => {
     setIsPending(true);
 
     try {
-      const { success } = await authClient.resetPassword(values);
+      const { success } = await authClient.resetPassword(values as ResetPasswordParams);
       setMessage('A reset link has been sent to your inbox.');
 
       notify('A reset link has been sent to your inbox', 'success');

@@ -8,15 +8,14 @@ import Stack from '@mui/material/Stack';
 import { Copy, Pencil, Trash } from '@phosphor-icons/react';
 // third-party
 import { ColumnDef } from '@tanstack/react-table';
-import useSWR from 'swr';
-
-import { Account } from '@/types/account';
-import { paths } from '@/paths';
-import { LIST_SERVICES } from '@/lib/api/endpoints';
-import { serviceClient } from '@/lib/api/service';
+import CircularLoader from 'components/CircularLoader';
 // types
-import useNotify from '@/hooks/useNotify';
-import CircularLoader from '@/components/CircularLoader';
+import useNotify from 'hooks/useNotify';
+import { LIST_SERVICES } from 'lib/api/endpoints';
+import { serviceClient } from 'lib/api/service';
+import { paths } from 'paths';
+import useSWR from 'swr';
+import { Account } from 'types/account';
 
 // project-import
 
@@ -24,6 +23,7 @@ import ServicesButtons from './ServicesButtons';
 import ServicesDialog from './ServicesDialogs';
 import ServicesFilter from './ServicesFilter';
 import ServicesTable from './ServicesTable';
+import { Service } from 'types/service';
 
 const ServicesListView = () => {
   const notify = useNotify();
@@ -61,7 +61,7 @@ const ServicesListView = () => {
     setDeleteOpen(false);
   };
 
-  const columns = useMemo<ColumnDef<Account>[]>(
+  const columns = useMemo<ColumnDef<Service>[]>(
     () => [
       // {
       //   id: 'id',
@@ -89,25 +89,25 @@ const ServicesListView = () => {
       {
         id: 'name',
         header: 'Name',
-        accessorKey: 'name',
+        accessorKey: 'name'
       },
       {
         id: 'description',
         header: 'Description',
         cell: ({ row }: any) => {
           return <Box>{row.original.description ?? ''}</Box>;
-        },
+        }
       },
       {
         id: 'endpoint',
         header: 'Endpoint',
-        accessorKey: 'endpoint',
+        accessorKey: 'endpoint'
       },
       {
         id: 'actions',
         header: 'Actions',
         meta: {
-          width: 10,
+          width: 10
         } as any,
         accessorKey: 'id',
         cell: ({ row }: any) => {
@@ -125,8 +125,8 @@ const ServicesListView = () => {
               </Tooltip>
             </Stack>
           );
-        },
-      },
+        }
+      }
     ],
     []
   );

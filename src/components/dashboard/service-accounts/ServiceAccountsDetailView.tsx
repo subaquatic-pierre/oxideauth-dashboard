@@ -8,21 +8,20 @@ import { Alert, Box, IconButton, Tooltip, Typography, useTheme } from '@mui/mate
 // material-ui
 import Stack from '@mui/material/Stack';
 import { Copy, Pencil, SkipBack, Trash } from '@phosphor-icons/react';
+import CircularLoader from 'components/CircularLoader';
+// project-import
+import { IndeterminateCheckbox } from 'components/third-party/react-table';
+// types
+import useNotify from 'hooks/useNotify';
+import { accountClient } from 'lib/api/account';
+import { roleClient } from 'lib/api/role';
+import { paths } from 'paths';
 // third-party
 import { useForm } from 'react-hook-form';
+import { Account } from 'types/account';
+import { Role } from 'types/role';
+import { Service } from 'types/service';
 import { z as zod } from 'zod';
-
-import { Account } from '@/types/account';
-import { Role } from '@/types/role';
-import { Service } from '@/types/service';
-import { paths } from '@/paths';
-import { accountClient } from '@/lib/api/account';
-import { roleClient } from '@/lib/api/role';
-// types
-import useNotify from '@/hooks/useNotify';
-import CircularLoader from '@/components/CircularLoader';
-// project-import
-import { IndeterminateCheckbox } from '@/components/third-party/react-table';
 
 import ServiceAccountsDetailForm from './ServiceAccountsDetailForm';
 import ServiceAccountsDetailFormButtons from './ServiceAccountsDetailFormButtons';
@@ -32,18 +31,13 @@ const blankSa: Account = {
   id: '',
   name: '',
   description: '',
-};
-
-const blankRole: Role = {
-  id: '',
-  name: '',
-  description: '',
-  permissions: [],
+  verified: false,
+  enabled: true
 };
 
 const schema = zod.object({
   name: zod.string().min(1, { message: 'Name is required' }),
-  description: zod.string(),
+  description: zod.string()
 });
 
 export type Values = zod.infer<typeof schema>;
@@ -67,13 +61,13 @@ const ServiceAccountsDetailView = () => {
     getValues,
     setValue,
     setError,
-    formState: { errors },
+    formState: { errors }
   } = useForm<Values>({ defaultValues: blankSa, resolver: zodResolver(schema) });
 
   const handleSubmit = async () => {
     const formValues = {
       name: getValues('name'),
-      description: getValues('description'),
+      description: getValues('description')
     };
 
     const selectedRolesIds = Object.values(selectedRoles);
@@ -187,17 +181,8 @@ const ServiceAccountsDetailView = () => {
         </Alert>
       ) : (
         <>
-          <ServiceAccountsDetailForm
-            control={control}
-            errors={errors}
-            handleSubmit={handleSubmit}
-            getValues={getValues}
-          />
-          <ServiceAccountsRolesTable
-            selectedRoles={selectedRoles}
-            setSelectedRoles={setSelectedRoles}
-            allRoles={allRoles}
-          />
+          <ServiceAccountsDetailForm control={control} errors={errors} handleSubmit={handleSubmit} getValues={getValues} />
+          <ServiceAccountsRolesTable selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} allRoles={allRoles} />
           <ServiceAccountsDetailFormButtons handleSubmit={handleSubmit} />
           {!isExisting && errors.root && (
             <Alert severity="error" color="error">

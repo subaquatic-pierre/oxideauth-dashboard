@@ -17,23 +17,22 @@ import Typography from '@mui/material/Typography';
 import { GoogleLogo } from '@phosphor-icons/react';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
+import { useAuth } from 'hooks/useAuth';
+import useNotify from 'hooks/useNotify';
+import { authClient, SignInWithPasswordParams } from 'lib/api/auth';
+import { getGoogleUrl } from 'lib/getGoogleUrl';
+import { paths } from 'paths';
 import { Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
 
-import { paths } from '@/paths';
-import { authClient } from '@/lib/api/auth';
-import { getGoogleUrl } from '@/lib/getGoogleUrl';
-import { useAuth } from '@/hooks/useAuth';
-import useNotify from '@/hooks/useNotify';
-
 const schema = zod.object({
   email: zod.string().min(1, { message: 'Email is required' }).email(),
-  password: zod.string().min(1, { message: 'Password is required' }),
+  password: zod.string().min(1, { message: 'Password is required' })
 });
 
 type Values = zod.infer<typeof schema>;
 
-const defaultValues = { email: 'viewer@email.com', password: 'password' } satisfies Values;
+const defaultValues = { email: 'viewer@email.com', password: 'password' } as Values;
 
 export function SignInForm(): React.JSX.Element {
   const params: any = useSearchParams();
@@ -54,12 +53,12 @@ export function SignInForm(): React.JSX.Element {
     control,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors }
   } = useForm<Values>({ defaultValues, resolver: zodResolver(schema) });
 
   const onSubmit = async (values: Values): Promise<void> => {
     try {
-      const { token, account } = await authClient.signInWithPassword(values);
+      const { token, account } = await authClient.signInWithPassword(values as SignInWithPasswordParams);
 
       if (account.verified) {
         localStorage.setItem('token', token);
@@ -161,14 +160,7 @@ export function SignInForm(): React.JSX.Element {
         Sign in with
       </Typography>
       <Stack>
-        <Button
-          href={getGoogleUrl()}
-          startIcon={<GoogleLogo />}
-          disabled={isPending}
-          type="submit"
-          color="secondary"
-          variant="contained"
-        >
+        <Button href={getGoogleUrl()} startIcon={<GoogleLogo />} disabled={isPending} type="submit" color="secondary" variant="contained">
           Google
         </Button>
       </Stack>

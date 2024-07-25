@@ -1,4 +1,4 @@
-import { Account } from '@/types/account';
+import { Account } from 'types/account';
 
 import { BaseClient } from './client';
 import {
@@ -8,7 +8,7 @@ import {
   DESCRIBE_ACCOUNT,
   LIST_ACCOUNTS,
   UPDATE_ACCOUNT,
-  UPDATE_SELF,
+  UPDATE_SELF
 } from './endpoints';
 
 interface UpdateSelfParams {
@@ -43,7 +43,7 @@ class AccountClient extends BaseClient {
     const data = await super.req<{ account: Account }>({
       endpoint: DESCRIBE_ACCOUNT,
       method: 'POST',
-      data: { account: idOrName },
+      data: { account: idOrName }
     });
     return data.account;
   }
@@ -53,7 +53,7 @@ class AccountClient extends BaseClient {
       endpoint: UPDATE_ACCOUNT,
       method: 'POST',
       data: updateParams,
-      auth: true,
+      auth: true
     });
     return data.account;
   }
@@ -63,7 +63,7 @@ class AccountClient extends BaseClient {
       endpoint: UPDATE_SELF,
       method: 'POST',
       data: updateParams,
-      auth: true,
+      auth: true
     });
     return data.account;
   }
@@ -73,7 +73,7 @@ class AccountClient extends BaseClient {
       endpoint: DELETE_ACCOUNT,
       method: 'POST',
       data: { account: idOrName },
-      auth: true,
+      auth: true
     });
 
     return data.deleted;
@@ -84,7 +84,7 @@ class AccountClient extends BaseClient {
       endpoint: CREATE_SERVICE_ACCOUNT,
       method: 'POST',
       data: updateParams,
-      auth: true,
+      auth: true
     });
     return data.account;
   }
@@ -94,7 +94,7 @@ class AccountClient extends BaseClient {
       endpoint: CREATE_ACCOUNT,
       method: 'POST',
       data: createAccountParams,
-      auth: true,
+      auth: true
     });
     return data.account;
   }

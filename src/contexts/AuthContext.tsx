@@ -2,19 +2,18 @@
 
 import { createContext, ReactElement, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-
-import { Account } from '@/types/account';
-import { AuthContextProps } from '@/types/auth';
-import { paths } from '@/paths';
-import { authClient } from '@/lib/api/auth';
-import { DESCRIBE_SELF } from '@/lib/api/endpoints';
+import { authClient } from 'lib/api/auth';
+import { DESCRIBE_SELF } from 'lib/api/endpoints';
+import { paths } from 'paths';
+import { Account } from 'types/account';
+import { AuthContextProps } from 'types/auth';
 
 // initial state
 const initialState: AuthContextProps = {
   user: null,
   loading: false,
   error: null,
-  checkSession: () => {},
+  checkSession: () => {}
 };
 
 const AuthContext = createContext(initialState);
@@ -63,7 +62,7 @@ function AuthContextProvider({ children }: React.PropsWithChildren): React.JSX.E
         user,
         loading,
         error,
-        checkSession,
+        checkSession
       }}
     >
       {children}

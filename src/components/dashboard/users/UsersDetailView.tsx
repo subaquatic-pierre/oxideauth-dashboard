@@ -10,23 +10,22 @@ import Stack from '@mui/material/Stack';
 import { Copy, Pencil, SkipBack, Trash } from '@phosphor-icons/react';
 // third-party
 import { ColumnDef } from '@tanstack/react-table';
+import CircularLoader from 'components/CircularLoader';
+// project-import
+import { IndeterminateCheckbox } from 'components/third-party/react-table';
+// types
+import useNotify from 'hooks/useNotify';
+import { accountClient } from 'lib/api/account';
+import { LIST_PERMISSIONS, LIST_SERVICES } from 'lib/api/endpoints';
+import { roleClient } from 'lib/api/role';
+import { serviceClient } from 'lib/api/service';
+import { paths } from 'paths';
 import { useForm } from 'react-hook-form';
 import useSWR from 'swr';
+import { Account } from 'types/account';
+import { Role } from 'types/role';
+import { Service } from 'types/service';
 import { z as zod } from 'zod';
-
-import { Account } from '@/types/account';
-import { Role } from '@/types/role';
-import { Service } from '@/types/service';
-import { paths } from '@/paths';
-import { accountClient } from '@/lib/api/account';
-import { LIST_PERMISSIONS, LIST_SERVICES } from '@/lib/api/endpoints';
-import { roleClient } from '@/lib/api/role';
-import { serviceClient } from '@/lib/api/service';
-// types
-import useNotify from '@/hooks/useNotify';
-import CircularLoader from '@/components/CircularLoader';
-// project-import
-import { IndeterminateCheckbox } from '@/components/third-party/react-table';
 
 import { PermsTableRow } from '../permissions/PermissionsView';
 import UsersDetailForm from './UsersDetailForm';
@@ -37,6 +36,8 @@ const blankAccount: Account = {
   id: '',
   name: '',
   email: '',
+  verified: false,
+  enabled: true
 };
 
 const schema = zod
@@ -44,14 +45,14 @@ const schema = zod
     name: zod.string().min(1, { message: 'Name is required' }),
     email: zod.string().min(1, { message: 'Email is required' }),
     password: zod.string().min(6, { message: 'Password should be at least 6 characters' }),
-    confirmPassword: zod.string().min(6, { message: 'Password should be at least 6 characters' }),
+    confirmPassword: zod.string().min(6, { message: 'Password should be at least 6 characters' })
   })
   .superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password) {
       ctx.addIssue({
         code: 'custom',
         message: 'The passwords did not match',
-        path: ['confirmPassword'],
+        path: ['confirmPassword']
       });
     }
   });
@@ -77,10 +78,10 @@ const UsersDetailView = () => {
     setValue,
     setError,
     trigger,
-    formState: { errors, isValid },
+    formState: { errors, isValid }
   } = useForm<UsersDetailFormSchema>({
     defaultValues: { ...blankAccount, password: '', confirmPassword: '' },
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema)
   });
 
   const handleSubmit = async () => {
@@ -93,7 +94,7 @@ const UsersDetailView = () => {
       name: getValues('name'),
       email: getValues('email'),
       password: getValues('password'),
-      confirmPassword: getValues('confirmPassword'),
+      confirmPassword: getValues('confirmPassword')
     };
 
     const selectedRolesIds = Object.values(selectedRoles);

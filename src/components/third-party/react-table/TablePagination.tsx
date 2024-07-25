@@ -105,7 +105,7 @@ export default function TablePagination({ getPageCount, setPageIndex, setPageSiz
           page={getState().pagination.pageIndex + 1}
           onChange={handleChangePagination}
           color="primary"
-          variant="combined"
+          variant={'combined' as any}
           showFirstButton
           showLastButton
         />

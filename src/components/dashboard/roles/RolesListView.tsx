@@ -7,15 +7,14 @@ import { Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { Copy, Pencil, Trash } from '@phosphor-icons/react';
 import { ColumnDef } from '@tanstack/react-table';
-import useSWR from 'swr';
-
-import { Role } from '@/types/role';
-import { paths } from '@/paths';
-import { LIST_ROLES } from '@/lib/api/endpoints';
+import CircularLoader from 'components/CircularLoader';
+import useNotify from 'hooks/useNotify';
+import { LIST_ROLES } from 'lib/api/endpoints';
 // types
-import { roleClient } from '@/lib/api/role';
-import useNotify from '@/hooks/useNotify';
-import CircularLoader from '@/components/CircularLoader';
+import { roleClient } from 'lib/api/role';
+import { paths } from 'paths';
+import useSWR from 'swr';
+import { Role } from 'types/role';
 
 import RolesButtons from './RolesButtons';
 import RolesDialogs from './RolesDialogs';
@@ -68,20 +67,20 @@ const RolesListView = () => {
       {
         id: 'name',
         header: 'Name',
-        accessorKey: 'name',
+        accessorKey: 'name'
       },
       {
         id: 'description',
         header: 'Description',
         cell: ({ row }: any) => {
           return <Box>{row.original.description ?? ''}</Box>;
-        },
+        }
       },
       {
         id: 'actions',
         header: 'Actions',
         meta: {
-          width: 10,
+          width: 10
         } as any,
         accessorKey: 'id',
         cell: ({ row }: any) => {
@@ -104,8 +103,8 @@ const RolesListView = () => {
               </Tooltip>
             </Stack>
           );
-        },
-      },
+        }
+      }
     ],
     []
   );

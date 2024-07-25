@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
-const config = {};
 
-export default config;
+module.exports = {
+  reactStrictMode: false,
+  output: 'standalone',
+  images: {
+    domains: ['flagcdn.com', 'assets.maccarianagency.com', 'localhost', 'oxideauth.nebuladev.io']
+  }
+};

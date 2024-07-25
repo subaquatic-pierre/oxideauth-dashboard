@@ -2,10 +2,9 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import GlobalStyles from '@mui/material/GlobalStyles';
-
-import { AuthGuard } from '@/components/auth/AuthGuard';
-import { MainNav } from '@/components/dashboard/layout/MainNav';
-import { SideNav } from '@/components/dashboard/layout/SideNav';
+import { AuthGuard } from 'components/auth/AuthGuard';
+import { MainNav } from 'components/dashboard/layout/MainNav';
+import { SideNav } from 'components/dashboard/layout/SideNav';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -22,8 +21,8 @@ export default function Layout({ children }: LayoutProps): React.JSX.Element {
             '--SideNav-width': '280px',
             '--SideNav-zIndex': 1100,
             '--MobileNav-width': '320px',
-            '--MobileNav-zIndex': 1100,
-          },
+            '--MobileNav-zIndex': 1100
+          }
         }}
       />
       <Box
@@ -32,7 +31,7 @@ export default function Layout({ children }: LayoutProps): React.JSX.Element {
           display: 'flex',
           flexDirection: 'column',
           position: 'relative',
-          minHeight: '100%',
+          minHeight: '100%'
         }}
       >
         <SideNav />

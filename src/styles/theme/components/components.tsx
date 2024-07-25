@@ -24,5 +24,5 @@ export const components = {
   MuiTab,
   MuiTableBody,
   MuiTableCell,
-  MuiTableHead,
+  MuiTableHead
 } satisfies Components<Theme>;

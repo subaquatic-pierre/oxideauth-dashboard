@@ -24,13 +24,12 @@ import {
   getPaginationRowModel,
   HeaderGroup,
   PaginationState,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
+import ScrollX from 'components/ScrollX';
+import { TablePagination } from 'components/third-party/react-table';
 import { LabelKeyObject } from 'react-csv/lib/core';
-
-import { Account } from '@/types/account';
-import ScrollX from '@/components/ScrollX';
-import { TablePagination } from '@/components/third-party/react-table';
+import { Account } from 'types/account';
 
 interface TableProps {
   data: Account[];
@@ -41,20 +40,13 @@ interface TableProps {
   setGlobalFilter: Dispatch<SetStateAction<string>>;
 }
 
-const ServiceAccountsTable: React.FC<TableProps> = ({
-  data,
-  columns,
-  globalFilter,
-  setGlobalFilter,
-  rowSelection,
-  setRowSelection,
-}) => {
+const ServiceAccountsTable: React.FC<TableProps> = ({ data, columns, globalFilter, setGlobalFilter, rowSelection, setRowSelection }) => {
   const theme = useTheme();
 
   const table = useReactTable({
     state: {
       globalFilter,
-      rowSelection,
+      rowSelection
     },
     data,
     columns,
@@ -67,7 +59,7 @@ const ServiceAccountsTable: React.FC<TableProps> = ({
     getRowId: (row) => row.id,
     enableRowSelection: true,
 
-    debugTable: true,
+    debugTable: true
   });
 
   let headers: LabelKeyObject[] = [];
@@ -75,7 +67,7 @@ const ServiceAccountsTable: React.FC<TableProps> = ({
     headers.push({
       label: typeof columns.columnDef.header === 'string' ? columns.columnDef.header : '#',
       // @ts-ignore
-      key: columns.columnDef.accessorKey,
+      key: columns.columnDef.accessorKey
     });
   });
 
@@ -94,14 +86,8 @@ const ServiceAccountsTable: React.FC<TableProps> = ({
                   {table.getHeaderGroups().map((headerGroup: HeaderGroup<any>) => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map((header) => (
-                        <TableCell
-                          sx={{ ...(header.id === 'id' && { width: 20 }) }}
-                          key={header.id}
-                          {...header.column.columnDef.meta}
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(header.column.columnDef.header, header.getContext())}
+                        <TableCell sx={{ ...(header.id === 'id' && { width: 20 }) }} key={header.id} {...header.column.columnDef.meta}>
+                          {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                         </TableCell>
                       ))}
                     </TableRow>
@@ -110,8 +96,8 @@ const ServiceAccountsTable: React.FC<TableProps> = ({
                 <TableBody
                   sx={{
                     '& .MuiTableRow-root:hover': {
-                      backgroundColor: 'transparent',
-                    },
+                      backgroundColor: 'transparent'
+                    }
                   }}
                 >
                   {table.getRowModel().rows.map((row) => (
@@ -134,7 +120,7 @@ const ServiceAccountsTable: React.FC<TableProps> = ({
                   setPageSize: table.setPageSize,
                   setPageIndex: table.setPageIndex,
                   getState: table.getState,
-                  getPageCount: table.getPageCount,
+                  getPageCount: table.getPageCount
                 }}
               />
             </Box>

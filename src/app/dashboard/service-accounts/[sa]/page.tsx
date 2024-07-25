@@ -9,10 +9,9 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
+import ServiceAccountsDetailView from 'components/dashboard/service-accounts/ServiceAccountsDetailView';
+import { config } from 'config';
 import dayjs from 'dayjs';
-
-import { config } from '@/config';
-import ServiceAccountsDetailView from '@/components/dashboard/service-accounts/ServiceAccountsDetailView';
 
 export const metadata = { title: `Integrations | Dashboard | ${config.site.name}` } satisfies Metadata;
 

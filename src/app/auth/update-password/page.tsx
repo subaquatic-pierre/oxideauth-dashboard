@@ -1,10 +1,9 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
-
-import { config } from '@/config';
-import { GuestGuard } from '@/components/auth/GuestGuard';
-import { Layout } from '@/components/auth/Layout';
-import UpdatePasswordForm from '@/components/auth/UpdatePasswordForm';
+import { GuestGuard } from 'components/auth/GuestGuard';
+import { Layout } from 'components/auth/Layout';
+import UpdatePasswordForm from 'components/auth/UpdatePasswordForm';
+import { config } from 'config';
 
 export const metadata = { title: `Update password | Auth | ${config.site.name}` } satisfies Metadata;
 

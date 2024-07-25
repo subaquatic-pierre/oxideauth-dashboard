@@ -10,17 +10,16 @@ import Stack from '@mui/material/Stack';
 import { Copy, Download, Pencil, Trash } from '@phosphor-icons/react';
 // third-party
 import { ColumnDef } from '@tanstack/react-table';
-import useSWR from 'swr';
-
-import { Account } from '@/types/account';
-import { paths } from '@/paths';
-import { accountClient } from '@/lib/api/account';
-import { LIST_ACCOUNTS, LIST_SERVICES } from '@/lib/api/endpoints';
-// types
-import useNotify from '@/hooks/useNotify';
-import CircularLoader from '@/components/CircularLoader';
+import CircularLoader from 'components/CircularLoader';
 // project-import
-import { IndeterminateCheckbox } from '@/components/third-party/react-table';
+import { IndeterminateCheckbox } from 'components/third-party/react-table';
+// types
+import useNotify from 'hooks/useNotify';
+import { accountClient } from 'lib/api/account';
+import { LIST_ACCOUNTS, LIST_SERVICES } from 'lib/api/endpoints';
+import { paths } from 'paths';
+import useSWR from 'swr';
+import { Account } from 'types/account';
 
 import ServiceAccountsButtons from './ServiceAccountsButtons';
 import ServiceAccountsDialog from './ServiceAccountsDialog';
@@ -45,7 +44,7 @@ const ServiceAccountsListView = () => {
     const key = crypto.randomBytes(8).toString('hex');
     const data = {
       serviceAccountName: name,
-      apiKey: key,
+      apiKey: key
     };
     // create file in browser
     const fileName = 'credentials';
@@ -126,25 +125,25 @@ const ServiceAccountsListView = () => {
       {
         id: 'name',
         header: 'Name',
-        accessorKey: 'name',
+        accessorKey: 'name'
       },
       {
         id: 'email',
         header: 'Email',
-        accessorKey: 'email',
+        accessorKey: 'email'
       },
       {
         id: 'description',
         header: 'Description',
         cell: ({ row }: any) => {
           return <Box>{row.original.description ?? ''}</Box>;
-        },
+        }
       },
       {
         id: 'actions',
         header: 'Actions',
         meta: {
-          width: 10,
+          width: 10
         } as any,
         accessorKey: 'id',
         cell: ({ row }: any) => {
@@ -167,8 +166,8 @@ const ServiceAccountsListView = () => {
               </Tooltip>
             </Stack>
           );
-        },
-      },
+        }
+      }
     ],
     []
   );
@@ -183,11 +182,7 @@ const ServiceAccountsListView = () => {
         <>
           <Typography variant="h4">Service Accounts</Typography>
           <ServiceAccountsButtons rowSelection={rowSelection} />
-          <ServiceAccountsFilter
-            length={data?.length ?? 0}
-            globalFilter={globalFilter}
-            setGlobalFilter={setGlobalFilter}
-          />
+          <ServiceAccountsFilter length={data?.length ?? 0} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
           <ServiceAccountsTable
             globalFilter={globalFilter}
             setGlobalFilter={setGlobalFilter}

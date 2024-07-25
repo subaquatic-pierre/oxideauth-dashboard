@@ -10,19 +10,18 @@ import { Copy, Pencil, Trash } from '@phosphor-icons/react';
 import { SkipBack } from '@phosphor-icons/react/dist/ssr';
 // third-party
 import { ColumnDef } from '@tanstack/react-table';
-import useSWR from 'swr';
-
-import { Account } from '@/types/account';
-import { Service } from '@/types/service';
-import { paths } from '@/paths';
-import { accountClient } from '@/lib/api/account';
-import { LIST_SERVICES } from '@/lib/api/endpoints';
-import { serviceClient } from '@/lib/api/service';
-// types
-import useNotify from '@/hooks/useNotify';
-import CircularLoader from '@/components/CircularLoader';
+import CircularLoader from 'components/CircularLoader';
 // project-import
-import { IndeterminateCheckbox } from '@/components/third-party/react-table';
+import { IndeterminateCheckbox } from 'components/third-party/react-table';
+// types
+import useNotify from 'hooks/useNotify';
+import { accountClient } from 'lib/api/account';
+import { LIST_SERVICES } from 'lib/api/endpoints';
+import { serviceClient } from 'lib/api/service';
+import { paths } from 'paths';
+import useSWR from 'swr';
+import { Account } from 'types/account';
+import { Service } from 'types/service';
 
 import { ServiceDetailForm } from './ServiceDetailForm';
 import ServicesButtons from './ServicesButtons';
@@ -34,7 +33,7 @@ const blankService: Service = {
   id: '',
   name: '',
   description: '',
-  endpoint: '',
+  endpoint: ''
 };
 
 const ServicesDetailView = () => {

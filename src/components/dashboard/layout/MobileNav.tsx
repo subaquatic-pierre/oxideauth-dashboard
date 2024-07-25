@@ -11,11 +11,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { ArrowSquareUpRight as ArrowSquareUpRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowSquareUpRight';
 import { CaretUpDown as CaretUpDownIcon } from '@phosphor-icons/react/dist/ssr/CaretUpDown';
-
-import type { NavItemConfig } from '@/types/nav';
-import { paths } from '@/paths';
-import { isNavItemActive } from '@/lib/isNavItemActive';
-import { Logo } from '@/components/core/Logo';
+import { Logo } from 'components/core/Logo';
+import { isNavItemActive } from 'lib/isNavItemActive';
+import { paths } from 'paths';
+import type { NavItemConfig } from 'types/nav';
 
 import { navItems } from './config';
 import { navIcons } from './NavIcons';
@@ -51,8 +50,8 @@ export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element 
           scrollbarWidth: 'none',
           width: 'var(--MobileNav-width)',
           zIndex: 'var(--MobileNav-zIndex)',
-          '&::-webkit-scrollbar': { display: 'none' },
-        },
+          '&::-webkit-scrollbar': { display: 'none' }
+        }
       }}
       onClose={onClose}
       open={open}
@@ -153,7 +152,7 @@ function NavItem({ disabled, external, href, icon, matcher, pathname, title }: N
               component: external ? 'a' : RouterLink,
               href,
               target: external ? '_blank' : undefined,
-              rel: external ? 'noreferrer' : undefined,
+              rel: external ? 'noreferrer' : undefined
             }
           : { role: 'button' })}
         sx={{
@@ -171,9 +170,9 @@ function NavItem({ disabled, external, href, icon, matcher, pathname, title }: N
           ...(disabled && {
             bgcolor: 'var(--NavItem-disabled-background)',
             color: 'var(--NavItem-disabled-color)',
-            cursor: 'not-allowed',
+            cursor: 'not-allowed'
           }),
-          ...(active && { bgcolor: 'var(--NavItem-active-background)', color: 'var(--NavItem-active-color)' }),
+          ...(active && { bgcolor: 'var(--NavItem-active-background)', color: 'var(--NavItem-active-color)' })
         }}
       >
         <Box sx={{ alignItems: 'center', display: 'flex', justifyContent: 'center', flex: '0 0 auto' }}>
@@ -186,10 +185,7 @@ function NavItem({ disabled, external, href, icon, matcher, pathname, title }: N
           ) : null}
         </Box>
         <Box sx={{ flex: '1 1 auto' }}>
-          <Typography
-            component="span"
-            sx={{ color: 'inherit', fontSize: '0.875rem', fontWeight: 500, lineHeight: '28px' }}
-          >
+          <Typography component="span" sx={{ color: 'inherit', fontSize: '0.875rem', fontWeight: 500, lineHeight: '28px' }}>
             {title}
           </Typography>
         </Box>

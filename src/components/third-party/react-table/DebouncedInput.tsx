@@ -39,7 +39,7 @@ export default function DebouncedInput({
     <InputAdornment
       sx={{
         fontSize: 'var(--icon-fontSize-md)',
-        '&:hover': { cursor: 'pointer' },
+        '&:hover': { cursor: 'pointer' }
       }}
       onClick={() => setValue('')}
       position="end"

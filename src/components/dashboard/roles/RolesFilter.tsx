@@ -4,11 +4,10 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { Button, Card, IconButton, Tooltip, Typography } from '@mui/material';
 // material-ui
 import Grid from '@mui/material/Grid';
-
 // types
 // project-import
-import ScrollX from '@/components/ScrollX';
-import { DebouncedInput } from '@/components/third-party/react-table';
+import ScrollX from 'components/ScrollX';
+import { DebouncedInput } from 'components/third-party/react-table';
 
 interface TableProps {
   length: number;

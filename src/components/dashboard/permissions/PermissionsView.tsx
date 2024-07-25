@@ -5,14 +5,13 @@ import { Typography } from '@mui/material';
 // material-ui
 import Stack from '@mui/material/Stack';
 import { ColumnDef } from '@tanstack/react-table';
-import useSWR from 'swr';
-
-import { LIST_PERMISSIONS } from '@/lib/api/endpoints';
+import CircularLoader from 'components/CircularLoader';
+import useNotify from 'hooks/useNotify';
+import { LIST_PERMISSIONS } from 'lib/api/endpoints';
 // types
-import { roleClient } from '@/lib/api/role';
-import { buildPermissionTableColumns } from '@/lib/tables';
-import useNotify from '@/hooks/useNotify';
-import CircularLoader from '@/components/CircularLoader';
+import { roleClient } from 'lib/api/role';
+import { buildPermissionTableColumns } from 'lib/tables';
+import useSWR from 'swr';
 
 // project-import
 

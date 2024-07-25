@@ -3,9 +3,8 @@
 
 import { useContext } from 'react';
 import { AlertColor } from '@mui/material';
-
-import { SnackbarProps } from '@/types/snackbar';
-import { NotificationContext } from '@/contexts/NotificationContext';
+import { NotificationContext } from 'contexts/NotificationContext';
+import { SnackbarProps } from 'types/snackbar';
 
 export default function useNotify() {
   const { setSnackbar } = useContext(NotificationContext);
@@ -15,6 +14,6 @@ export default function useNotify() {
       open: true,
       variant: 'alert',
       message,
-      alert: { ...old.alert, color, severity: color },
+      alert: { ...old.alert, color, severity: color }
     }));
 }

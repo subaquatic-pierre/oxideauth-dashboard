@@ -25,7 +25,7 @@ interface Props {
 
 const schema = zod.object({
   name: zod.string().min(1, { message: 'Name is required' }),
-  description: zod.string(),
+  description: zod.string()
 });
 
 type Values = zod.infer<typeof schema>;
@@ -37,10 +37,7 @@ export function RolesDetailForm({ control, handleSubmit, errors, getValues }: Pr
   return (
     <>
       <Card>
-        <CardHeader
-          title={isExisting ? getValues('name') : 'New'}
-          subheader={isExisting ? (roleId as string) : 'Create a new role'}
-        />
+        <CardHeader title={isExisting ? getValues('name') : 'New'} subheader={isExisting ? (roleId as string) : 'Create a new role'} />
         <Divider />
         <CardContent>
           <Grid container spacing={3}>

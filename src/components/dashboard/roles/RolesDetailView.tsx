@@ -10,23 +10,22 @@ import Stack from '@mui/material/Stack';
 import { Copy, Pencil, SkipBack, Trash } from '@phosphor-icons/react';
 // third-party
 import { ColumnDef } from '@tanstack/react-table';
+import CircularLoader from 'components/CircularLoader';
+// project-import
+import { IndeterminateCheckbox } from 'components/third-party/react-table';
+// types
+import useNotify from 'hooks/useNotify';
+import { accountClient } from 'lib/api/account';
+import { LIST_PERMISSIONS, LIST_SERVICES } from 'lib/api/endpoints';
+import { roleClient } from 'lib/api/role';
+import { serviceClient } from 'lib/api/service';
+import { paths } from 'paths';
 import { useForm } from 'react-hook-form';
 import useSWR from 'swr';
+import { Account } from 'types/account';
+import { Role } from 'types/role';
+import { Service } from 'types/service';
 import { z as zod } from 'zod';
-
-import { Account } from '@/types/account';
-import { Role } from '@/types/role';
-import { Service } from '@/types/service';
-import { paths } from '@/paths';
-import { accountClient } from '@/lib/api/account';
-import { LIST_PERMISSIONS, LIST_SERVICES } from '@/lib/api/endpoints';
-import { roleClient } from '@/lib/api/role';
-import { serviceClient } from '@/lib/api/service';
-// types
-import useNotify from '@/hooks/useNotify';
-import CircularLoader from '@/components/CircularLoader';
-// project-import
-import { IndeterminateCheckbox } from '@/components/third-party/react-table';
 
 import { PermsTableRow } from '../permissions/PermissionsView';
 import { RolesDetailForm } from './RolesDetailForm';
@@ -37,12 +36,12 @@ const blankRole: Role = {
   id: '',
   name: '',
   description: '',
-  permissions: [],
+  permissions: []
 };
 
 const schema = zod.object({
   name: zod.string().min(1, { message: 'Name is required' }),
-  description: zod.string(),
+  description: zod.string()
 });
 
 export type Values = zod.infer<typeof schema>;
@@ -64,14 +63,14 @@ const RolesDetailView = () => {
     getValues,
     setValue,
     setError,
-    formState: { errors },
+    formState: { errors }
   } = useForm<Values>({ defaultValues: blankRole, resolver: zodResolver(schema) });
 
   const handleSubmit = async () => {
     const permissions: string[] = Object.keys(selectedPerms);
     const formValues = {
       name: getValues('name'),
-      description: getValues('description'),
+      description: getValues('description')
     };
 
     try {

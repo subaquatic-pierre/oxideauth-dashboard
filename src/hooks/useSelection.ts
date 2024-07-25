@@ -52,6 +52,6 @@ export function useSelection<T = string>(keys: T[] = []): Selection<T> {
     selectOne: handleSelectOne,
     selected,
     selectedAny,
-    selectedAll,
+    selectedAll
   };
 }

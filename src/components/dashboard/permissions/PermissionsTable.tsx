@@ -22,14 +22,13 @@ import {
   getPaginationRowModel,
   HeaderGroup,
   PaginationState,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
-import { LabelKeyObject } from 'react-csv/lib/core';
-
 // types
 // project-import
-import ScrollX from '@/components/ScrollX';
-import { TablePagination } from '@/components/third-party/react-table';
+import ScrollX from 'components/ScrollX';
+import { TablePagination } from 'components/third-party/react-table';
+import { LabelKeyObject } from 'react-csv/lib/core';
 
 import { PermsTableRow } from './PermissionsView';
 
@@ -44,14 +43,7 @@ interface TableProps {
   setGlobalFilter: Dispatch<SetStateAction<string>>;
 }
 
-const PermissionsTable: React.FC<TableProps> = ({
-  data,
-  columns,
-  globalFilter,
-  setGlobalFilter,
-  rowSelection,
-  setRowSelection,
-}) => {
+const PermissionsTable: React.FC<TableProps> = ({ data, columns, globalFilter, setGlobalFilter, rowSelection, setRowSelection }) => {
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 50 });
 
   const theme = useTheme();
@@ -59,7 +51,7 @@ const PermissionsTable: React.FC<TableProps> = ({
   const pagination = useMemo(
     () => ({
       pageIndex,
-      pageSize,
+      pageSize
     }),
     [pageIndex, pageSize]
   );
@@ -70,7 +62,7 @@ const PermissionsTable: React.FC<TableProps> = ({
     state: {
       globalFilter,
       rowSelection,
-      pagination,
+      pagination
     },
     columns,
     getCoreRowModel: getCoreRowModel(),
@@ -82,7 +74,7 @@ const PermissionsTable: React.FC<TableProps> = ({
 
     getRowId: (row) => row.name,
     enableRowSelection: true,
-    manualPagination: true,
+    manualPagination: true
   });
 
   let headers: LabelKeyObject[] = [];
@@ -91,7 +83,7 @@ const PermissionsTable: React.FC<TableProps> = ({
       headers.push({
         label: typeof columns.columnDef.header === 'string' ? columns.columnDef.header : '#',
         // @ts-ignore
-        key: columns.columnDef.accessorKey,
+        key: columns.columnDef.accessorKey
       });
     }
   });
@@ -106,11 +98,7 @@ const PermissionsTable: React.FC<TableProps> = ({
                 {table.getHeaderGroups().map((headerGroup: HeaderGroup<any>) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
-                      <TableCell
-                        sx={{ ...(header.id === 'id' && { width: 20, ml: 0 }) }}
-                        key={header.id}
-                        {...header.column.columnDef.meta}
-                      >
+                      <TableCell sx={{ ...(header.id === 'id' && { width: 20, ml: 0 }) }} key={header.id} {...header.column.columnDef.meta}>
                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                       </TableCell>
                     ))}
@@ -120,8 +108,8 @@ const PermissionsTable: React.FC<TableProps> = ({
               <TableBody
                 sx={{
                   '& .MuiTableRow-root:hover': {
-                    backgroundColor: 'transparent',
-                  },
+                    backgroundColor: 'transparent'
+                  }
                 }}
               >
                 {table.getRowModel().rows.map((row) => (
@@ -145,7 +133,7 @@ const PermissionsTable: React.FC<TableProps> = ({
                 setPageSize: table.setPageSize,
                 setPageIndex: table.setPageIndex,
                 getState: table.getState,
-                getPageCount: table.getPageCount,
+                getPageCount: table.getPageCount
               }}
             />
           </Box>

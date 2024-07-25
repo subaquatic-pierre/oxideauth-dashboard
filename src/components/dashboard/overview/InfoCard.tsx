@@ -9,8 +9,7 @@ import Stack from '@mui/material/Stack';
 import type { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { ArrowRight } from '@phosphor-icons/react/dist/ssr';
-
-import { paths } from '@/paths';
+import { paths } from 'paths';
 
 export interface Props {
   sx?: SxProps;

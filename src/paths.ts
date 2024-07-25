@@ -4,7 +4,7 @@ export const paths = {
     confirmAccount: '/auth/confirm-account',
     signIn: '/auth/sign-in',
     signUp: '/auth/sign-up',
-    resetPassword: '/auth/reset-password',
+    resetPassword: '/auth/reset-password'
   },
   dashboard: {
     overview: '/dashboard',
@@ -13,7 +13,7 @@ export const paths = {
     serviceAccounts: '/dashboard/service-accounts',
     roles: '/dashboard/roles',
     permissions: '/dashboard/permissions',
-    settings: '/dashboard/settings',
+    settings: '/dashboard/settings'
   },
-  errors: { notFound: '/errors/not-found' },
+  errors: { notFound: '/errors/not-found' }
 } as const;

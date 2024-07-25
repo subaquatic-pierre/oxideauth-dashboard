@@ -17,13 +17,12 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
 import { EyeSlash as EyeSlashIcon } from '@phosphor-icons/react/dist/ssr/EyeSlash';
+import { useAuth } from 'hooks/useAuth';
+import useNotify from 'hooks/useNotify';
+import { authClient, SignUpParams } from 'lib/api/auth';
+import { paths } from 'paths';
 import { Controller, useForm } from 'react-hook-form';
 import { z as zod } from 'zod';
-
-import { paths } from '@/paths';
-import { authClient } from '@/lib/api/auth';
-import { useAuth } from '@/hooks/useAuth';
-import useNotify from '@/hooks/useNotify';
 
 const schema = zod
   .object({
@@ -31,14 +30,14 @@ const schema = zod
     email: zod.string().min(1, { message: 'Email is required' }).email(),
     terms: zod.boolean().refine((value) => value, 'You must accept the terms and conditions'),
     password: zod.string().min(6, { message: 'Password should be at least 6 characters' }),
-    confirmPassword: zod.string().min(6, { message: 'Password should be at least 6 characters' }),
+    confirmPassword: zod.string().min(6, { message: 'Password should be at least 6 characters' })
   })
   .superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password) {
       ctx.addIssue({
         code: 'custom',
         message: 'The passwords did not match',
-        path: ['confirmPassword'],
+        path: ['confirmPassword']
       });
     }
   });
@@ -50,7 +49,7 @@ const defaultValues = {
   email: '',
   password: '',
   confirmPassword: '',
-  terms: false,
+  terms: false
 } satisfies SignUpFormSchema;
 
 export function SignUpForm(): React.JSX.Element {
@@ -65,14 +64,14 @@ export function SignUpForm(): React.JSX.Element {
     control,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors }
   } = useForm<SignUpFormSchema>({ defaultValues, resolver: zodResolver(schema) });
 
   const onSubmit = async (values: SignUpFormSchema): Promise<void> => {
     setIsPending(true);
 
     try {
-      await authClient.signUp(values);
+      await authClient.signUp(values as SignUpParams);
       // use check sessions to reload user on AuthContext
       // will cause redirect to dashboard
       router.push(paths.auth.confirmAccount);

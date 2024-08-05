@@ -1,7 +1,14 @@
 import { Service } from 'types/service';
 
 import { BaseClient } from './client';
-import { CREATE_SERVICE, DELETE_SERVICE, DESCRIBE_SERVICE, LIST_SERVICES, UPDATE_SERVICE } from './endpoints';
+import {
+  CREATE_SERVICE,
+  DELETE_SERVICE,
+  DESCRIBE_SERVICE,
+  GET_SERVICE_ACCOUNT_SECRET_KEY,
+  LIST_SERVICES,
+  UPDATE_SERVICE
+} from './endpoints';
 
 export interface CreateServiceParams {
   name: string;

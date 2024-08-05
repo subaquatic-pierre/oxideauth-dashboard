@@ -37,18 +37,17 @@ const ServiceAccountsListView = () => {
   const [rowSelection, setRowSelection] = useState({});
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const handleDownloadClick = (name: string) => {
-    // TODO: get actual token from API to be used
-    // in all service account client requests,
-    // added to header "Authorization: Bearer {token}"
-    const key = crypto.randomBytes(8).toString('hex');
-    const data = {
-      serviceAccountName: name,
+  const handleDownloadClick = async (accountName: string, accountId: string) => {
+    const { key } = await accountClient.getServiceAccountSecretKey(accountId);
+
+    // const key = crypto.randomBytes(8).toString('hex');
+    const jsonData = {
+      serviceAccountName: accountName,
       apiKey: key
     };
     // create file in browser
     const fileName = 'credentials';
-    const json = JSON.stringify(data, null, 2);
+    const json = JSON.stringify(jsonData, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
     const href = URL.createObjectURL(blob);
 
@@ -155,7 +154,7 @@ const ServiceAccountsListView = () => {
                 </IconButton>
               </Tooltip>
               <Tooltip title="Download Credentials">
-                <IconButton color="error" onClick={() => handleDownloadClick(row.original.name)}>
+                <IconButton color="error" onClick={() => handleDownloadClick(row.original.name, row.original.id)}>
                   <Download color={theme.palette.secondary.main} />
                 </IconButton>
               </Tooltip>

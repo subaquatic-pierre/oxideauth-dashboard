@@ -13,6 +13,7 @@ export const CREATE_ACCOUNT = '/accounts/create-user-account';
 export const UPDATE_SELF = '/accounts/update-self';
 export const DESCRIBE_ACCOUNT = '/accounts/describe-account';
 export const UPDATE_ACCOUNT = '/accounts/update-account';
+export const GET_SERVICE_ACCOUNT_SECRET_KEY = '/accounts/service-account-secret-key';
 
 export const LIST_ROLES = '/roles/list-roles';
 export const DESCRIBE_ROLE = '/roles/describe-role';

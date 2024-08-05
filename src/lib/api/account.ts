@@ -6,6 +6,7 @@ import {
   CREATE_SERVICE_ACCOUNT,
   DELETE_ACCOUNT,
   DESCRIBE_ACCOUNT,
+  GET_SERVICE_ACCOUNT_SECRET_KEY,
   LIST_ACCOUNTS,
   UPDATE_ACCOUNT,
   UPDATE_SELF
@@ -97,6 +98,16 @@ class AccountClient extends BaseClient {
       auth: true
     });
     return data.account;
+  }
+
+  async getServiceAccountSecretKey(accountId: string): Promise<{ key: string }> {
+    const data = await super.req<{ key: string }>({
+      endpoint: GET_SERVICE_ACCOUNT_SECRET_KEY,
+      method: 'POST',
+      data: { account: accountId },
+      auth: true
+    });
+    return data;
   }
 }
 

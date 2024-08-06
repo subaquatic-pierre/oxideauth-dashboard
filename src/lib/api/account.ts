@@ -53,8 +53,7 @@ class AccountClient extends BaseClient {
     const data = await super.req<{ account: Account }>({
       endpoint: UPDATE_ACCOUNT,
       method: 'POST',
-      data: updateParams,
-      auth: true
+      data: updateParams
     });
     return data.account;
   }
@@ -63,8 +62,7 @@ class AccountClient extends BaseClient {
     const data = await super.req<{ account: Account }>({
       endpoint: UPDATE_SELF,
       method: 'POST',
-      data: updateParams,
-      auth: true
+      data: updateParams
     });
     return data.account;
   }
@@ -73,8 +71,7 @@ class AccountClient extends BaseClient {
     const data = await super.req<{ deleted: boolean }>({
       endpoint: DELETE_ACCOUNT,
       method: 'POST',
-      data: { account: idOrName },
-      auth: true
+      data: { account: idOrName }
     });
 
     return data.deleted;
@@ -84,8 +81,7 @@ class AccountClient extends BaseClient {
     const data = await super.req<{ account: Account }>({
       endpoint: CREATE_SERVICE_ACCOUNT,
       method: 'POST',
-      data: updateParams,
-      auth: true
+      data: updateParams
     });
     return data.account;
   }
@@ -94,8 +90,7 @@ class AccountClient extends BaseClient {
     const data = await super.req<{ account: Account }>({
       endpoint: CREATE_ACCOUNT,
       method: 'POST',
-      data: createAccountParams,
-      auth: true
+      data: createAccountParams
     });
     return data.account;
   }
@@ -104,8 +99,7 @@ class AccountClient extends BaseClient {
     const data = await super.req<{ key: string }>({
       endpoint: GET_SERVICE_ACCOUNT_SECRET_KEY,
       method: 'POST',
-      data: { account: accountId },
-      auth: true
+      data: { account: accountId }
     });
     return data;
   }

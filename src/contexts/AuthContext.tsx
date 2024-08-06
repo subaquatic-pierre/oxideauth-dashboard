@@ -7,6 +7,7 @@ import { DESCRIBE_SELF } from 'lib/api/endpoints';
 import { paths } from 'paths';
 import { Account } from 'types/account';
 import { AuthContextProps } from 'types/auth';
+import { sleep } from 'lib/sleep';
 
 // initial state
 const initialState: AuthContextProps = {
@@ -37,6 +38,8 @@ function AuthContextProvider({ children }: React.PropsWithChildren): React.JSX.E
     } catch (e) {
       setError(`${e}`);
       window.localStorage.removeItem('token');
+      await sleep(1);
+      window.location.reload();
       console.log(e);
     }
 

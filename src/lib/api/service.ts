@@ -33,8 +33,7 @@ export class ServiceClient extends BaseClient {
     const data = await super.req<{ service: Service }>({
       endpoint: DESCRIBE_SERVICE,
       method: 'POST',
-      data: { service: idOrName },
-      auth: true
+      data: { service: idOrName }
     });
     return data.service;
   }
@@ -43,8 +42,7 @@ export class ServiceClient extends BaseClient {
     const data = await super.req<{ service: Service }>({
       endpoint: CREATE_SERVICE,
       method: 'POST',
-      data: newServiceData,
-      auth: true
+      data: newServiceData
     });
     return data.service;
   }
@@ -53,8 +51,7 @@ export class ServiceClient extends BaseClient {
     const data = await super.req<{ service: Service }>({
       endpoint: UPDATE_SERVICE,
       method: 'POST',
-      data: updateServiceData,
-      auth: true
+      data: updateServiceData
     });
     return data.service;
   }
@@ -63,8 +60,7 @@ export class ServiceClient extends BaseClient {
     const data = await super.req<{ service: Service }>({
       endpoint: DELETE_SERVICE,
       method: 'POST',
-      data: { service: idOrName },
-      auth: true
+      data: { service: idOrName }
     });
     return data.service;
   }

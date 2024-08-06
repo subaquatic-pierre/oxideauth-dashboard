@@ -20,7 +20,7 @@ export type ApiRequest = {
 };
 
 export class BaseClient {
-  async req<Model = {}>({ endpoint, data, headers, method = 'GET', auth = false }: ApiRequest): Promise<Model> {
+  async req<Model = {}>({ endpoint, data, headers, method = 'GET', auth = true }: ApiRequest): Promise<Model> {
     let _headers: { [key: string]: string } = headers ?? {};
     if (auth) {
       const token = window.localStorage.getItem('token');

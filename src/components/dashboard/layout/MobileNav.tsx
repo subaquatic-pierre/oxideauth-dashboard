@@ -16,8 +16,9 @@ import { isNavItemActive } from 'lib/isNavItemActive';
 import { paths } from 'paths';
 import type { NavItemConfig } from 'types/nav';
 
-import { navItems } from './config';
+import { getNavItems, navItems } from './config';
 import { navIcons } from './NavIcons';
+import { useAuth } from 'hooks/useAuth';
 
 export interface MobileNavProps {
   onClose?: () => void;
@@ -26,6 +27,7 @@ export interface MobileNavProps {
 }
 
 export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element {
+  const { user } = useAuth();
   const pathname = usePathname();
 
   return (
@@ -84,7 +86,7 @@ export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element 
       </Stack>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
       <Box component="nav" sx={{ flex: '1 1 auto', p: '12px' }}>
-        {renderNavItems({ pathname, items: navItems })}
+        {renderNavItems({ pathname, items: getNavItems(user) })}
       </Box>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
       {/* <Stack spacing={2} sx={{ p: '12px' }}>

@@ -61,7 +61,6 @@ class RoleClient extends BaseClient {
     const data = await super.req<{ role: Role }>({
       endpoint: CREATE_ROLE,
       data: newRoleData,
-      auth: true,
       method: 'POST'
     });
 
@@ -72,7 +71,6 @@ class RoleClient extends BaseClient {
     const data = await super.req<{ role: Role }>({
       endpoint: UPDATE_ROLE,
       data: updateRoleData,
-      auth: true,
       method: 'POST'
     });
 
@@ -83,7 +81,6 @@ class RoleClient extends BaseClient {
     const data = await super.req<{ deleted_role: string }>({
       endpoint: DELETE_ROLE,
       data: { role: idOrName },
-      auth: true,
       method: 'POST'
     });
 
@@ -94,8 +91,7 @@ class RoleClient extends BaseClient {
     const data = await super.req<{ account: Account }>({
       endpoint: REMOVE_ROLES,
       method: 'POST',
-      data: removeRolesParams,
-      auth: true
+      data: removeRolesParams
     });
     return data.account;
   }
@@ -104,8 +100,7 @@ class RoleClient extends BaseClient {
     const data = await super.req<{ account: Account }>({
       endpoint: ASSIGN_ROLES,
       method: 'POST',
-      data: assignRolesParams,
-      auth: true
+      data: assignRolesParams
     });
     return data.account;
   }
@@ -117,7 +112,6 @@ class RoleClient extends BaseClient {
     const data = await super.req<{ role: Role }>({
       endpoint: ASSIGN_PERMISSIONS,
       method: 'POST',
-      auth: true,
       data: assignPermsParams
     });
     return data.role;
@@ -127,7 +121,6 @@ class RoleClient extends BaseClient {
     const data = await super.req<{ role: Role }>({
       endpoint: REMOVE_PERMISSIONS,
       method: 'POST',
-      auth: true,
       data: removePermissionsParams
     });
     return data.role;

@@ -15,11 +15,16 @@ import { isNavItemActive } from 'lib/isNavItemActive';
 import { paths } from 'paths';
 import type { NavItemConfig } from 'types/nav';
 
-import { navItems } from './config';
+import { getNavItems, navItems } from './config';
 import { navIcons } from './NavIcons';
+import { useAuth } from 'hooks/useAuth';
 
 export function SideNav(): React.JSX.Element {
+  const { user } = useAuth();
   const pathname = usePathname();
+
+  const items = getNavItems(user);
+  console.log({ items });
 
   return (
     <Box
@@ -56,7 +61,7 @@ export function SideNav(): React.JSX.Element {
       </Stack>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
       <Box component="nav" sx={{ flex: '1 1 auto', p: '12px' }}>
-        {renderNavItems({ pathname, items: navItems })}
+        {renderNavItems({ pathname, items: getNavItems(user) })}
       </Box>
     </Box>
   );

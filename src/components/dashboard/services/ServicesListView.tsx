@@ -24,8 +24,11 @@ import ServicesDialog from './ServicesDialogs';
 import ServicesFilter from './ServicesFilter';
 import ServicesTable from './ServicesTable';
 import { Service } from 'types/service';
+import { useAuth } from 'hooks/useAuth';
+import { hasPerms } from 'lib/accountPerms';
 
 const ServicesListView = () => {
+  const { user } = useAuth();
   const notify = useNotify();
   const theme = useTheme();
   const { data, isLoading, error, mutate } = useSWR(LIST_SERVICES, serviceClient.listServices);
@@ -113,16 +116,20 @@ const ServicesListView = () => {
         cell: ({ row }: any) => {
           return (
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
-              <Tooltip title="Edit Service">
-                <IconButton LinkComponent={Link} href={`${paths.dashboard.services}/${row.original.id}`}>
-                  <Pencil />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Delete Service">
-                <IconButton color="error" onClick={() => handleDeleteClick(row.original.name)}>
-                  <Trash color={theme.palette.error.main} />
-                </IconButton>
-              </Tooltip>
+              {hasPerms(user, 'auth.services.update') && (
+                <Tooltip title="Edit Service">
+                  <IconButton LinkComponent={Link} href={`${paths.dashboard.services}/${row.original.id}`}>
+                    <Pencil />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {hasPerms(user, 'auth.services.delete') && (
+                <Tooltip title="Delete Service">
+                  <IconButton color="error" onClick={() => handleDeleteClick(row.original.name)}>
+                    <Trash color={theme.palette.error.main} />
+                  </IconButton>
+                </Tooltip>
+              )}
             </Stack>
           );
         }

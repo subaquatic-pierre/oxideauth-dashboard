@@ -44,6 +44,7 @@ class AuthClient extends BaseClient {
 
     const data = await super.req<{ token: string; user: Account }>({
       endpoint: REGISTER,
+      auth: false,
       method: 'POST',
       data: { name, email, password }
     });
@@ -56,6 +57,7 @@ class AuthClient extends BaseClient {
 
     const data = await super.req<{ token: string; account: Account }>({
       endpoint: LOGIN,
+      auth: false,
       method: 'POST',
       data: { email, password }
     });
@@ -72,6 +74,7 @@ class AuthClient extends BaseClient {
 
     const data = await super.req<{ success: boolean }>({
       endpoint: RESET_PASSWORD,
+      auth: false,
       method: 'POST',
       data: { email, redirectUrl }
     });
@@ -88,6 +91,7 @@ class AuthClient extends BaseClient {
     const data = await super.req<{ account: Account }>({
       endpoint: UPDATE_PASSWORD,
       method: 'POST',
+      auth: false,
       data: { password, token }
     });
     return { account: data.account };
@@ -95,8 +99,7 @@ class AuthClient extends BaseClient {
 
   async getUser(): Promise<Account> {
     const data = await super.req<{ account: Account }>({
-      endpoint: DESCRIBE_SELF,
-      auth: true
+      endpoint: DESCRIBE_SELF
     });
 
     return data.account;
@@ -106,6 +109,7 @@ class AuthClient extends BaseClient {
     const { email } = params;
     const data = await super.req<{ success: boolean }>({
       endpoint: RESEND_CONFIRM_LINK,
+      auth: false,
       method: 'POST',
       data: { email }
     });

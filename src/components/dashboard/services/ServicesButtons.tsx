@@ -7,6 +7,8 @@ import Stack from '@mui/material/Stack';
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import { paths } from 'paths';
 import { Role } from 'types/role';
+import { useAuth } from 'hooks/useAuth';
+import { hasPerms } from 'lib/accountPerms';
 
 interface TableProps {
   // setDeleteOpen: (open: boolean) => void;
@@ -17,11 +19,15 @@ const ServicesButtons: React.FC<TableProps> = ({
   // setDeleteOpen,
   rowSelection
 }) => {
+  const { user } = useAuth();
+
   return (
     <Stack minHeight={44} direction={'row'} spacing={2}>
-      <Button component={Link} href={paths.dashboard.services + '/new'} startIcon={<PlusIcon />} variant="contained">
-        New
-      </Button>
+      {hasPerms(user, 'auth.services.create') && (
+        <Button component={Link} href={paths.dashboard.services + '/new'} startIcon={<PlusIcon />} variant="contained">
+          New
+        </Button>
+      )}
       {Object.keys(rowSelection).length > 0 && (
         <>
           {/* <Button color="error" onClick={() => setDeleteOpen(true)} startIcon={<Trash />}>

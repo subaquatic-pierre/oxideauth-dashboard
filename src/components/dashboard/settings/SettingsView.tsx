@@ -32,6 +32,7 @@ import { z as zod } from 'zod';
 import SettingsForm from './SettingsForm';
 import SettingsFormButtons from './SettingsFormButtons';
 import SettingsRolesTable from './SettingsRolesTable';
+import SettingsDialog from './SettingsDialog';
 
 const schema = zod.object({
   name: zod.string().min(1, { message: 'Name is required' }),
@@ -40,15 +41,13 @@ const schema = zod.object({
 
 export type SettingsFormSchema = zod.infer<typeof schema>;
 
-export type SelectedRoles = { [mapPos: string]: string };
-
 const SettingsView = () => {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { user: account, checkSession } = useAuth();
   const notify = useNotify();
   const router = useRouter();
 
-  const [allRoles, setAllRoles] = useState<Role[]>([]);
-  const [selectedRoles, setSelectedRoles] = useState<SelectedRoles>({});
+  const [activeRoles, setActiveRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
 
@@ -64,12 +63,16 @@ const SettingsView = () => {
     resolver: zodResolver(schema)
   });
 
+  const handleDeleteSelf = async () => {
+    await accountClient.deleteSelf();
+    checkSession();
+  };
+
   const handleSubmit = async () => {
     trigger();
     if (!isValid) {
       return;
     }
-    // const permissions: string[] = Object.keys(selectedPerms);
     const formValues = {
       name: getValues('name')
     };
@@ -90,30 +93,12 @@ const SettingsView = () => {
   const handleLoad = async () => {
     try {
       const account = await authClient.getUser();
-      // get all data
-
-      // set all data
       setValue('name', account?.name ?? '');
       setValue('email', account?.email ?? '');
-      const currentRoles = account?.roles?.map((el) => el.id) ?? [];
 
-      const selected: SelectedRoles = {};
-
-      for (let i = 0; i < currentRoles.length; i++) {
-        selected[i] = currentRoles[i];
-      }
-
-      setSelectedRoles(selected);
+      setActiveRoles(account.roles ?? []);
     } catch (e) {
       setLoadError('There was an error fetching account');
-    }
-
-    try {
-      const allRoles = await roleClient.listRoles();
-
-      setAllRoles(allRoles);
-    } catch (e: any) {
-      notify(e.message, 'error');
     }
 
     setLoading(false);
@@ -139,13 +124,14 @@ const SettingsView = () => {
       ) : (
         <>
           <SettingsForm control={control} errors={errors} getValues={getValues} />
-          <SettingsRolesTable selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} allRoles={allRoles} />
-          <SettingsFormButtons handleSubmit={handleSubmit} />
+          <SettingsRolesTable selectedRoles={activeRoles} />
+          <SettingsFormButtons handleSubmit={handleSubmit} openDeleteDialog={() => setDeleteDialogOpen(true)} />
           {errors.root && (
             <Alert severity="error" color="error">
               {errors.root.message}
             </Alert>
           )}
+          <SettingsDialog setDeleteOpen={setDeleteDialogOpen} deleteOpen={deleteDialogOpen} submitDelete={handleDeleteSelf} />
         </>
       )}
     </Stack>

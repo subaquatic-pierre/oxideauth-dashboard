@@ -36,11 +36,11 @@ function AuthContextProvider({ children }: React.PropsWithChildren): React.JSX.E
       const account = await authClient.getUser();
       setUser(account);
     } catch (e) {
-      setError(`${e}`);
+      // setError(`${e}`);
       window.localStorage.removeItem('token');
       await sleep(1);
       window.location.reload();
-      console.log(e);
+      // console.log(e);
     }
 
     setLoading(false);

@@ -9,7 +9,8 @@ import {
   GET_SERVICE_ACCOUNT_SECRET_KEY,
   LIST_ACCOUNTS,
   UPDATE_ACCOUNT,
-  UPDATE_SELF
+  UPDATE_SELF,
+  DELETE_SELF
 } from './endpoints';
 
 interface UpdateSelfParams {
@@ -64,7 +65,17 @@ class AccountClient extends BaseClient {
       method: 'POST',
       data: updateParams
     });
+
     return data.account;
+  }
+
+  async deleteSelf(): Promise<{ deleted: boolean }> {
+    const data = await super.req<{ deleted: boolean }>({
+      endpoint: DELETE_SELF,
+      method: 'DELETE'
+    });
+
+    return data;
   }
 
   async deleteAccount(idOrName: string): Promise<boolean> {

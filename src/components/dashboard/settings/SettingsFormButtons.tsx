@@ -6,23 +6,25 @@ import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import { paths } from 'paths';
+import { accountClient } from 'lib/api/account';
 
 interface Props {
   handleSubmit: () => void;
+  openDeleteDialog: () => void;
 }
-const SettingsFormButtons: React.FC<Props> = ({ handleSubmit }) => {
+const SettingsFormButtons: React.FC<Props> = ({ handleSubmit, openDeleteDialog }) => {
   const { user: accountId } = useParams();
 
   const isExisting = accountId !== 'new';
   return (
     <Card>
       <CardActions sx={{ justifyContent: 'flex-end' }}>
+        <Button onClick={() => openDeleteDialog()} color="error" variant="contained">
+          Delete Account
+        </Button>
         <Button onClick={() => handleSubmit()} variant="contained">
           {isExisting ? 'Save details' : 'Create new'}
         </Button>
-        {/* <Button LinkComponent={Link} href={paths.dashboard.users} color="warning" variant="contained">
-          Cancel
-        </Button> */}
       </CardActions>
     </Card>
   );

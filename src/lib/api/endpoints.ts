@@ -6,6 +6,7 @@ export const UPDATE_PASSWORD = '/auth/update-password';
 export const RESEND_CONFIRM_LINK = '/auth/resend-confirm';
 
 export const DESCRIBE_SELF = '/accounts/describe-self';
+export const DELETE_SELF = '/accounts/delete-self';
 export const LIST_ACCOUNTS = '/accounts/list-accounts';
 export const DELETE_ACCOUNT = '/accounts/delete-account';
 export const CREATE_SERVICE_ACCOUNT = '/accounts/create-service-account';

@@ -71,10 +71,6 @@ const ServicesTable: React.FC<TableProps> = ({ data, columns, globalFilter, setG
     });
   });
 
-  useEffect(() => {
-    console.log(rowSelection);
-  }, [rowSelection]);
-
   return (
     <Stack spacing={3}>
       <Card>

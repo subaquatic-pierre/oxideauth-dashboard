@@ -71,10 +71,6 @@ const ServiceAccountsTable: React.FC<TableProps> = ({ data, columns, globalFilte
     });
   });
 
-  useEffect(() => {
-    console.log(rowSelection);
-  }, [rowSelection]);
-
   return (
     <Stack spacing={3}>
       <Card>

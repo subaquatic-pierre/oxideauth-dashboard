@@ -73,10 +73,6 @@ const ServicesTable: React.FC<TableProps> = ({ data, columns, handleDeleteClick 
     });
   });
 
-  useEffect(() => {
-    console.log(rowSelection);
-  }, [rowSelection]);
-
   return (
     <Stack spacing={3}>
       <Card>

@@ -71,10 +71,6 @@ const UsersTable: React.FC<TableProps> = ({ data, columns, globalFilter, setGlob
     });
   });
 
-  useEffect(() => {
-    console.log(rowSelection);
-  }, [rowSelection]);
-
   return (
     <Stack spacing={3}>
       <Card>

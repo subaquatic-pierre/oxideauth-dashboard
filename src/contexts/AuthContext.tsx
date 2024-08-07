@@ -55,10 +55,6 @@ function AuthContextProvider({ children }: React.PropsWithChildren): React.JSX.E
     loadUser();
   }, []);
 
-  useEffect(() => {
-    console.log({ user });
-  }, [user]);
-
   return (
     <AuthContext.Provider
       value={{

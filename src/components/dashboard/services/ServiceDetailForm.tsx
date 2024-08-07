@@ -50,15 +50,11 @@ export function ServiceDetailForm({ initialData }: Props): React.JSX.Element {
       if (isExistingService) {
         const res = await serviceClient.updateService({ service: initialData.id, ...formValues });
 
-        console.log(res);
-
         notify('Successfully updated service', 'success');
 
         router.push(paths.dashboard.services);
       } else {
         const res = await serviceClient.createService(formValues as CreateServiceParams);
-
-        console.log(res);
 
         notify('Successfully create new service', 'success');
 

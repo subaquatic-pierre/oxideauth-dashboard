@@ -91,11 +91,11 @@ const RolesListView = () => {
                   <Pencil />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Copy Role">
+              {/* <Tooltip title="Copy Role">
                 <IconButton color="error" onClick={() => handleCopyClick(row.original.name)}>
                   <Copy color={theme.palette.secondary.main} />
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
               <Tooltip title="Delete Role">
                 <IconButton color="error" onClick={() => handleDeleteClick(row.original.name)}>
                   <Trash color={theme.palette.error.main} />

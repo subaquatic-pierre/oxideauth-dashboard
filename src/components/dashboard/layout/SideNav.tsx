@@ -23,9 +23,6 @@ export function SideNav(): React.JSX.Element {
   const { user } = useAuth();
   const pathname = usePathname();
 
-  const items = getNavItems(user);
-  console.log({ items });
-
   return (
     <Box
       sx={{

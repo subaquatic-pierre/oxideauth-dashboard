@@ -6,6 +6,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { paths } from 'paths';
 import { Box } from '@mui/material';
+import Link from 'next/link';
 
 export function IndexPage(): React.JSX.Element {
   return (
@@ -35,6 +36,11 @@ export function IndexPage(): React.JSX.Element {
         <Button href={paths.auth.signIn} color="primary" variant="contained">
           Sign In
         </Button>
+      </Stack>
+      <Stack>
+        <Link style={{}} href="/company-terms">
+          Terms & Conditions
+        </Link>
       </Stack>
     </Stack>
   );

@@ -7,3 +7,22 @@ build/
 public/
 .env*
 references
+# Next.js
+.next/
+out/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Testing
+coverage/
+playwright-report/
+test-results/
+
+# Misc
+.DS_Store
+*.log
+*.tmp
+.vscode/
+.idea/

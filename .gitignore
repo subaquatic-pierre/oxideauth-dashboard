@@ -1,0 +1,6 @@
+.opencode/
+.specify/
+specs/
+node_modules/
+dist/
+.env*

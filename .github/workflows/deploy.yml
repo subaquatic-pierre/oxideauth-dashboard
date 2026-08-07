@@ -1,0 +1,59 @@
+name: Deploy Dashboard to GitHub Pages
+
+on:
+  push:
+    tags: ["*"]
+
+concurrency:
+  group: deploy-dashboard
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  environment: github-pages
+  url: ${{ steps.deployment.outputs.page_url }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci || echo "Warning: no package.json yet"
+
+      - name: Build
+        run: |
+          if [ -f package.json ] && node -e "process.exit(require('./package.json').scripts?.build ? 0 : 1)" 2>/dev/null; then
+            npm run build || echo "::warning::Dashboard has no build step yet — skipping build"
+          else
+            echo "::warning::Dashboard has no build step yet — skipping build"
+          fi
+
+      - name: Determine artifact path
+        id: artifact-path
+        run: |
+          if [ -d "./dist" ]; then
+            echo "path=./dist" >> $GITHUB_OUTPUT
+          elif [ -d "./build" ]; then
+            echo "path=./build" >> $GITHUB_OUTPUT
+          else
+            echo "path=./public" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ steps.artifact-path.outputs.path }}
+
+      - uses: actions/deploy-pages@v4
+        id: deployment

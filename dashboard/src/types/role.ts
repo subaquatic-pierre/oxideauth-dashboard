@@ -40,11 +40,9 @@ export interface RoleDeleteRes {
 
 export interface RoleDescribeReq {
   id: string
-  workspace_id: string
 }
 
 export interface RoleCreateReq {
-  workspace_id: string
   name: string
   description?: string
   permission_ids: string[]
@@ -54,7 +52,6 @@ export interface RoleCreateReq {
 
 export interface RoleUpdateReq {
   id: string
-  workspace_id: string
   name?: string
   description?: string
   permission_ids?: string[]
@@ -63,14 +60,12 @@ export interface RoleUpdateReq {
 }
 
 export interface RoleListReq {
-  workspace_id: string
   filter?: import("./pagination").RequestFilterParams<RoleFilter>
   options?: import("./pagination").RequestListOptions
 }
 
 export interface RoleDeleteReq {
   id: string
-  workspace_id: string
 }
 
 export interface RoleFilter {

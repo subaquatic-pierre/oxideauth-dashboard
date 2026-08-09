@@ -44,8 +44,8 @@ export default function RoleDetailPage() {
   const params = useParams<{ id: string }>()
   const router = useRouter()
   const workspaceId = useActiveWorkspaceId() ?? undefined
-  const { data: role, isLoading, error } = useRole(workspaceId, params.id)
-  const { data: allPermissions } = usePermissions(workspaceId)
+  const { data: role, isLoading, error } = useRole(params.id)
+  const { data: allPermissions } = usePermissions()
   const { remove, isDeleting, error: deleteError } = useDeleteRole()
 
   // PERMISSION-GATED: Edit requires `role:update`, Delete requires `role:delete`.
@@ -56,7 +56,7 @@ export default function RoleDetailPage() {
     if (!workspaceId || !role) return
     if (!window.confirm(`Delete role "${role.name}"?`)) return
     try {
-      await remove(workspaceId, role.id)
+      await remove(role.id)
       router.push("/roles")
     } catch {
       // error is surfaced via deleteError

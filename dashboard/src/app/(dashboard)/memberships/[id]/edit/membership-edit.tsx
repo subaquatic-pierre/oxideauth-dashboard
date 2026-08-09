@@ -15,10 +15,7 @@ import { ArrowLeftIcon } from "lucide-react"
 export default function EditMembershipPage() {
   const params = useParams<{ id: string }>()
   const workspaceId = useActiveWorkspaceId()
-  const { data: membership, isLoading, error } = useMembership(
-    workspaceId,
-    params.id,
-  )
+  const { data: membership, isLoading, error } = useMembership(params.id)
 
   return (
     <div className="space-y-6">
@@ -48,7 +45,7 @@ export default function EditMembershipPage() {
           </CardContent>
         </Card>
       ) : membership && workspaceId ? (
-        <MembershipForm workspaceId={workspaceId} membership={membership} />
+        <MembershipForm membership={membership} />
       ) : null}
     </div>
   )

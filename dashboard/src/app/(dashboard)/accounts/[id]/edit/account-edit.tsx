@@ -12,7 +12,7 @@ export default function EditAccountPage() {
   const router = useRouter();
   const id = params.id as string;
   const workspaceId = useActiveWorkspaceId();
-  const { data: account, isLoading, error } = useAccount(workspaceId, id);
+  const { data: account, isLoading, error } = useAccount(id);
   const updateAccount = useUpdateAccount(id);
 
   async function handleSubmit(data: AccountFormData) {

@@ -10,20 +10,21 @@ import type { ListFilters } from "@/types/common"
 /**
  * Project list + mutations for the active workspace. The workspace id is read
  * from localStorage ("active_workspace_id"), which the header workspace
- * selector persists.
+ * selector persists. It is used only to partition the SWR cache key — the
+ * service reads the active workspace internally.
  */
 export function useProjects(filters?: ListFilters) {
   const workspaceId = getActiveWorkspaceId()
 
   const { data, isLoading, error, mutate } = useSWR(
     workspaceId ? ["projects", workspaceId, filters] : null,
-    () => projectService.list(workspaceId, filters),
+    () => projectService.list(filters),
   )
 
   const createMutation = useSWRMutation(
     "projects-create",
     async (_key: string, { arg }: { arg: ProjectFormData }) => {
-      return projectService.create(workspaceId, arg)
+      return projectService.create(arg)
     },
     { onSuccess: () => mutate() },
   )
@@ -31,7 +32,7 @@ export function useProjects(filters?: ListFilters) {
   const updateMutation = useSWRMutation(
     "projects-update",
     async (_key: string, { arg }: { arg: { id: string; data: ProjectFormData } }) => {
-      return projectService.update(workspaceId, arg.id, arg.data)
+      return projectService.update(arg.id, arg.data)
     },
     { onSuccess: () => mutate() },
   )
@@ -39,7 +40,7 @@ export function useProjects(filters?: ListFilters) {
   const deleteMutation = useSWRMutation(
     "projects-delete",
     async (_key: string, { arg }: { arg: string }) => {
-      return projectService.delete(workspaceId, arg)
+      return projectService.delete(arg)
     },
     { onSuccess: () => mutate() },
   )
@@ -68,7 +69,7 @@ export function useProject(idOrCode: string) {
 
   const { data, isLoading, error, mutate } = useSWR(
     workspaceId && idOrCode ? ["project", workspaceId, idOrCode] : null,
-    () => projectService.describe(workspaceId, idOrCode),
+    () => projectService.describe(idOrCode),
   )
 
   return { project: data, isLoading, error, mutate }

@@ -39,29 +39,28 @@ export function useDashboardCounts() {
   const { data, isLoading, error } = useSWR<DashboardCounts>(
     key,
     async () => {
-      const wid = workspaceId!
       const [workspaces, accounts, projects, roles, permissions, memberships, credentials] =
         await Promise.all([
           workspaceService
             .list({ limit: 1 })
             .then((r) => r.metadata?.total ?? 0),
           accountService
-            .list(wid, { options: { limit: 1 } })
+            .list({ options: { limit: 1 } })
             .then((r) => r.metadata?.total ?? 0),
           projectService
-            .list(wid, { limit: 1 })
+            .list({ limit: 1 })
             .then((r) => r.metadata?.total ?? 0),
           roleService
-            .list(wid, { limit: 100 })
+            .list({ limit: 100 })
             .then((r) => r.length ?? 0),
           permissionService
-            .list(wid, { limit: 100 })
+            .list({ limit: 100 })
             .then((r) => r.length ?? 0),
           membershipsService
-            .list(wid, {})
+            .list({})
             .then((r) => r.length ?? 0),
           credentialService
-            .list(wid, { limit: 1 })
+            .list({ limit: 1 })
             .then((r) => r.metadata?.total ?? 0),
         ])
 

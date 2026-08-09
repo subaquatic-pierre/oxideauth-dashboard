@@ -2,7 +2,7 @@ import { BaseService } from "./base"
 import type { PermissionResponse, PermissionFormData } from "@/types/permission"
 import type { ListFilters } from "@/types/common"
 import type { ListResponseMeta } from "@/types/pagination"
-import { resolveWorkspaceId } from "@/lib/workspace"
+import { getActiveWorkspaceId } from "@/lib/workspace"
 import { isGuestMode } from "@/lib/guest-mode"
 import { mockOk } from "@/lib/mock-ok"
 import { MOCK_PERMISSIONS, filterByWorkspace } from "@/lib/mock-data"
@@ -20,60 +20,45 @@ function toPermissionList(data: PermissionListResponse | PermissionResponse[]): 
 }
 
 export class PermissionService extends BaseService {
-  async list(
-    workspaceId?: string,
-    filters: ListFilters = {},
-  ): Promise<PermissionResponse[]> {
+  async list(filters: ListFilters = {}): Promise<PermissionResponse[]> {
     if (isGuestMode()) {
       const items = filterByWorkspace(
         MOCK_PERMISSIONS,
-        resolveWorkspaceId(workspaceId),
+        getActiveWorkspaceId(),
       )
       return mockOk(items).data as unknown as PermissionResponse[]
     }
-    const wid = resolveWorkspaceId(workspaceId)
     const data = await this.post<PermissionListResponse | PermissionResponse[]>(
       "/permissions/list",
       {
-        workspace_id: wid,
         ...buildListQuery(filters),
       },
     )
     return toPermissionList(data)
   }
 
-  async describe(
-    workspaceId: string | undefined,
-    idOrCode: string,
-  ): Promise<PermissionResponse> {
+  async describe(idOrCode: string): Promise<PermissionResponse> {
     if (isGuestMode()) {
       const permission = filterByWorkspace(
         MOCK_PERMISSIONS,
-        resolveWorkspaceId(workspaceId),
+        getActiveWorkspaceId(),
       ).find((p) => p.id === idOrCode || p.code === idOrCode)
       return mockOk(permission ?? MOCK_PERMISSIONS[0]).data as unknown as PermissionResponse
     }
-    const wid = resolveWorkspaceId(workspaceId)
     return this.post<PermissionResponse>("/permissions/describe", {
-      workspace_id: wid,
       ...permissionDescribeIdentifier(idOrCode),
     })
   }
 
-  async create(
-    workspaceId: string | undefined,
-    data: PermissionFormData,
-  ): Promise<PermissionResponse> {
+  async create(data: PermissionFormData): Promise<PermissionResponse> {
     if (isGuestMode()) {
       return mockOk({
         id: "perm-mock-new",
-        workspace_id: resolveWorkspaceId(workspaceId),
+        workspace_id: getActiveWorkspaceId(),
         ...data,
       }).data as unknown as PermissionResponse
     }
-    const wid = resolveWorkspaceId(workspaceId)
     return this.post<PermissionResponse>("/permissions/create", {
-      workspace_id: wid,
       tags: [],
       meta: { schema_version: "1" },
       ...data,
@@ -81,31 +66,23 @@ export class PermissionService extends BaseService {
   }
 
   async update(
-    workspaceId: string | undefined,
     idOrCode: string,
     data: PermissionFormData,
   ): Promise<PermissionResponse> {
     if (isGuestMode()) {
       return mockOk({ id: idOrCode, ...data }).data as unknown as PermissionResponse
     }
-    const wid = resolveWorkspaceId(workspaceId)
     return this.post<PermissionResponse>("/permissions/update", {
-      workspace_id: wid,
       id: idOrCode,
       ...data,
     })
   }
 
-  async delete(
-    workspaceId: string | undefined,
-    idOrCode: string,
-  ): Promise<void> {
+  async delete(idOrCode: string): Promise<void> {
     if (isGuestMode()) {
       return Promise.resolve()
     }
-    const wid = resolveWorkspaceId(workspaceId)
     return this.post<void>("/permissions/delete", {
-      workspace_id: wid,
       id: idOrCode,
     })
   }

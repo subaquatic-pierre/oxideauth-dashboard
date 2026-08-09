@@ -29,10 +29,7 @@ export interface AccountListResponse {
 }
 
 export class AccountService extends BaseService {
-  list(
-    workspaceId: string,
-    filters?: AccountListQuery,
-  ): Promise<AccountListResponse> {
+  list(filters?: AccountListQuery): Promise<AccountListResponse> {
     if (isGuestMode()) {
       const limit = filters?.options?.limit ?? 10
       const offset = filters?.options?.offset ?? 0
@@ -51,13 +48,12 @@ export class AccountService extends BaseService {
       )
     }
     return this.post<AccountListResponse>("/accounts/list", {
-      workspace_id: workspaceId,
       ...filters,
     })
   }
 
   // Accepts either an account UUID `id` or an account `email`.
-  describe(workspaceId: string, identifier: string): Promise<AccountResponse> {
+  describe(identifier: string): Promise<AccountResponse> {
     if (isGuestMode()) {
       const account = MOCK_ACCOUNTS.find(
         (a) => a.id === identifier || a.email === identifier,
@@ -67,19 +63,17 @@ export class AccountService extends BaseService {
       )
     }
     return this.post<AccountResponse>("/accounts/describe", {
-      workspace_id: workspaceId,
       ...accountIdentifier(identifier),
     })
   }
 
-  create(workspaceId: string, data: AccountFormData): Promise<AccountResponse> {
+  create(data: AccountFormData): Promise<AccountResponse> {
     if (isGuestMode()) {
       return Promise.resolve(
         mockOk({ id: "acc-mock-new", ...data }).data as unknown as AccountResponse,
       )
     }
     return this.post<AccountResponse>("/accounts/create", {
-      workspace_id: workspaceId,
       tags: [],
       meta: { schema_version: "1" },
       ...data,
@@ -88,7 +82,6 @@ export class AccountService extends BaseService {
 
   // Accepts either an account UUID `id` or an account `email`.
   update(
-    workspaceId: string,
     identifier: string,
     data: Partial<AccountFormData>,
   ): Promise<AccountResponse> {
@@ -98,19 +91,17 @@ export class AccountService extends BaseService {
       )
     }
     return this.post<AccountResponse>("/accounts/update", {
-      workspace_id: workspaceId,
       ...accountIdentifier(identifier),
       ...data,
     })
   }
 
   // Accepts either an account UUID `id` or an account `email`.
-  delete(workspaceId: string, identifier: string): Promise<void> {
+  delete(identifier: string): Promise<void> {
     if (isGuestMode()) {
       return Promise.resolve()
     }
     return this.post<void>("/accounts/delete", {
-      workspace_id: workspaceId,
       ...accountIdentifier(identifier),
     })
   }

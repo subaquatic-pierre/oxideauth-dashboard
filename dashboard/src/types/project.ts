@@ -28,11 +28,9 @@ export interface ProjectDeleteRes {
 export interface ProjectDescribeReq {
   id?: string
   code?: string
-  workspace_id: string
 }
 
 export interface ProjectCreateReq {
-  workspace_id: string
   name: string
   code?: string
   description?: string
@@ -44,7 +42,6 @@ export interface ProjectCreateReq {
 export interface ProjectUpdateReq {
   id?: string
   code?: string
-  workspace_id: string
   name?: string
   new_code?: string
   description?: string
@@ -54,7 +51,6 @@ export interface ProjectUpdateReq {
 }
 
 export interface ProjectListReq {
-  workspace_id: string
   filter?: import("./pagination").RequestFilterParams<ProjectFilter>
   options?: import("./pagination").RequestListOptions
 }
@@ -62,7 +58,6 @@ export interface ProjectListReq {
 export interface ProjectDeleteReq {
   id?: string
   code?: string
-  workspace_id: string
 }
 
 export interface ProjectFilter {

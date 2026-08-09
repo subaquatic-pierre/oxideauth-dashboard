@@ -26,7 +26,7 @@ export default function NewRolePage() {
   async function handleSubmit(data: RoleFormData) {
     if (!workspaceId) return
     try {
-      const created = await create(workspaceId, data)
+      const created = await create(data)
       router.push(`/roles/${created.id}`)
     } catch {
       // error is surfaced via the mutation error below
@@ -76,7 +76,6 @@ export default function NewRolePage() {
         </CardHeader>
         <CardContent>
           <RoleForm
-            workspaceId={workspaceId}
             isSubmitting={isCreating}
             submitLabel="Create role"
             onSubmit={handleSubmit}

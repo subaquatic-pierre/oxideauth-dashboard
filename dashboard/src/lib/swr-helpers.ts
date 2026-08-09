@@ -1,4 +1,5 @@
 import type { useSWRConfig } from "swr";
+import { getActiveWorkspaceId } from "@/lib/workspace";
 
 /**
  * SWR cache invalidation helpers for revalidating resource lists after
@@ -20,11 +21,10 @@ export function revalidateRoles(
 }
 
 // Moved from hooks/use-memberships.ts
-export function isMembershipsListKey(
-  key: unknown,
-  workspaceId: string
-): boolean {
+export function isMembershipsListKey(key: unknown): boolean {
   return (
-    Array.isArray(key) && key[0] === "memberships" && key[1] === workspaceId
+    Array.isArray(key) &&
+    key[0] === "memberships" &&
+    key[1] === getActiveWorkspaceId()
   );
 }

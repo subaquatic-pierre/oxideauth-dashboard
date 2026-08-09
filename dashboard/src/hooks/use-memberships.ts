@@ -3,6 +3,7 @@
 import useSWR, { useSWRConfig } from "swr"
 import useSWRMutation from "swr/mutation"
 import { membershipsService } from "@/services"
+import { useActiveWorkspaceId } from "@/hooks/use-active-workspace"
 import { isMembershipsListKey } from "@/lib/swr-helpers"
 import type {
   Membership,
@@ -11,46 +12,38 @@ import type {
 } from "@/types/membership"
 
 // List memberships for a workspace (optionally filtered).
-export function useMemberships(
-  workspaceId: string | null,
-  filters?: MembershipFilters,
-) {
+export function useMemberships(filters?: MembershipFilters) {
+  const workspaceId = useActiveWorkspaceId()
   const key = workspaceId
     ? (["memberships", workspaceId, filters ?? null] as const)
     : null
-  return useSWR<Membership[]>(
-    key,
-    () => membershipsService.list(workspaceId!, filters),
-  )
+  return useSWR<Membership[]>(key, () => membershipsService.list(filters))
 }
 
 // Describe a single membership (includes populated account + roles).
-export function useMembership(workspaceId: string | null, id: string | null) {
+export function useMembership(id: string | null) {
+  const workspaceId = useActiveWorkspaceId()
   const key =
     workspaceId && id ? (["membership", workspaceId, id] as const) : null
-  return useSWR<Membership>(
-    key,
-    () => membershipsService.describe(workspaceId!, id!),
-  )
+  return useSWR<Membership>(key, () => membershipsService.describe(id!))
 }
 
 export function useCreateMembership() {
   const { mutate } = useSWRConfig()
+  const workspaceId = useActiveWorkspaceId()
   return useSWRMutation(
     "membership-create",
     async (
       _key: string,
-      { arg }: { arg: { workspaceId: string; data: MembershipFormData } },
-    ): Promise<{ workspaceId: string; membership: Membership }> => {
-      const membership = await membershipsService.create(
-        arg.workspaceId,
-        arg.data,
-      )
-      return { workspaceId: arg.workspaceId, membership }
+      { arg }: { arg: MembershipFormData },
+    ): Promise<Membership> => {
+      return membershipsService.create(arg)
     },
     {
-      onSuccess: (result) => {
-        mutate((key) => isMembershipsListKey(key, result.workspaceId))
+      onSuccess: () => {
+        if (workspaceId) {
+          mutate((key) => isMembershipsListKey(key))
+        }
       },
     },
   )
@@ -58,29 +51,23 @@ export function useCreateMembership() {
 
 export function useUpdateMembership(id: string) {
   const { mutate } = useSWRConfig()
+  const workspaceId = useActiveWorkspaceId()
   return useSWRMutation(
     ["membership-update", id],
     async (
       _key: string[],
-      {
-        arg,
-      }: {
-        arg: { workspaceId: string; data: Partial<MembershipFormData> }
-      },
-    ): Promise<{ workspaceId: string; id: string; membership: Membership }> => {
-      const membership = await membershipsService.update(
-        arg.workspaceId,
-        id,
-        arg.data,
-      )
-      return { workspaceId: arg.workspaceId, id, membership }
+      { arg }: { arg: Partial<MembershipFormData> },
+    ): Promise<Membership> => {
+      return membershipsService.update(id, arg)
     },
     {
-      onSuccess: (result) => {
-        mutate(["membership", result.workspaceId, result.id], result.membership, {
-          revalidate: false,
-        })
-        mutate((key) => isMembershipsListKey(key, result.workspaceId))
+      onSuccess: (membership) => {
+        if (workspaceId) {
+          mutate(["membership", workspaceId, id], membership, {
+            revalidate: false,
+          })
+          mutate((key) => isMembershipsListKey(key))
+        }
       },
     },
   )
@@ -88,21 +75,24 @@ export function useUpdateMembership(id: string) {
 
 export function useDeleteMembership() {
   const { mutate } = useSWRConfig()
+  const workspaceId = useActiveWorkspaceId()
   return useSWRMutation(
     "membership-delete",
     async (
       _key: string,
-      { arg }: { arg: { workspaceId: string; id: string } },
-    ): Promise<{ workspaceId: string; id: string }> => {
-      await membershipsService.delete(arg.workspaceId, arg.id)
-      return { workspaceId: arg.workspaceId, id: arg.id }
+      { arg }: { arg: string },
+    ): Promise<{ id: string }> => {
+      await membershipsService.delete(arg)
+      return { id: arg }
     },
     {
       onSuccess: (result) => {
-        mutate(["membership", result.workspaceId, result.id], null, {
-          revalidate: false,
-        })
-        mutate((key) => isMembershipsListKey(key, result.workspaceId))
+        if (workspaceId) {
+          mutate(["membership", workspaceId, result.id], null, {
+            revalidate: false,
+          })
+          mutate((key) => isMembershipsListKey(key))
+        }
       },
     },
   )

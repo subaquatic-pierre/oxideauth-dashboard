@@ -33,7 +33,7 @@ export default function PermissionDetailPage() {
   const params = useParams<{ id: string }>()
   const router = useRouter()
   const workspaceId = useActiveWorkspaceId() ?? undefined
-  const { data: permission, isLoading, error } = usePermission(workspaceId, params.id)
+  const { data: permission, isLoading, error } = usePermission(params.id)
   const { remove, isDeleting, error: deleteError } = useDeletePermission()
 
   // PERMISSION-GATED: Edit requires `permission:update`, Delete requires `permission:delete`.
@@ -44,7 +44,7 @@ export default function PermissionDetailPage() {
     if (!workspaceId || !permission) return
     if (!window.confirm(`Delete permission "${permission.name}"?`)) return
     try {
-      await remove(workspaceId, permission.id)
+      await remove(permission.id)
       router.push("/permissions")
     } catch {
       // error is surfaced via deleteError

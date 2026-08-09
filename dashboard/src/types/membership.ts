@@ -31,12 +31,10 @@ export interface MembershipDeleteRes {
 
 export interface MembershipDescribeReq {
   id: string
-  workspace_id: string
 }
 
 export interface MembershipCreateReq {
   account_id: string
-  workspace_id: string
   scope: MembershipScope
   status: MembershipStatus
   project_id?: string
@@ -47,7 +45,6 @@ export interface MembershipCreateReq {
 
 export interface MembershipUpdateReq {
   id: string
-  workspace_id: string
   status?: MembershipStatus
   scope?: MembershipScope
   project_id?: string
@@ -56,14 +53,12 @@ export interface MembershipUpdateReq {
 }
 
 export interface MembershipListReq {
-  workspace_id: string
   filter?: import("./pagination").RequestFilterParams<MembershipFilter>
   options?: import("./pagination").RequestListOptions
 }
 
 export interface MembershipDeleteReq {
   id: string
-  workspace_id: string
 }
 
 export interface MembershipFilter {

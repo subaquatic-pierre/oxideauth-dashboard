@@ -48,7 +48,7 @@ export default function AccountDetailPage() {
   const router = useRouter();
   const id = params.id as string;
   const workspaceId = useActiveWorkspaceId();
-  const { data: account, isLoading, error } = useAccount(workspaceId, id);
+  const { data: account, isLoading, error } = useAccount(id);
   const deleteAccount = useDeleteAccount();
 
   // PERMISSION-GATED: Edit requires `account:update`, Delete requires `account:delete`.

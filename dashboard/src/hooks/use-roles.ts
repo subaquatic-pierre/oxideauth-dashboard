@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback } from "react"
+import { useActiveWorkspaceId } from "@/hooks/use-active-workspace"
 import useSWR, { useSWRConfig } from "swr"
 import useSWRMutation from "swr/mutation"
 import { roleService } from "@/services"
@@ -9,11 +10,12 @@ import { revalidateRoles } from "@/lib/swr-helpers"
 import type { RoleResponse, RoleFormData } from "@/types/role"
 import type { ListFilters } from "@/types/common"
 
-export function useRoles(workspaceId?: string, filters?: ListFilters) {
+export function useRoles(filters?: ListFilters) {
+  const workspaceId = useActiveWorkspaceId()
   const key = workspaceId ? ["roles", "list", workspaceId, filters ?? {}] : null
   return useSWR<RoleResponse[]>(
     key,
-    () => roleService.list(workspaceId, filters),
+    () => roleService.list(filters),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
@@ -21,11 +23,12 @@ export function useRoles(workspaceId?: string, filters?: ListFilters) {
   )
 }
 
-export function useRole(workspaceId?: string, id?: string) {
+export function useRole(id?: string) {
+  const workspaceId = useActiveWorkspaceId()
   const key = workspaceId && id ? ["roles", "detail", workspaceId, id] : null
   return useSWR<RoleResponse>(
     key,
-    () => roleService.describe(workspaceId, id as string),
+    () => roleService.describe(id as string),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
@@ -37,8 +40,7 @@ export function useCreateRole() {
   const { mutate } = useSWRConfig()
   const mutation = useSWRMutation(
     "role-create",
-    async (_key, { arg }: { arg: { workspaceId: string; data: RoleFormData } }) =>
-      roleService.create(arg.workspaceId, arg.data),
+    async (_key, { arg }: { arg: RoleFormData }) => roleService.create(arg),
     {
       onSuccess: () => {
         revalidateRoles(mutate)
@@ -47,8 +49,8 @@ export function useCreateRole() {
   )
 
   const create = useCallback(
-    async (workspaceId: string, data: RoleFormData) => {
-      return mutation.trigger({ workspaceId, data })
+    async (data: RoleFormData) => {
+      return mutation.trigger(data)
     },
     [mutation],
   )
@@ -64,8 +66,8 @@ export function useUpdateRole(id?: string) {
   const { mutate } = useSWRConfig()
   const mutation = useSWRMutation(
     id ? ["role-update", id] : null,
-    async (_key, { arg }: { arg: { workspaceId: string; data: RoleFormData } }) =>
-      roleService.update(arg.workspaceId, id as string, arg.data),
+    async (_key, { arg }: { arg: RoleFormData }) =>
+      roleService.update(id as string, arg),
     {
       onSuccess: () => {
         revalidateRoles(mutate)
@@ -74,9 +76,9 @@ export function useUpdateRole(id?: string) {
   )
 
   const update = useCallback(
-    async (workspaceId: string, data: RoleFormData) => {
+    async (data: RoleFormData) => {
       if (!id) throw new Error("Missing role id")
-      return mutation.trigger({ workspaceId, data })
+      return mutation.trigger(data)
     },
     [id, mutation],
   )
@@ -92,8 +94,7 @@ export function useDeleteRole() {
   const { mutate } = useSWRConfig()
   const mutation = useSWRMutation(
     "role-delete",
-    async (_key, { arg }: { arg: { workspaceId: string; id: string } }) =>
-      roleService.delete(arg.workspaceId, arg.id),
+    async (_key, { arg }: { arg: string }) => roleService.delete(arg),
     {
       onSuccess: () => {
         revalidateRoles(mutate)
@@ -102,8 +103,8 @@ export function useDeleteRole() {
   )
 
   const remove = useCallback(
-    async (workspaceId: string, id: string) => {
-      return mutation.trigger({ workspaceId, id })
+    async (id: string) => {
+      return mutation.trigger(id)
     },
     [mutation],
   )

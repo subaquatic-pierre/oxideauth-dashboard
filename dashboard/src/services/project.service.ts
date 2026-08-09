@@ -12,19 +12,15 @@ import { MOCK_PROJECTS, filterByWorkspace } from "@/lib/mock-data"
 /**
  * Workspace-scoped project management. `describe`/`update`/`delete` accept
  * either a project UUID `id` or the project's unique `code` (unique per
- * workspace). When the active workspace is not passed explicitly it is read
- * from localStorage ("active_workspace_id").
+ * workspace). The active workspace is read from localStorage
+ * ("active_workspace_id").
  */
 export class ProjectService extends BaseService {
   async list(
-    workspaceId: string,
     filters?: ListFilters,
   ): Promise<PaginatedResponse<Project, "projects">> {
     if (isGuestMode()) {
-      const items = filterByWorkspace(
-        MOCK_PROJECTS,
-        workspaceId || getActiveWorkspaceId(),
-      )
+      const items = filterByWorkspace(MOCK_PROJECTS, getActiveWorkspaceId())
       const limit = filters?.limit ?? 10
       const offset = filters?.offset ?? 0
       const page = items.slice(offset, offset + limit)
@@ -40,35 +36,32 @@ export class ProjectService extends BaseService {
       }).data as unknown as PaginatedResponse<Project, "projects">
     }
     return this.post("/projects/list", {
-      workspace_id: workspaceId || getActiveWorkspaceId(),
       ...buildListQuery(filters),
     })
   }
 
-  async describe(workspaceId: string, idOrCode: string): Promise<Project> {
+  async describe(idOrCode: string): Promise<Project> {
     if (isGuestMode()) {
       const project = filterByWorkspace(
         MOCK_PROJECTS,
-        workspaceId || getActiveWorkspaceId(),
+        getActiveWorkspaceId(),
       ).find((p) => p.id === idOrCode || p.code === idOrCode)
       return mockOk(project ?? MOCK_PROJECTS[0]).data as unknown as Project
     }
     return this.post("/projects/describe", {
-      workspace_id: workspaceId || getActiveWorkspaceId(),
       ...projectIdentifier(idOrCode),
     })
   }
 
-  async create(workspaceId: string, data: ProjectFormData): Promise<Project> {
+  async create(data: ProjectFormData): Promise<Project> {
     if (isGuestMode()) {
       return mockOk({
         id: "proj-mock-new",
-        workspace_id: workspaceId || getActiveWorkspaceId(),
+        workspace_id: getActiveWorkspaceId(),
         ...data,
       }).data as unknown as Project
     }
     return this.post("/projects/create", {
-      workspace_id: workspaceId || getActiveWorkspaceId(),
       config: { schema_version: "1" },
       tags: [],
       meta: { schema_version: "1" },
@@ -77,7 +70,6 @@ export class ProjectService extends BaseService {
   }
 
   async update(
-    workspaceId: string,
     idOrCode: string,
     data: ProjectFormData,
   ): Promise<Project> {
@@ -100,18 +92,16 @@ export class ProjectService extends BaseService {
     }
 
     return this.post("/projects/update", {
-      workspace_id: workspaceId || getActiveWorkspaceId(),
       ...projectIdentifier(idOrCode),
       ...payload,
     })
   }
 
-  async delete(workspaceId: string, idOrCode: string): Promise<void> {
+  async delete(idOrCode: string): Promise<void> {
     if (isGuestMode()) {
       return Promise.resolve()
     }
     return this.post("/projects/delete", {
-      workspace_id: workspaceId || getActiveWorkspaceId(),
       ...projectIdentifier(idOrCode),
     })
   }

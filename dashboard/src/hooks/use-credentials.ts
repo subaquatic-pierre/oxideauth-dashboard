@@ -3,7 +3,7 @@
 import useSWR, { useSWRConfig } from "swr"
 import useSWRMutation from "swr/mutation"
 import { credentialService } from "@/services"
-import { getActiveWorkspaceId } from "@/lib/workspace"
+import { useActiveWorkspaceId } from "@/hooks/use-active-workspace"
 import type { Credential, CredentialFormData } from "@/types/credential"
 import type { ListFilters } from "@/types/common"
 
@@ -15,11 +15,11 @@ import type { ListFilters } from "@/types/common"
  * when the account id is already known via the URL).
  */
 export function useCredentials(filters?: ListFilters | null) {
-  const workspaceId = getActiveWorkspaceId()
+  const workspaceId = useActiveWorkspaceId()
 
   const { data, isLoading, error, mutate } = useSWR(
     workspaceId && filters != null ? ["credentials", workspaceId, filters] : null,
-    () => credentialService.list(workspaceId, filters ?? undefined),
+    () => credentialService.list(filters ?? undefined),
   )
 
   return {
@@ -33,13 +33,13 @@ export function useCredentials(filters?: ListFilters | null) {
 
 /** Fetch a single credential. `accountId` is required by the API. */
 export function useCredential(accountId: string, id: string) {
-  const workspaceId = getActiveWorkspaceId()
+  const workspaceId = useActiveWorkspaceId()
 
   const { data, isLoading, error, mutate } = useSWR(
     workspaceId && accountId && id
       ? ["credential", workspaceId, accountId, id]
       : null,
-    () => credentialService.describe(workspaceId, accountId, id),
+    () => credentialService.describe(accountId, id),
   )
 
   return { credential: data, isLoading, error, mutate }
@@ -47,13 +47,12 @@ export function useCredential(accountId: string, id: string) {
 
 /** Update (e.g. revoke) a credential — no create operation is available. */
 export function useUpdateCredential() {
-  const workspaceId = getActiveWorkspaceId()
   const { mutate } = useSWRConfig()
 
   const mutation = useSWRMutation(
     "credentials-update",
     async (_key: string, { arg }: { arg: { accountId: string; id: string; data: CredentialFormData } }) => {
-      return credentialService.update(workspaceId, arg.accountId, arg.id, arg.data)
+      return credentialService.update(arg.accountId, arg.id, arg.data)
     },
     {
       onSuccess: () => {
@@ -75,13 +74,12 @@ export function useUpdateCredential() {
 
 /** Delete a credential permanently. */
 export function useDeleteCredential() {
-  const workspaceId = getActiveWorkspaceId()
   const { mutate } = useSWRConfig()
 
   const mutation = useSWRMutation(
     "credentials-delete",
     async (_key: string, { arg }: { arg: { accountId: string; id: string } }) => {
-      return credentialService.delete(workspaceId, arg.accountId, arg.id)
+      return credentialService.delete(arg.accountId, arg.id)
     },
     {
       onSuccess: () => {

@@ -31,7 +31,6 @@ import type {
 } from "@/types/membership"
 
 interface MembershipFormProps {
-  workspaceId: string
   membership?: Membership
 }
 
@@ -46,16 +45,16 @@ const statusOptions: { value: MembershipStatus; label: string }[] = [
   { value: "suspended", label: "Suspended" },
 ]
 
-export function MembershipForm({ workspaceId, membership }: MembershipFormProps) {
+export function MembershipForm({ membership }: MembershipFormProps) {
   const router = useRouter()
   const isEdit = Boolean(membership)
   const createMembership = useCreateMembership()
   const updateMembership = useUpdateMembership(membership?.id ?? "")
 
   const { data: accountsData, isLoading: accountsLoading } =
-    useAccounts(workspaceId)
+    useAccounts()
   const { projects, isLoading: projectsLoading } = useProjects()
-  const { data: rolesData, isLoading: rolesLoading } = useRoles(workspaceId)
+  const { data: rolesData, isLoading: rolesLoading } = useRoles()
 
   const [accountId, setAccountId] = React.useState(membership?.account_id ?? "")
   const [scope, setScope] = React.useState<MembershipScope>(
@@ -121,9 +120,9 @@ export function MembershipForm({ workspaceId, membership }: MembershipFormProps)
         tags: parseTags(tagsText),
       }
       const result = membership
-        ? await updateMembership.trigger({ workspaceId, data })
-        : await createMembership.trigger({ workspaceId, data })
-      router.push(`/memberships/${result.membership.id}`)
+        ? await updateMembership.trigger(data)
+        : await createMembership.trigger(data)
+      router.push(`/memberships/${result.id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save membership.")
     }

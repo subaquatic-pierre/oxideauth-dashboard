@@ -39,12 +39,10 @@ export interface PermissionDeleteRes {
 
 export interface PermissionDescribeReq {
   id?: string
-  workspace_id: string
   code?: string
 }
 
 export interface PermissionCreateReq {
-  workspace_id: string
   name: string
   code?: string
   description?: string
@@ -54,7 +52,6 @@ export interface PermissionCreateReq {
 
 export interface PermissionUpdateReq {
   id: string
-  workspace_id: string
   name?: string
   code?: string
   description?: string
@@ -63,14 +60,12 @@ export interface PermissionUpdateReq {
 }
 
 export interface PermissionListReq {
-  workspace_id: string
   filter?: import("./pagination").RequestFilterParams<PermissionFilter>
   options?: import("./pagination").RequestListOptions
 }
 
 export interface PermissionDeleteReq {
   id: string
-  workspace_id: string
 }
 
 export interface PermissionFilter {

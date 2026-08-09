@@ -34,7 +34,6 @@ export interface CredentialDeleteRes {
 export interface CredentialDescribeReq {
   id: string
   account_id: string
-  workspace_id: string
   provider_id?: string
   email?: string
 }
@@ -44,7 +43,6 @@ export interface CredentialUpdateReq {
   provider_id?: string
   email?: string
   account_id: string
-  workspace_id: string
   kind?: CredentialKind
   provider?: CredentialProvider
   status?: CredentialStatus
@@ -57,7 +55,6 @@ export interface CredentialUpdateReq {
 }
 
 export interface CredentialListReq {
-  workspace_id: string
   filter?: import("./pagination").RequestFilterParams<CredentialFilter>
   options?: import("./pagination").RequestListOptions
 }
@@ -65,7 +62,6 @@ export interface CredentialListReq {
 export interface CredentialDeleteReq {
   id: string
   account_id: string
-  workspace_id: string
   provider_id?: string
   email?: string
 }

@@ -3,24 +3,23 @@
 import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 import { accountService, type AccountListQuery, type AccountListResponse } from "@/services";
-import { getActiveWorkspaceId } from "@/lib/workspace";
+import { useActiveWorkspaceId } from "@/hooks/use-active-workspace";
 import type { AccountResponse, AccountFormData } from "@/types/account";
 
-export function useAccounts(
-  workspaceId?: string | null,
-  filters?: AccountListQuery,
-) {
+export function useAccounts(filters?: AccountListQuery) {
+  const workspaceId = useActiveWorkspaceId();
   const key = workspaceId
     ? ["accounts", "list", workspaceId, filters ?? {}]
     : null;
   return useSWR<AccountListResponse>(key, () =>
-    accountService.list(workspaceId!, filters),
+    accountService.list(filters),
   );
 }
 
-export function useAccount(workspaceId: string | null | undefined, id: string) {
+export function useAccount(id: string) {
+  const workspaceId = useActiveWorkspaceId();
   const key = workspaceId && id ? ["accounts", "detail", workspaceId, id] : null;
-  return useSWR<AccountResponse>(key, () => accountService.describe(workspaceId!, id));
+  return useSWR<AccountResponse>(key, () => accountService.describe(id));
 }
 
 export function useCreateAccount() {
@@ -29,9 +28,7 @@ export function useCreateAccount() {
   return useSWRMutation(
     "accounts-create",
     async (_key: string, { arg }: { arg: AccountFormData }) => {
-      const workspaceId = getActiveWorkspaceId();
-      if (!workspaceId) throw new Error("No active workspace selected");
-      return accountService.create(workspaceId, arg);
+      return accountService.create(arg);
     },
     {
       onSuccess: () => {
@@ -50,9 +47,7 @@ export function useUpdateAccount(id: string) {
       _key: string[],
       { arg }: { arg: Partial<AccountFormData> },
     ) => {
-      const workspaceId = getActiveWorkspaceId();
-      if (!workspaceId) throw new Error("No active workspace selected");
-      return accountService.update(workspaceId, id, arg);
+      return accountService.update(id, arg);
     },
     {
       onSuccess: () => {
@@ -69,9 +64,7 @@ export function useDeleteAccount() {
   return useSWRMutation(
     "accounts-delete",
     async (_key: string, { arg }: { arg: string }) => {
-      const workspaceId = getActiveWorkspaceId();
-      if (!workspaceId) throw new Error("No active workspace selected");
-      return accountService.delete(workspaceId, arg);
+      return accountService.delete(arg);
     },
     {
       onSuccess: () => {

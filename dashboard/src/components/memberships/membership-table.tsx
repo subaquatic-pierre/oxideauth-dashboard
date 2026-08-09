@@ -36,14 +36,12 @@ export function StatusBadge({ status }: { status: MembershipStatus }) {
 }
 
 interface MembershipTableProps {
-  workspaceId: string
   memberships: Membership[]
   isLoading?: boolean
   error?: Error | null
 }
 
 export function MembershipTable({
-  workspaceId,
   memberships,
   isLoading = false,
   error = null,
@@ -168,10 +166,7 @@ export function MembershipTable({
         }}
         onConfirm={async () => {
           if (!deleteTarget) return
-          await deleteMembership.trigger({
-            workspaceId,
-            id: deleteTarget.id,
-          })
+          await deleteMembership.trigger(deleteTarget.id)
           setDeleteTarget(null)
         }}
       />

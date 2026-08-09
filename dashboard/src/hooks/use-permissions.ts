@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback } from "react"
+import { useActiveWorkspaceId } from "@/hooks/use-active-workspace"
 import useSWR, { useSWRConfig } from "swr"
 import useSWRMutation from "swr/mutation"
 import { permissionService } from "@/services"
@@ -9,13 +10,14 @@ import { revalidatePermissions } from "@/lib/swr-helpers"
 import type { PermissionResponse, PermissionFormData } from "@/types/permission"
 import type { ListFilters } from "@/types/common"
 
-export function usePermissions(workspaceId?: string, filters?: ListFilters) {
+export function usePermissions(filters?: ListFilters) {
+  const workspaceId = useActiveWorkspaceId()
   const key = workspaceId
     ? ["permissions", "list", workspaceId, filters ?? {}]
     : null
   return useSWR<PermissionResponse[]>(
     key,
-    () => permissionService.list(workspaceId, filters),
+    () => permissionService.list(filters),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
@@ -23,11 +25,12 @@ export function usePermissions(workspaceId?: string, filters?: ListFilters) {
   )
 }
 
-export function usePermission(workspaceId?: string, id?: string) {
+export function usePermission(id?: string) {
+  const workspaceId = useActiveWorkspaceId()
   const key = workspaceId && id ? ["permissions", "detail", workspaceId, id] : null
   return useSWR<PermissionResponse>(
     key,
-    () => permissionService.describe(workspaceId, id as string),
+    () => permissionService.describe(id as string),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
@@ -39,8 +42,8 @@ export function useCreatePermission() {
   const { mutate } = useSWRConfig()
   const mutation = useSWRMutation(
     "permission-create",
-    async (_key, { arg }: { arg: { workspaceId: string; data: PermissionFormData } }) =>
-      permissionService.create(arg.workspaceId, arg.data),
+    async (_key, { arg }: { arg: PermissionFormData }) =>
+      permissionService.create(arg),
     {
       onSuccess: () => {
         revalidatePermissions(mutate)
@@ -49,8 +52,8 @@ export function useCreatePermission() {
   )
 
   const create = useCallback(
-    async (workspaceId: string, data: PermissionFormData) => {
-      return mutation.trigger({ workspaceId, data })
+    async (data: PermissionFormData) => {
+      return mutation.trigger(data)
     },
     [mutation],
   )
@@ -66,8 +69,8 @@ export function useUpdatePermission(id?: string) {
   const { mutate } = useSWRConfig()
   const mutation = useSWRMutation(
     id ? ["permission-update", id] : null,
-    async (_key, { arg }: { arg: { workspaceId: string; data: PermissionFormData } }) =>
-      permissionService.update(arg.workspaceId, id as string, arg.data),
+    async (_key, { arg }: { arg: PermissionFormData }) =>
+      permissionService.update(id as string, arg),
     {
       onSuccess: () => {
         revalidatePermissions(mutate)
@@ -76,9 +79,9 @@ export function useUpdatePermission(id?: string) {
   )
 
   const update = useCallback(
-    async (workspaceId: string, data: PermissionFormData) => {
+    async (data: PermissionFormData) => {
       if (!id) throw new Error("Missing permission id")
-      return mutation.trigger({ workspaceId, data })
+      return mutation.trigger(data)
     },
     [id, mutation],
   )
@@ -94,8 +97,7 @@ export function useDeletePermission() {
   const { mutate } = useSWRConfig()
   const mutation = useSWRMutation(
     "permission-delete",
-    async (_key, { arg }: { arg: { workspaceId: string; id: string } }) =>
-      permissionService.delete(arg.workspaceId, arg.id),
+    async (_key, { arg }: { arg: string }) => permissionService.delete(arg),
     {
       onSuccess: () => {
         revalidatePermissions(mutate)
@@ -104,8 +106,8 @@ export function useDeletePermission() {
   )
 
   const remove = useCallback(
-    async (workspaceId: string, id: string) => {
-      return mutation.trigger({ workspaceId, id })
+    async (id: string) => {
+      return mutation.trigger(id)
     },
     [mutation],
   )

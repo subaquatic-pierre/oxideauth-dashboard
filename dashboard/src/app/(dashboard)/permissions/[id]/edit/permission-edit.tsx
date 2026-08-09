@@ -23,13 +23,13 @@ export default function EditPermissionPage() {
   const params = useParams<{ id: string }>()
   const router = useRouter()
   const workspaceId = useActiveWorkspaceId() ?? undefined
-  const { data: permission, isLoading, error } = usePermission(workspaceId, params.id)
+  const { data: permission, isLoading, error } = usePermission(params.id)
   const { update, isUpdating, error: updateError } = useUpdatePermission(params.id)
 
   async function handleSubmit(data: PermissionFormData) {
     if (!workspaceId) return
     try {
-      await update(workspaceId, data)
+      await update(data)
       router.push(`/permissions/${params.id}`)
     } catch {
       // error is surfaced via the mutation error below

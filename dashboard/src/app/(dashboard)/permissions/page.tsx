@@ -27,7 +27,7 @@ export default function PermissionsPage() {
     data: permissions,
     isLoading,
     error,
-  } = usePermissions(workspaceId)
+  } = usePermissions()
   const { remove, error: deleteError } = useDeletePermission()
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
@@ -39,7 +39,7 @@ export default function PermissionsPage() {
     if (!window.confirm(`Delete permission "${permission.name}"?`)) return
     setDeletingId(permission.id)
     try {
-      await remove(workspaceId, permission.id)
+      await remove(permission.id)
     } catch {
       // error is surfaced via deleteError
     } finally {

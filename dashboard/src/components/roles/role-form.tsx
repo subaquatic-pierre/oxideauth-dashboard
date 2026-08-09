@@ -26,7 +26,6 @@ import type { RoleFormData } from "@/types/role"
 import type { PermissionDescribeRes } from "@/types/permission"
 
 interface RoleFormProps {
-  workspaceId?: string
   initialData?: RoleFormData
   isSubmitting?: boolean
   submitLabel?: string
@@ -34,7 +33,6 @@ interface RoleFormProps {
 }
 
 export function RoleForm({
-  workspaceId,
   initialData,
   isSubmitting = false,
   submitLabel = "Create role",
@@ -45,9 +43,7 @@ export function RoleForm({
   const [permissionIds, setPermissionIds] = useState<string[]>(
     initialData?.permission_ids ?? [],
   )
-  const { data: permissions, isLoading: permissionsLoading } = usePermissions(
-    workspaceId,
-  )
+  const { data: permissions, isLoading: permissionsLoading } = usePermissions()
 
   const permissionById = useMemo(() => {
     const map = new Map<string, PermissionDescribeRes>()

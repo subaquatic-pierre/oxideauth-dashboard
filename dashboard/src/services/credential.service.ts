@@ -18,13 +18,12 @@ import { MOCK_CREDENTIALS, filterByWorkspace } from "@/lib/mock-data"
  */
 export class CredentialService extends BaseService {
   async list(
-    workspaceId: string,
     filters?: ListFilters,
   ): Promise<PaginatedResponse<Credential, "credentials">> {
     if (isGuestMode()) {
       const items = filterByWorkspace(
         MOCK_CREDENTIALS,
-        workspaceId || getActiveWorkspaceId(),
+        getActiveWorkspaceId(),
       )
       const limit = filters?.limit ?? 10
       const offset = filters?.offset ?? 0
@@ -41,32 +40,28 @@ export class CredentialService extends BaseService {
       }).data as unknown as PaginatedResponse<Credential, "credentials">
     }
     return this.post("/credentials/list", {
-      workspace_id: workspaceId || getActiveWorkspaceId(),
       ...buildListQuery(filters),
     })
   }
 
   async describe(
-    workspaceId: string,
     accountId: string,
     id: string,
   ): Promise<Credential> {
     if (isGuestMode()) {
       const credential = filterByWorkspace(
         MOCK_CREDENTIALS,
-        workspaceId || getActiveWorkspaceId(),
+        getActiveWorkspaceId(),
       ).find((c) => c.id === id && c.account_id === accountId)
       return mockOk(credential ?? MOCK_CREDENTIALS[0]).data as unknown as Credential
     }
     return this.post("/credentials/describe", {
-      workspace_id: workspaceId || getActiveWorkspaceId(),
       account_id: accountId,
       id,
     })
   }
 
   async update(
-    workspaceId: string,
     accountId: string,
     id: string,
     data: CredentialFormData,
@@ -75,23 +70,17 @@ export class CredentialService extends BaseService {
       return mockOk({ id, account_id: accountId, ...data }).data as unknown as Credential
     }
     return this.post("/credentials/update", {
-      workspace_id: workspaceId || getActiveWorkspaceId(),
       account_id: accountId,
       id,
       ...data,
     })
   }
 
-  async delete(
-    workspaceId: string,
-    accountId: string,
-    id: string,
-  ): Promise<void> {
+  async delete(accountId: string, id: string): Promise<void> {
     if (isGuestMode()) {
       return Promise.resolve()
     }
     return this.post("/credentials/delete", {
-      workspace_id: workspaceId || getActiveWorkspaceId(),
       account_id: accountId,
       id,
     })

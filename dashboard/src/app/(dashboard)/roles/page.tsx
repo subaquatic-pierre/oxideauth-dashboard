@@ -23,7 +23,7 @@ import type { RoleDescribeRes } from "@/types/role"
 
 export default function RolesPage() {
   const workspaceId = useActiveWorkspaceId() ?? undefined
-  const { data: roles, isLoading, error } = useRoles(workspaceId)
+  const { data: roles, isLoading, error } = useRoles()
   const { remove, error: deleteError } = useDeleteRole()
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
@@ -35,7 +35,7 @@ export default function RolesPage() {
     if (!window.confirm(`Delete role "${role.name}"?`)) return
     setDeletingId(role.id)
     try {
-      await remove(workspaceId, role.id)
+      await remove(role.id)
     } catch {
       // error is surfaced via deleteError
     } finally {

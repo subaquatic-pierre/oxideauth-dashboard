@@ -29,7 +29,7 @@ export function PermissionProvider({ children }: { children: React.ReactNode }) 
       // resolution, so we return an empty set here. Swap this for the real
       // resolution endpoint once available.
       const svc = permissionService
-      await svc.list(workspaceId!, { limit: 1 })
+      await svc.list({ limit: 1 })
       return []
     },
   )

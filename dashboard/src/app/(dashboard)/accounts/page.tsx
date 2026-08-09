@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAccounts } from "@/hooks/use-accounts";
-import { useActiveWorkspaceId } from "@/hooks/use-active-workspace";
 import { useCan } from "@/hooks/use-permissions-check";
 import { AccountTable } from "@/components/accounts/account-table";
 import { Button } from "@/components/ui/button";
@@ -24,7 +23,6 @@ import type { AccountListQuery } from "@/services";
 
 export default function AccountsPage() {
   const router = useRouter();
-  const workspaceId = useActiveWorkspaceId();
 
   // PERMISSION-GATED: Create requires `account:create`.
   const canCreate = useCan("account", "create");
@@ -48,7 +46,7 @@ export default function AccountsPage() {
     };
   }, [email, name, verified, enabled]);
 
-  const { data, error, isLoading } = useAccounts(workspaceId, filters);
+  const { data, error, isLoading } = useAccounts(filters);
   const accounts = data?.accounts ?? [];
 
   const hasFilters = Boolean(email.trim() || name.trim() || verified !== "all" || enabled !== "all");

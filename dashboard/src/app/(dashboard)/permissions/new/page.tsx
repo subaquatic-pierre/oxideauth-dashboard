@@ -26,7 +26,7 @@ export default function NewPermissionPage() {
   async function handleSubmit(data: PermissionFormData) {
     if (!workspaceId) return
     try {
-      const created = await create(workspaceId, data)
+      const created = await create(data)
       router.push(`/permissions/${created.id}`)
     } catch {
       // error is surfaced via the mutation error below

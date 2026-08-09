@@ -23,13 +23,13 @@ export default function EditRolePage() {
   const params = useParams<{ id: string }>()
   const router = useRouter()
   const workspaceId = useActiveWorkspaceId()
-  const { data: role, isLoading, error } = useRole(workspaceId ?? undefined, params.id)
+  const { data: role, isLoading, error } = useRole(params.id)
   const { update, isUpdating, error: updateError } = useUpdateRole(params.id)
 
   async function handleSubmit(data: RoleFormData) {
     if (!workspaceId) return
     try {
-      await update(workspaceId, data)
+      await update(data)
       router.push(`/roles/${params.id}`)
     } catch {
       // error is surfaced via the mutation error below
@@ -93,7 +93,6 @@ export default function EditRolePage() {
             </CardHeader>
             <CardContent>
               <RoleForm
-                workspaceId={workspaceId}
                 initialData={{
                   name: role.name,
                   description: role.description ?? undefined,

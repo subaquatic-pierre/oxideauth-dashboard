@@ -41,7 +41,7 @@ export default function NewMembershipPage() {
           </CardContent>
         </Card>
       ) : (
-        <MembershipForm workspaceId={workspaceId} />
+        <MembershipForm />
       )}
     </div>
   )

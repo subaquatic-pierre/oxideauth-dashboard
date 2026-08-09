@@ -3,7 +3,6 @@
 import * as React from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { useActiveWorkspaceId } from "@/hooks/use-active-workspace"
 import { useMembership } from "@/hooks/use-memberships"
 import { useRoles } from "@/hooks/use-roles"
 import { useCan } from "@/hooks/use-permissions-check"
@@ -135,12 +134,8 @@ function MembershipDetail({ membership }: { membership: MembershipDescribeRes })
 
 export default function MembershipDetailPage() {
   const params = useParams<{ id: string }>()
-  const workspaceId = useActiveWorkspaceId()
-  const { data: membership, isLoading, error } = useMembership(
-    workspaceId,
-    params.id,
-  )
-  const { data: workspaceRoles } = useRoles(workspaceId ?? undefined)
+  const { data: membership, isLoading, error } = useMembership(params.id)
+  const { data: workspaceRoles } = useRoles()
 
   // PERMISSION-GATED: Edit requires `membership:update`.
   const canEdit = useCan("membership", "update")

@@ -44,13 +44,11 @@ export interface AccountDeleteRes {
 export interface AccountDescribeReq {
   email?: string
   id?: string
-  workspace_id: string
 }
 
 export interface AccountCreateReq {
   email: string
   password: string
-  workspace_id: string
   name: string
   description?: string
   avatar_url?: string
@@ -61,7 +59,6 @@ export interface AccountCreateReq {
 export interface AccountUpdateReq {
   email?: string
   id?: string
-  workspace_id: string
   name?: string
   description?: string
   avatar_url?: string
@@ -72,7 +69,6 @@ export interface AccountUpdateReq {
 }
 
 export interface AccountListReq {
-  workspace_id: string
   filter?: import("./pagination").RequestFilterParams<AccountFilter>
   options?: import("./pagination").RequestListOptions
 }
@@ -80,7 +76,6 @@ export interface AccountListReq {
 export interface AccountDeleteReq {
   email?: string
   id?: string
-  workspace_id: string
 }
 
 export interface AccountFilter {

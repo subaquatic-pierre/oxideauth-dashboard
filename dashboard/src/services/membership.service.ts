@@ -5,23 +5,22 @@ import type {
   MembershipFormData,
   MembershipListParams,
 } from "@/types/membership";
+import { getActiveWorkspaceId } from "@/lib/workspace";
 import { isGuestMode } from "@/lib/guest-mode";
 import { mockOk } from "@/lib/mock-ok";
 import { MOCK_MEMBERSHIPS, filterByWorkspace } from "@/lib/mock-data";
 
 export class MembershipService extends BaseService {
   async list(
-    workspaceId: string,
     filters?: MembershipListParams,
   ): Promise<Membership[]> {
     if (isGuestMode()) {
-      const items = filterByWorkspace(MOCK_MEMBERSHIPS, workspaceId);
+      const items = filterByWorkspace(MOCK_MEMBERSHIPS, getActiveWorkspaceId());
       return mockOk(items).data as unknown as Membership[];
     }
     const res = await this.post<PaginatedResponse<Membership, "memberships">>(
       "/memberships/list",
       {
-        workspace_id: workspaceId,
         filter: {
           // tags: [],
           fields: { ...(filters ?? {}) },
@@ -36,33 +35,29 @@ export class MembershipService extends BaseService {
     return (res.memberships as Membership[]) ?? [];
   }
 
-  async describe(workspaceId: string, id: string): Promise<Membership> {
+  async describe(id: string): Promise<Membership> {
     if (isGuestMode()) {
-      const membership = filterByWorkspace(MOCK_MEMBERSHIPS, workspaceId).find(
-        (m) => m.id === id,
-      );
+      const membership = filterByWorkspace(
+        MOCK_MEMBERSHIPS,
+        getActiveWorkspaceId(),
+      ).find((m) => m.id === id);
       return mockOk(membership ?? MOCK_MEMBERSHIPS[0])
         .data as unknown as Membership;
     }
     return this.post<Membership>("/memberships/describe", {
-      workspace_id: workspaceId,
       id,
     });
   }
 
-  async create(
-    workspaceId: string,
-    data: MembershipFormData,
-  ): Promise<Membership> {
+  async create(data: MembershipFormData): Promise<Membership> {
     if (isGuestMode()) {
       return mockOk({
         id: "mem-mock-new",
-        workspace_id: workspaceId,
+        workspace_id: getActiveWorkspaceId(),
         ...data,
       }).data as unknown as Membership;
     }
     return this.post<Membership>("/memberships/create", {
-      workspace_id: workspaceId,
       status: "active" as const,
       tags: [],
       meta: { schema_version: "1" },
@@ -71,7 +66,6 @@ export class MembershipService extends BaseService {
   }
 
   async update(
-    workspaceId: string,
     id: string,
     data: Partial<MembershipFormData>,
   ): Promise<Membership> {
@@ -80,18 +74,16 @@ export class MembershipService extends BaseService {
     }
     const { role_ids, ...updateData } = data;
     return this.post<Membership>("/memberships/update", {
-      workspace_id: workspaceId,
       id,
       ...updateData,
     });
   }
 
-  async delete(workspaceId: string, id: string): Promise<void> {
+  async delete(id: string): Promise<void> {
     if (isGuestMode()) {
       return Promise.resolve();
     }
     return this.post<void>("/memberships/delete", {
-      workspace_id: workspaceId,
       id,
     });
   }

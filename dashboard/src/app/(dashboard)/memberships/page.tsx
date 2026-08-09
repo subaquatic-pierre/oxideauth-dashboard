@@ -57,12 +57,9 @@ export default function MembershipsPage() {
     [accountId, scope, status, projectId],
   )
 
-  const { data: accountsData } = useAccounts(workspaceId)
+  const { data: accountsData } = useAccounts()
   const { projects } = useProjects()
-  const { data: memberships, isLoading, error } = useMemberships(
-    workspaceId,
-    filters,
-  )
+  const { data: memberships, isLoading, error } = useMemberships(filters)
 
   const accountOptions = React.useMemo(() => {
     const list = accountsData?.accounts ?? []
@@ -218,7 +215,6 @@ export default function MembershipsPage() {
             </Card>
           ) : (
             <MembershipTable
-              workspaceId={workspaceId}
               memberships={memberships ?? []}
               isLoading={isLoading}
               error={error}

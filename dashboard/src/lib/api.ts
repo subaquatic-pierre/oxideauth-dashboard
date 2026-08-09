@@ -1,4 +1,5 @@
 import { clearAuth, getStoredAuth } from "@/utils/auth";
+import { getActiveWorkspaceId } from "@/lib/workspace";
 
 export class ApiError extends Error {
   status: number;
@@ -30,6 +31,36 @@ export function isNetworkError(error: unknown): boolean {
  */
 export const AUTH_EXPIRED_EVENT = "auth:expired";
 
+// ---------------------------------------------------------------------------
+// In-flight request cancellation (FR-008)
+// ---------------------------------------------------------------------------
+
+let abortController: AbortController | null = null;
+
+function getAbortSignal(): AbortSignal {
+  if (!abortController) {
+    abortController = new AbortController();
+  }
+  return abortController.signal;
+}
+
+/**
+ * Abort all in-flight API requests and create a fresh controller for
+ * subsequent calls. Called by the workspace selector when the user switches
+ * workspaces so that stale responses from the previous workspace are never
+ * processed.
+ */
+export function abortInFlightRequests(): void {
+  if (abortController) {
+    abortController.abort();
+  }
+  abortController = new AbortController();
+}
+
+// ---------------------------------------------------------------------------
+// Core fetch wrapper
+// ---------------------------------------------------------------------------
+
 export async function api<T>(path: string, options?: RequestInit): Promise<T> {
   const auth = getStoredAuth();
   const token = auth?.token;
@@ -40,8 +71,11 @@ export async function api<T>(path: string, options?: RequestInit): Promise<T> {
     tokenHeaders["Authorization"] = `Bearer ${token}`;
   }
 
-  // Inject workspace ID from the deserialized token claims when available.
-  const workspaceId = auth?.claims?.ws;
+  // Inject workspace ID from the workspace selector (localStorage) when
+  // the user has explicitly selected one, otherwise fall back to the
+  // workspace ID from the JWT token claims (FR-004, FR-006).
+  const workspaceId =
+    getActiveWorkspaceId() || auth?.claims?.ws || "";
   if (workspaceId) {
     tokenHeaders["X-Workspace-Id"] = workspaceId;
   }
@@ -55,9 +89,15 @@ export async function api<T>(path: string, options?: RequestInit): Promise<T> {
         ...tokenHeaders,
         ...options?.headers,
       },
+      signal: getAbortSignal(),
       ...options,
     });
-  } catch {
+  } catch (err: unknown) {
+    // AbortError is triggered by abortInFlightRequests() on workspace
+    // switch — silently discard the response (FR-008).
+    if (err instanceof DOMException && err.name === "AbortError") {
+      throw new NetworkError("Request cancelled");
+    }
     // fetch rejected: the API is unreachable (offline, server down, DNS, ...)
     throw new NetworkError();
   }

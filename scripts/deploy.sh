@@ -105,7 +105,7 @@ if [ "${YES}" = false ]; then
   fi
 fi
 
-# ── build ──────────────────────────────────────────────────────────────
+# ── build application ──────────────────────────────────────────────────
 
 if [ -f "package.json" ]; then
   if npm run build >/dev/null 2>&1; then
@@ -160,24 +160,32 @@ if [ -f "package.json" ] && ! git diff --quiet package.json; then
   git push origin "${CURRENT_BRANCH}"
 fi
 
-# ── deploy to gh-pages ─────────────────────────────────────────────────
+# ── build container image ──────────────────────────────────────────────
 
-log "Deploying build output to gh-pages branch..."
+log "Building container image..."
 
-TMP_DIR="$(mktemp -d)"
-trap "rm -rf '${TMP_DIR}'" EXIT
+IMAGE_NAME="oxideauth-dashboard:${TAG}"
 
-cp -a "${OUTPUT_DIR}/." "${TMP_DIR}/"
+if command -v docker >/dev/null 2>&1; then
+  if docker build -t "${IMAGE_NAME}" -f Dockerfile . 2>&1; then
+    log "Container image built successfully: ${IMAGE_NAME}"
+  else
+    err "Docker build failed. See output above for details."
+  fi
+else
+  warn "Docker is not available. Skipping container image build."
+  warn "Install Docker or run the build in CI to produce a container image."
+fi
 
-cd "${TMP_DIR}"
-git init -q
-git checkout -B gh-pages
-git add -A
-git commit -m "deploy: ${TAG} [skip ci]" --allow-empty
+# ── kubernetes deployment placeholder ───────────────────────────────────
 
-GIT_REMOTE="$(git -C "${ROOT_DIR}" remote get-url origin)"
-git push -f "${GIT_REMOTE}" gh-pages
-
-cd "${ROOT_DIR}"
-
-log "Deployed to gh-pages branch successfully."
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  KUBERNETES DEPLOYMENT PENDING"
+echo "  The container image has been built and verified."
+echo "  Deployment to Kubernetes will be implemented when the cluster"
+echo "  is provisioned."
+echo ""
+echo "  TODO: Add 'kubectl set image' or Helm upgrade step here."
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""

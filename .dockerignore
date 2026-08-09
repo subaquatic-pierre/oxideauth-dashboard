@@ -1,0 +1,15 @@
+node_modules/
+.next/
+.git/
+.github/
+.opencode/
+.specify/
+specs/
+references/
+Dockerfile*
+.dockerignore
+*.md
+.env*
+dist/
+build/
+coverage/

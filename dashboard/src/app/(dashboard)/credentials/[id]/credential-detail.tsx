@@ -23,11 +23,8 @@ import {
   FingerprintIcon,
 } from "lucide-react"
 import { formatDateTime } from "@/lib/format"
+import { errorMessage } from "@/lib/errors"
 import type { CredentialStatus } from "@/types/credential"
-
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Request failed"
-}
 
 const statusBadgeClass: Record<CredentialStatus, string> = {
   active: "bg-green-500/10 text-green-700 dark:text-green-400",

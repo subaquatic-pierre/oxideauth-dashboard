@@ -3,18 +3,12 @@
 import useSWR, { useSWRConfig } from "swr"
 import useSWRMutation from "swr/mutation"
 import { membershipsService } from "@/services"
+import { isMembershipsListKey } from "@/lib/swr-helpers"
 import type {
   Membership,
   MembershipFilters,
   MembershipFormData,
 } from "@/types/membership"
-
-// True for SWR keys belonging to any memberships list of the given workspace.
-function isMembershipsListKey(key: unknown, workspaceId: string): boolean {
-  return (
-    Array.isArray(key) && key[0] === "memberships" && key[1] === workspaceId
-  )
-}
 
 // List memberships for a workspace (optionally filtered).
 export function useMemberships(

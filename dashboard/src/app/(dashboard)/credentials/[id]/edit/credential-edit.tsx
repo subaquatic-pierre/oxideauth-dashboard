@@ -12,10 +12,7 @@ import { Text } from "@/components/ui/text"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import type { CredentialFormData } from "@/types/credential"
-
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Request failed"
-}
+import { errorMessage } from "@/lib/errors"
 
 function EditCredential() {
   const params = useParams<{ id: string }>()

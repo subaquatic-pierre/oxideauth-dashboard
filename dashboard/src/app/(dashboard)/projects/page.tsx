@@ -12,14 +12,11 @@ import { Text } from "@/components/ui/text"
 import { Card } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { isNetworkError } from "@/lib/api"
+import { errorMessage } from "@/lib/errors"
 import { PlusIcon, FolderKanbanIcon } from "lucide-react"
 import type { Project } from "@/types/project"
 
 const PAGE_SIZE = 10
-
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Request failed"
-}
 
 export default function ProjectsPage() {
   const [page, setPage] = useState(1)

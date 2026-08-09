@@ -4,16 +4,10 @@ import { useCallback } from "react"
 import useSWR, { useSWRConfig } from "swr"
 import useSWRMutation from "swr/mutation"
 import { permissionService } from "@/services"
+import { errorMessage } from "@/lib/errors"
+import { revalidatePermissions } from "@/lib/swr-helpers"
 import type { PermissionResponse, PermissionFormData } from "@/types/permission"
 import type { ListFilters } from "@/types/common"
-
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Request failed"
-}
-
-function revalidatePermissions(mutate: ReturnType<typeof useSWRConfig>["mutate"]) {
-  mutate((key) => Array.isArray(key) && key[0] === "permissions")
-}
 
 export function usePermissions(workspaceId?: string, filters?: ListFilters) {
   const key = workspaceId

@@ -1,4 +1,4 @@
-import type { ListFilters } from "@/types/common"
+import type { ListFilters } from "@/types/common";
 
 /**
  * Serialize ListFilters into the API's ListQuery body shape:
@@ -10,13 +10,13 @@ import type { ListFilters } from "@/types/common"
 export function buildListQuery(filters?: ListFilters) {
   return {
     filter: {
-      tags: filters?.tags ?? [],
-      fields: filters?.fields ?? {},
+      // tags: filters?.tags ?? [],
+      // fields: filters?.fields ?? {},
     },
     options: {
       limit: filters?.limit,
       offset: filters?.offset,
       order_bys: filters?.order_bys?.join(","),
     },
-  }
+  };
 }

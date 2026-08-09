@@ -1,3 +1,5 @@
+import { clearAuth, getStoredAuth } from "@/utils/auth";
+
 export class ApiError extends Error {
   status: number;
   constructor(message: string, status: number) {
@@ -29,9 +31,20 @@ export function isNetworkError(error: unknown): boolean {
 export const AUTH_EXPIRED_EVENT = "auth:expired";
 
 export async function api<T>(path: string, options?: RequestInit): Promise<T> {
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+  const auth = getStoredAuth();
+  const token = auth?.token;
   const url = `${process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"}${path}`;
+
+  const tokenHeaders: Record<string, string> = {};
+  if (token) {
+    tokenHeaders["Authorization"] = `Bearer ${token}`;
+  }
+
+  // Inject workspace ID from the deserialized token claims when available.
+  const workspaceId = auth?.claims?.ws;
+  if (workspaceId) {
+    tokenHeaders["X-Workspace-Id"] = workspaceId;
+  }
 
   let res: Response;
   try {
@@ -39,7 +52,7 @@ export async function api<T>(path: string, options?: RequestInit): Promise<T> {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...tokenHeaders,
         ...options?.headers,
       },
       ...options,
@@ -55,8 +68,7 @@ export async function api<T>(path: string, options?: RequestInit): Promise<T> {
   // redirect to the login page, then bail out with a dedicated error.
   if (res.status === 401) {
     if (typeof window !== "undefined") {
-      localStorage.removeItem("auth_token");
-      localStorage.removeItem("auth_user");
+      clearAuth();
       window.dispatchEvent(new CustomEvent(AUTH_EXPIRED_EVENT));
     }
     throw new ApiError("Session expired", 401);
@@ -68,8 +80,6 @@ export async function api<T>(path: string, options?: RequestInit): Promise<T> {
       res.status,
     );
   }
-
-  console.log(json.data);
 
   return json.data as T;
 }

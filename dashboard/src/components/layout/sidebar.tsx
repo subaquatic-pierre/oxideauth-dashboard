@@ -58,7 +58,7 @@ const resourceLinks = [
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { collapsed } = useSidebar();
+  const { collapsed, mobileOpen, setMobileOpen } = useSidebar();
   const { isGuest } = useGuestMode();
 
   // PERMISSION-GATED: each resource section requires `{entity}:read`.
@@ -111,12 +111,22 @@ export function Sidebar() {
   };
 
   return (
-    <aside
-      className={cn(
-        "hidden border-r bg-sidebar transition-all duration-300 lg:flex lg:flex-col",
-        collapsed ? "w-16" : "w-60",
+    <>
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
       )}
-    >
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-40 flex flex-col border-r bg-sidebar transition-all duration-300 lg:static",
+          mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+          collapsed ? "lg:w-16" : "lg:w-60",
+          "w-60",
+        )}
+      >
       {/* Logo area */}
       <div
         className={cn(
@@ -154,5 +164,6 @@ export function Sidebar() {
         {!collapsed && <Separator className="my-3" />}
       </nav>
     </aside>
+  </>
   );
 }

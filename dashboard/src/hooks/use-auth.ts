@@ -5,41 +5,9 @@ import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 import { authService } from "@/services";
 import { AUTH_EXPIRED_EVENT } from "@/lib/api";
+import { errorMessage } from "@/lib/errors";
+import { getStoredAuth, storeAuth, clearAuth } from "@/utils/auth";
 import type { User, LoginRequest, RegisterRequest } from "@/types/auth";
-
-const AUTH_TOKEN_KEY = "auth_token";
-const AUTH_USER_KEY = "auth_user";
-const AUTH_REFRESH_TOKEN_KEY = "auth_refresh_token";
-
-function getStoredAuth(): { token: string | null; user: User | null } {
-  if (typeof window === "undefined") return { token: null, user: null };
-  try {
-    const token = localStorage.getItem(AUTH_TOKEN_KEY);
-    const userStr = localStorage.getItem(AUTH_USER_KEY);
-    const user = userStr ? (JSON.parse(userStr) as User) : null;
-    return { token, user };
-  } catch {
-    return { token: null, user: null };
-  }
-}
-
-function storeAuth(token: string, user: User, refreshToken?: string) {
-  localStorage.setItem(AUTH_TOKEN_KEY, token);
-  localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
-  if (refreshToken) {
-    localStorage.setItem(AUTH_REFRESH_TOKEN_KEY, refreshToken);
-  }
-}
-
-function clearAuth() {
-  localStorage.removeItem(AUTH_TOKEN_KEY);
-  localStorage.removeItem(AUTH_USER_KEY);
-  localStorage.removeItem(AUTH_REFRESH_TOKEN_KEY);
-}
-
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Request failed";
-}
 
 export function useAuth() {
   const { mutate } = useSWRConfig();
@@ -68,7 +36,7 @@ export function useAuth() {
     stored.token ? ["auth", "me"] : null,
     async () => {
       const u = await authService.me();
-      if (u) localStorage.setItem(AUTH_USER_KEY, JSON.stringify(u));
+      if (u) localStorage.setItem("auth_user", JSON.stringify(u));
       return u;
     },
     {
@@ -118,7 +86,7 @@ export function useAuth() {
   );
 
   const logout = useCallback(() => {
-    if (typeof window !== "undefined" && localStorage.getItem(AUTH_TOKEN_KEY)) {
+    if (typeof window !== "undefined" && localStorage.getItem("auth_token")) {
       // Fire-and-forget server-side session revoke
       authService.revoke().catch(() => {});
     }
@@ -129,7 +97,7 @@ export function useAuth() {
 
   return {
     user: user ?? null,
-    token: stored.token,
+    token: stored?.token ?? null,
     isAuthenticated: !!user,
     isPending: isLoading,
     error,

@@ -15,3 +15,8 @@ export function getErrorMessage(error: unknown): string {
   }
   return "An unexpected error occurred."
 }
+
+/** Lightweight error-to-string conversion. Use when type-specific messages are not needed. */
+export function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : "Request failed"
+}

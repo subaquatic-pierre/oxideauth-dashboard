@@ -42,7 +42,7 @@ export function Header() {
   const router = useRouter();
   const { user, logout } = useAuth();
   const { isGuest, exitGuestMode } = useGuestMode();
-  const { toggle: toggleSidebar } = useSidebar();
+  const { toggle: toggleSidebar, setMobileOpen, mobileOpen } = useSidebar();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -67,7 +67,7 @@ export function Header() {
         variant="ghost"
         size="icon"
         className="lg:hidden"
-        onClick={toggleSidebar}
+        onClick={() => setMobileOpen(!mobileOpen)}
         aria-label="Toggle sidebar"
       >
         <MenuIcon className="size-5" />

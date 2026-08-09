@@ -14,10 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ArrowLeftIcon, PencilIcon, Trash2Icon, FolderKanbanIcon } from "lucide-react"
 import { formatDateTime } from "@/lib/format"
-
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Request failed"
-}
+import { errorMessage } from "@/lib/errors"
 
 export default function ProjectDetailPage() {
   const params = useParams<{ id: string }>()

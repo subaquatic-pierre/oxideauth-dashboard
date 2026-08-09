@@ -8,6 +8,34 @@ export type AuthResponse = AuthLoginRes
 export type TokenType = "Auth" | "PasswordReset" | "Refresh" | "AccountConfirm"
 export type AuthProvider = "local" | "google" | "github"
 
+/** Deserialized JWT claims matching the backend `TokenClaims` struct. */
+export interface TokenClaims {
+  /** Account ID (UUID) */
+  sub: string
+  /** Workspace ID (UUID) — may be nil UUID for account-level tokens */
+  ws: string
+  /** Membership ID (UUID) */
+  mem: string
+  /** Issuer identifier */
+  iss: string
+  /** Audience identifier */
+  aud: string
+  /** Expiration timestamp (Unix seconds) */
+  exp: number
+  /** Issued-at timestamp (Unix seconds) */
+  iat: number
+  /** Token type — JSON key is `ty` not `typ` (matches Rust field name) */
+  ty: TokenType
+  /** Membership token version */
+  mem_ver: number
+  /** Account token version */
+  acc_ver: number
+  /** Session ID (absent for single-use tokens) */
+  sid: string | null
+  /** JWT ID — unique per token */
+  jti: string | null
+}
+
 export interface AuthLoginRes {
   account: Account
   accessToken: string

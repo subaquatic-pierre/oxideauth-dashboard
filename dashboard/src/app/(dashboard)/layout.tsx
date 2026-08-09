@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useGuestMode } from "@/hooks/use-guest-mode";
 import { isGuestMode } from "@/lib/guest-mode";
@@ -17,6 +17,12 @@ export default function DashboardLayout({
   const { isPending, isAuthenticated } = useAuth();
   const { isGuest } = useGuestMode();
   const router = useRouter();
+
+  // Auth state comes from localStorage, which is unavailable during SSR.
+  // Defer auth-conditional rendering until after mount so the server and
+  // client render the same initial HTML (avoids hydration mismatch).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     // Allow guest sessions to access dashboard; only redirect truly
@@ -37,6 +43,10 @@ export default function DashboardLayout({
     window.addEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
     return () => window.removeEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
   }, [router]);
+
+  // Before mount, always render the empty shell so SSR and client match.
+  // After mount, the auth-gated redirect in useEffect takes over if needed.
+  if (!mounted) return null;
 
   if (isPending && !isGuest) {
     return (

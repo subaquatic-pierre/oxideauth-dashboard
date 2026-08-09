@@ -4,16 +4,10 @@ import { useCallback } from "react"
 import useSWR, { useSWRConfig } from "swr"
 import useSWRMutation from "swr/mutation"
 import { roleService } from "@/services"
+import { errorMessage } from "@/lib/errors"
+import { revalidateRoles } from "@/lib/swr-helpers"
 import type { RoleResponse, RoleFormData } from "@/types/role"
 import type { ListFilters } from "@/types/common"
-
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Request failed"
-}
-
-function revalidateRoles(mutate: ReturnType<typeof useSWRConfig>["mutate"]) {
-  mutate((key) => Array.isArray(key) && key[0] === "roles")
-}
 
 export function useRoles(workspaceId?: string, filters?: ListFilters) {
   const key = workspaceId ? ["roles", "list", workspaceId, filters ?? {}] : null

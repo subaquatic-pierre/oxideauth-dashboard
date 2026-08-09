@@ -19,7 +19,7 @@ import { useActiveWorkspaceId } from "@/hooks/use-active-workspace"
 import { useCan } from "@/hooks/use-permissions-check"
 import { isNetworkError } from "@/lib/api"
 import { Building2Icon, ShieldIcon, PlusIcon } from "lucide-react"
-import type { Role } from "@/types/role"
+import type { RoleDescribeRes } from "@/types/role"
 
 export default function RolesPage() {
   const workspaceId = useActiveWorkspaceId() ?? undefined
@@ -30,7 +30,7 @@ export default function RolesPage() {
   // PERMISSION-GATED: Create requires `role:create`.
   const canCreate = useCan("role", "create")
 
-  async function handleDelete(role: Role) {
+  async function handleDelete(role: RoleDescribeRes) {
     if (!workspaceId) return
     if (!window.confirm(`Delete role "${role.name}"?`)) return
     setDeletingId(role.id)

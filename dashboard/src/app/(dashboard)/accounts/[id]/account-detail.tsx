@@ -260,8 +260,6 @@ export default function AccountDetailPage() {
               }
             />
           )}
-          <DetailRow label="Created by" value={account.created_by} />
-          <DetailRow label="Updated by" value={account.updated_by} />
           <DetailRow
             label="Created at"
             value={

@@ -16,6 +16,10 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "OxideAuth Dashboard",
   description: "Admin dashboard for managing the OxideAuth IAM platform",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/logo.png",
+  },
 };
 
 const flashScript = `(function(){try{var e=localStorage.getItem("theme");e||(e=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");"dark"===e&&document.documentElement.classList.add("dark")}catch(e){}})();`;

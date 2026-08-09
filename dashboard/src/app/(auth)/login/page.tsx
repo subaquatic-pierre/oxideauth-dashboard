@@ -4,9 +4,11 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/use-auth";
+import { useGuestMode } from "@/hooks/use-guest-mode";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import {
   Card,
   CardContent,
@@ -20,8 +22,9 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login, isLoggingIn, loginError } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { enterGuestMode } = useGuestMode();
+  const [email, setEmail] = useState("root@system.local");
+  const [password, setPassword] = useState("rootpass");
   const registered = searchParams.get("registered") === "1";
 
   async function handleSubmit(e: React.FormEvent) {
@@ -32,6 +35,11 @@ function LoginForm() {
     } catch {
       // error is exposed via loginError
     }
+  }
+
+  function handleGuestAccess() {
+    enterGuestMode();
+    router.push("/");
   }
 
   return (
@@ -91,6 +99,15 @@ function LoginForm() {
               Register
             </Link>
           </p>
+          <Separator />
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleGuestAccess}
+          >
+            Continue as Guest
+          </Button>
         </CardFooter>
       </form>
     </Card>

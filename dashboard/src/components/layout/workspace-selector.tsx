@@ -13,6 +13,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Building2Icon, Loader2Icon } from "lucide-react";
+import { workspaceService } from "@/services";
+import type { WorkspaceDescribeRes } from "@/types/workspace";
 
 interface Workspace {
   id: string;
@@ -22,10 +24,14 @@ interface Workspace {
 const ACTIVE_WORKSPACE_KEY = "active_workspace_id";
 
 export function WorkspaceSelector() {
-  const { data: workspaces, isLoading } = useSWR<Workspace[]>(
+  const wsSvc = workspaceService;
+  const { data, isLoading } = useSWR<{ workspaces: WorkspaceDescribeRes[] }>(
     ["workspaces", "list"],
-    () => api("/workspace/list", { body: JSON.stringify({}) }),
+    () => wsSvc.list().then((res: { workspaces: WorkspaceDescribeRes[] }) => ({ workspaces: res.workspaces })),
   );
+
+  const { workspaces } = data ?? { workspaces: [] };
+
   const [activeId, setActiveId] = useState<string | null>(() =>
     typeof window !== "undefined"
       ? localStorage.getItem(ACTIVE_WORKSPACE_KEY)
@@ -60,7 +66,12 @@ export function WorkspaceSelector() {
 
   if (isLoading) {
     return (
-      <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground" disabled>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="gap-2 text-muted-foreground"
+        disabled
+      >
         <Loader2Icon className="size-4 animate-spin" />
         <span className="hidden sm:inline">Workspaces</span>
       </Button>
@@ -82,7 +93,7 @@ export function WorkspaceSelector() {
   }
 
   return (
-    <Select value={activeWorkspace?.id} onValueChange={handleChange}>
+    <Select value={activeWorkspace?.name} onValueChange={handleChange}>
       <SelectTrigger size="sm" className="gap-2 text-muted-foreground">
         <Building2Icon className="size-4" />
         <SelectValue placeholder="Select workspace" />

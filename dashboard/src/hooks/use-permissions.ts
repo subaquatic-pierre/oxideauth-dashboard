@@ -4,7 +4,7 @@ import { useCallback } from "react"
 import useSWR, { useSWRConfig } from "swr"
 import useSWRMutation from "swr/mutation"
 import { permissionService } from "@/services"
-import type { Permission, PermissionFormData } from "@/types/permission"
+import type { PermissionResponse, PermissionFormData } from "@/types/permission"
 import type { ListFilters } from "@/types/common"
 
 function errorMessage(error: unknown): string {
@@ -19,7 +19,7 @@ export function usePermissions(workspaceId?: string, filters?: ListFilters) {
   const key = workspaceId
     ? ["permissions", "list", workspaceId, filters ?? {}]
     : null
-  return useSWR<Permission[]>(
+  return useSWR<PermissionResponse[]>(
     key,
     () => permissionService.list(workspaceId, filters),
     {
@@ -31,7 +31,7 @@ export function usePermissions(workspaceId?: string, filters?: ListFilters) {
 
 export function usePermission(workspaceId?: string, id?: string) {
   const key = workspaceId && id ? ["permissions", "detail", workspaceId, id] : null
-  return useSWR<Permission>(
+  return useSWR<PermissionResponse>(
     key,
     () => permissionService.describe(workspaceId, id as string),
     {

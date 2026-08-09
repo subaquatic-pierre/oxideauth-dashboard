@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
+import { useGuestMode } from "@/hooks/use-guest-mode";
 import { useSidebar } from "@/components/layout/sidebar-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { WorkspaceSelector } from "@/components/layout/workspace-selector";
+import { GuestModeBadge } from "@/components/layout/guest-mode-badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -38,6 +41,7 @@ function getInitials(name?: string): string {
 export function Header() {
   const router = useRouter();
   const { user, logout } = useAuth();
+  const { isGuest, exitGuestMode } = useGuestMode();
   const { toggle: toggleSidebar } = useSidebar();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -47,6 +51,11 @@ export function Header() {
   useEffect(() => { setMounted(true); }, []);
 
   function handleLogout() {
+    if (isGuest) {
+      exitGuestMode();
+      router.push("/login");
+      return;
+    }
     logout();
     router.push("/login");
   }
@@ -75,8 +84,18 @@ export function Header() {
         <PanelLeftIcon className="size-5" />
       </Button>
 
-      {/* App title */}
-      <span className="text-base font-semibold">OxideAuth</span>
+      {/* App brand */}
+      <Image
+        src="/logoIconText.png"
+        alt="OxideAuth"
+        width={120}
+        height={28}
+        className="h-7 w-auto"
+        priority
+      />
+
+      {/* Guest mode indicator */}
+      <GuestModeBadge />
 
       {/* Workspace selector */}
       <WorkspaceSelector />

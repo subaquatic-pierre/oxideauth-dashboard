@@ -150,14 +150,11 @@ export default function PermissionDetailPage() {
               <DetailRow label="ID">
                 <span className="font-mono text-xs">{permission.id}</span>
               </DetailRow>
-              <DetailRow label="Workspace">
-                <span className="font-mono text-xs">{permission.workspace_id}</span>
-              </DetailRow>
               <DetailRow label="Created">
                 {formatDateTime(permission.created_at)}
               </DetailRow>
               <DetailRow label="Updated">
-                {formatDateTime(permission.updated_at)}
+                {permission.updated_at ? formatDateTime(permission.updated_at) : "—"}
               </DetailRow>
             </CardContent>
           </Card>

@@ -29,7 +29,7 @@ import { useActiveWorkspaceId } from "@/hooks/use-active-workspace"
 import { useCan } from "@/hooks/use-permissions-check"
 import { formatDateTime } from "@/lib/format"
 import { Building2Icon, KeyIcon, Loader2Icon, PencilIcon, Trash2Icon } from "lucide-react"
-import type { Permission } from "@/types/permission"
+import type { PermissionDescribeRes } from "@/types/permission"
 
 function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -65,10 +65,10 @@ export default function RoleDetailPage() {
 
   // Prefer the permissions embedded on describe; fall back to resolving
   // the permission ids against the workspace permission list.
-  const permissions: Permission[] =
+  const permissions: PermissionDescribeRes[] =
     role?.permissions?.length
       ? role.permissions
-      : (allPermissions ?? []).filter((p) => role?.permission_ids?.includes(p.id))
+      : (allPermissions ?? []).filter((p) => role?.permissions?.some((rp) => rp.id === p.id))
 
   if (!workspaceId) {
     return (
@@ -166,14 +166,11 @@ export default function RoleDetailPage() {
               <DetailRow label="ID">
                 <span className="font-mono text-xs">{role.id}</span>
               </DetailRow>
-              <DetailRow label="Workspace">
-                <span className="font-mono text-xs">{role.workspace_id}</span>
-              </DetailRow>
               <DetailRow label="Created">
                 {formatDateTime(role.created_at)}
               </DetailRow>
               <DetailRow label="Updated">
-                {formatDateTime(role.updated_at)}
+                {role.updated_at ? formatDateTime(role.updated_at) : "—"}
               </DetailRow>
             </CardContent>
           </Card>

@@ -28,7 +28,7 @@ import {
   ChevronRightIcon,
   Building2Icon,
 } from "lucide-react";
-import type { Workspace } from "@/types/workspace";
+import type { WorkspaceDescribeRes } from "@/types/workspace";
 
 const PER_PAGE = 10;
 
@@ -51,7 +51,7 @@ export default function WorkspacesPage() {
   };
 
   const { data, isLoading, error } = useWorkspaces(filters);
-  const workspaces = data?.workspaces as Workspace[] | undefined;
+  const workspaces = data?.workspaces as WorkspaceDescribeRes[] | undefined;
   const total = data?.metadata.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
@@ -59,7 +59,7 @@ export default function WorkspacesPage() {
   const canCreate = useCan("workspace", "create");
 
   const deleteWorkspace = useDeleteWorkspace();
-  const [deleteTarget, setDeleteTarget] = useState<Workspace | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<WorkspaceDescribeRes | null>(null);
 
   async function handleConfirmDelete() {
     if (!deleteTarget) return;

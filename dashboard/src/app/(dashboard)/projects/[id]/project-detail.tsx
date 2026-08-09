@@ -116,7 +116,6 @@ export default function ProjectDetailPage() {
         <CardContent>
           <div className="space-y-3">
             <DetailRow label="ID" value={project.id} mono />
-            <DetailRow label="Workspace ID" value={project.workspace_id} mono />
             <DetailRow
               label="Description"
               value={project.description || undefined}
@@ -152,7 +151,7 @@ export default function ProjectDetailPage() {
             />
             <DetailRow
               label="Updated"
-              value={formatDateTime(project.updated_at)}
+              value={project.updated_at ? formatDateTime(project.updated_at) : "—"}
             />
           </div>
         </CardContent>

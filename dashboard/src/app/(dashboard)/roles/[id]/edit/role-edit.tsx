@@ -96,8 +96,8 @@ export default function EditRolePage() {
                 workspaceId={workspaceId}
                 initialData={{
                   name: role.name,
-                  description: role.description,
-                  permission_ids: role.permission_ids ?? [],
+                  description: role.description ?? undefined,
+                  permission_ids: role.permissions?.map((p) => p.id) ?? [],
                 }}
                 isSubmitting={isUpdating}
                 submitLabel="Save changes"

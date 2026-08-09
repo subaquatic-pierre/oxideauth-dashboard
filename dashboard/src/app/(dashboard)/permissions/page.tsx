@@ -19,7 +19,7 @@ import { useActiveWorkspaceId } from "@/hooks/use-active-workspace"
 import { useCan } from "@/hooks/use-permissions-check"
 import { isNetworkError } from "@/lib/api"
 import { Building2Icon, KeyIcon, PlusIcon } from "lucide-react"
-import type { Permission } from "@/types/permission"
+import type { PermissionDescribeRes } from "@/types/permission"
 
 export default function PermissionsPage() {
   const workspaceId = useActiveWorkspaceId() ?? undefined
@@ -34,7 +34,7 @@ export default function PermissionsPage() {
   // PERMISSION-GATED: Create requires `permission:create`.
   const canCreate = useCan("permission", "create")
 
-  async function handleDelete(permission: Permission) {
+  async function handleDelete(permission: PermissionDescribeRes) {
     if (!workspaceId) return
     if (!window.confirm(`Delete permission "${permission.name}"?`)) return
     setDeletingId(permission.id)

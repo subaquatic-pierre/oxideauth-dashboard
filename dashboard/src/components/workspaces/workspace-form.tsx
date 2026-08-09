@@ -15,10 +15,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ArrowLeftIcon } from "lucide-react";
-import type { Workspace, WorkspaceFormData } from "@/types/workspace";
+import type { WorkspaceDescribeRes, WorkspaceFormData } from "@/types/workspace";
 
 interface WorkspaceFormProps {
-  initialData?: Workspace;
+  initialData?: WorkspaceDescribeRes;
   onSubmit: (data: WorkspaceFormData) => Promise<void>;
   isSubmitting: boolean;
   error?: string | null;

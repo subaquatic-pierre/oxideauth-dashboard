@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PlusIcon, UsersIcon } from "lucide-react";
-import type { AccountListQuery } from "@/services/account.service";
+import type { AccountListQuery } from "@/services";
 
 export default function AccountsPage() {
   const router = useRouter();

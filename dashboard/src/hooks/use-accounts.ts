@@ -2,13 +2,9 @@
 
 import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
-import { accountService } from "@/services";
-import type {
-  AccountListQuery,
-  AccountListResponse,
-} from "@/services/account.service";
+import { accountService, type AccountListQuery, type AccountListResponse } from "@/services";
 import { getActiveWorkspaceId } from "@/lib/workspace";
-import type { Account, AccountFormData } from "@/types/account";
+import type { AccountResponse, AccountFormData } from "@/types/account";
 
 export function useAccounts(
   workspaceId?: string | null,
@@ -24,7 +20,7 @@ export function useAccounts(
 
 export function useAccount(workspaceId: string | null | undefined, id: string) {
   const key = workspaceId && id ? ["accounts", "detail", workspaceId, id] : null;
-  return useSWR<Account>(key, () => accountService.describe(workspaceId!, id));
+  return useSWR<AccountResponse>(key, () => accountService.describe(workspaceId!, id));
 }
 
 export function useCreateAccount() {

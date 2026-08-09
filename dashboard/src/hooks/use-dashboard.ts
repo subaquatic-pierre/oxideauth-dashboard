@@ -8,7 +8,6 @@ import {
   roleService,
   permissionService,
   credentialService,
-  tokenService,
   membershipsService,
 } from "@/services"
 import { useActiveWorkspaceId } from "@/hooks/use-active-workspace"
@@ -21,7 +20,6 @@ export interface DashboardCounts {
   permissions: number
   memberships: number
   credentials: number
-  tokens: number
 }
 
 /**
@@ -42,7 +40,7 @@ export function useDashboardCounts() {
     key,
     async () => {
       const wid = workspaceId!
-      const [workspaces, accounts, projects, roles, permissions, memberships, credentials, tokens] =
+      const [workspaces, accounts, projects, roles, permissions, memberships, credentials] =
         await Promise.all([
           workspaceService
             .list({ limit: 1 })
@@ -65,9 +63,6 @@ export function useDashboardCounts() {
           credentialService
             .list(wid, { limit: 1 })
             .then((r) => r.metadata?.total ?? 0),
-          tokenService
-            .list({ limit: 1 })
-            .then((r) => r.metadata?.total ?? 0),
         ])
 
       return {
@@ -78,7 +73,6 @@ export function useDashboardCounts() {
         permissions,
         memberships,
         credentials,
-        tokens,
       }
     },
   )

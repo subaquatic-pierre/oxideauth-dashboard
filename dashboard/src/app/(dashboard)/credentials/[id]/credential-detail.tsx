@@ -201,7 +201,7 @@ function CredentialDetail() {
             />
             <DetailRow
               label="Updated"
-              value={formatDateTime(credential.updated_at)}
+              value=                {credential.updated_at ? formatDateTime(credential.updated_at) : "—"}
             />
           </div>
         </CardContent>

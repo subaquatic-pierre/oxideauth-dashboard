@@ -16,10 +16,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ArrowLeftIcon, XIcon } from "lucide-react";
-import type { Account, AccountFormData } from "@/types/account";
+import type { AccountDescribeRes, AccountFormData } from "@/types/account";
 
 interface AccountFormProps {
-  account?: Account;
+  account?: AccountDescribeRes;
   onSubmit: (data: AccountFormData) => Promise<void>;
   isPending: boolean;
   error: Error | null;

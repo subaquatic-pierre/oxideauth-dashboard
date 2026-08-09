@@ -66,7 +66,7 @@ export function MembershipForm({ workspaceId, membership }: MembershipFormProps)
     membership?.status ?? "active",
   )
   const [roleIds, setRoleIds] = React.useState<string[]>(
-    membership?.role_ids ?? [],
+    membership?.roles?.map((r) => r.id) ?? [],
   )
   const [tagsText, setTagsText] = React.useState(membership?.tags?.join(", ") ?? "")
   const [error, setError] = React.useState<string | null>(null)

@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { useGuestMode } from "@/hooks/use-guest-mode";
+import { isGuestMode } from "@/lib/guest-mode";
 import { AUTH_EXPIRED_EVENT } from "@/lib/api";
 import { Header } from "@/components/layout/header";
 import { Sidebar } from "@/components/layout/sidebar";
@@ -13,25 +15,30 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { isPending, isAuthenticated } = useAuth();
+  const { isGuest } = useGuestMode();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isPending && !isAuthenticated) {
+    // Allow guest sessions to access dashboard; only redirect truly
+    // unauthenticated users (no guest, no JWT) to the login page.
+    if (!isPending && !isAuthenticated && !isGuest) {
       router.push("/login");
     }
-  }, [isPending, isAuthenticated, router]);
+  }, [isPending, isAuthenticated, isGuest, router]);
 
   // Session expiry: the API layer dispatches `auth:expired` on any 401.
-  // Bounce the user to the login page.
+  // Bounce the user to the login page — unless in guest mode.
   useEffect(() => {
     function handleAuthExpired() {
-      router.push("/login");
+      if (!isGuestMode()) {
+        router.push("/login");
+      }
     }
     window.addEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
     return () => window.removeEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
   }, [router]);
 
-  if (isPending) {
+  if (isPending && !isGuest) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="size-8 animate-spin rounded-full border-4 border-muted border-t-primary" />
@@ -39,7 +46,7 @@ export default function DashboardLayout({
     );
   }
 
-  if (!isAuthenticated) return null;
+  if (!isAuthenticated && !isGuest) return null;
 
   return (
     <div className="flex min-h-screen flex-col">

@@ -95,8 +95,8 @@ export default function EditPermissionPage() {
               <PermissionForm
                 initialData={{
                   name: permission.name,
-                  code: permission.code,
-                  description: permission.description,
+                  code: permission.code ?? undefined,
+                  description: permission.description ?? undefined,
                 }}
                 isSubmitting={isUpdating}
                 submitLabel="Save changes"

@@ -22,10 +22,10 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Text } from "@/components/ui/text"
 import { formatDateTime } from "@/lib/format"
 import { ArrowLeftIcon, PencilIcon } from "lucide-react"
-import type { Membership } from "@/types/membership"
-import type { Role } from "@/types/role"
+import type { MembershipDescribeRes } from "@/types/membership"
+import type { Role, RoleDescribeRes } from "@/types/role"
 
-function MembershipDetail({ membership }: { membership: Membership }) {
+function MembershipDetail({ membership }: { membership: MembershipDescribeRes }) {
   return (
     <div className="space-y-6">
       <Card>
@@ -36,16 +36,14 @@ function MembershipDetail({ membership }: { membership: Membership }) {
         <CardContent className="space-y-3">
           <div className="flex items-center gap-3 rounded-lg bg-muted/50 px-4 py-3">
             <div className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-              {(membership.account?.name ?? membership.account?.email ?? "?")
-                .slice(0, 1)
-                .toUpperCase()}
+              {(membership.account_id?.slice(0, 1) ?? "?").toUpperCase()}
             </div>
             <div className="min-w-0">
               <p className="truncate font-medium">
-                {membership.account?.name ?? "Unknown account"}
+                {membership.account_id}
               </p>
               <p className="truncate text-sm text-muted-foreground">
-                {membership.account?.email ?? membership.account_id}
+                {membership.account_id}
               </p>
             </div>
           </div>
@@ -81,10 +79,10 @@ function MembershipDetail({ membership }: { membership: Membership }) {
           <DetailRow label="Status" value={<StatusBadge status={membership.status} />} />
           <DetailRow
             label="Roles"
-            value={<span className="tabular-nums">{membership.role_ids.length}</span>}
+            value={<span className="tabular-nums">{membership.roles.length}</span>}
           />
           <DetailRow label="Created" value={formatDateTime(membership.created_at)} />
-          <DetailRow label="Updated" value={formatDateTime(membership.updated_at)} />
+          <DetailRow label="Updated" value={membership.updated_at ? formatDateTime(membership.updated_at) : "—"} />
           {membership.tags && membership.tags.length > 0 ? (
             <DetailRow
               label="Tags"
@@ -110,7 +108,7 @@ function MembershipDetail({ membership }: { membership: Membership }) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {membership.role_ids.length === 0 ? (
+          {membership.roles.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               No roles assigned to this membership.
             </p>
@@ -152,13 +150,11 @@ export default function MembershipDetailPage() {
   const resolvedRoles = React.useMemo(() => {
     if (membership?.roles?.length) return membership.roles
     if (!membership || !workspaceRoles) return []
-    return membership.role_ids
-      .map((id) => workspaceRoles.find((r) => r.id === id))
-      .filter((r): r is Role => Boolean(r))
+    return membership.roles.map((r) => workspaceRoles.find((wr: RoleDescribeRes) => wr.id === r.id)).filter((r): r is RoleDescribeRes => Boolean(r))
   }, [membership, workspaceRoles])
 
-  const membershipWithRoles = membership
-    ? { ...membership, roles: resolvedRoles }
+  const membershipWithRoles: MembershipDescribeRes | undefined = membership
+    ? { ...membership, roles: resolvedRoles as unknown as Role[] }
     : undefined
 
   return (
@@ -176,7 +172,7 @@ export default function MembershipDetailPage() {
           <div>
             <Text variant="h2">Membership details</Text>
             <Text variant="muted">
-              {membership?.account?.email ?? "Loading member..."}
+              {membership?.account_id ?? "Loading member..."}
             </Text>
           </div>
         </div>

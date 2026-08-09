@@ -59,7 +59,7 @@ export function ProjectForm({
       name: name.trim(),
       code: code.trim(),
       description: description.trim() || undefined,
-      config,
+      config: config as ProjectFormData["config"],
       tags: tags.length > 0 ? tags : undefined,
     })
   }

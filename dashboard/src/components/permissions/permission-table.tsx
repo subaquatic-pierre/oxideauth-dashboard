@@ -12,12 +12,12 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { EyeIcon, PencilIcon, Trash2Icon, Loader2Icon } from "lucide-react"
-import type { Permission } from "@/types/permission"
+import type { PermissionDescribeRes } from "@/types/permission"
 
 interface PermissionTableProps {
-  permissions: Permission[]
+  permissions: PermissionDescribeRes[]
   deletingId?: string | null
-  onDelete?: (permission: Permission) => void
+  onDelete?: (permission: PermissionDescribeRes) => void
 }
 
 export function PermissionTable({

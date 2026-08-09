@@ -98,15 +98,8 @@ export function MembershipTable({
                   <TableCell>
                     <div className="flex min-w-0 flex-col">
                       <span className="font-medium">
-                        {membership.account?.name ??
-                          membership.account?.email ??
-                          membership.account_id}
+                        {membership.account_id}
                       </span>
-                      {membership.account?.email ? (
-                        <span className="text-xs text-muted-foreground">
-                          {membership.account.email}
-                        </span>
-                      ) : null}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -118,7 +111,7 @@ export function MembershipTable({
                     <StatusBadge status={membership.status} />
                   </TableCell>
                   <TableCell className="tabular-nums">
-                    {membership.role_ids.length}
+                    {membership.roles.length}
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
                     {formatDateTime(membership.created_at)}
@@ -128,7 +121,7 @@ export function MembershipTable({
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={`View ${membership.account?.email ?? "membership"}`}
+                        aria-label={`View ${membership.account_id ?? "membership"}`}
                         render={<Link href={`/memberships/${membership.id}`} />}
                       >
                         <EyeIcon />
@@ -136,7 +129,7 @@ export function MembershipTable({
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={`Edit ${membership.account?.email ?? "membership"}`}
+                        aria-label={`Edit ${membership.account_id ?? "membership"}`}
                         render={
                           <Link href={`/memberships/${membership.id}/edit`} />
                         }
@@ -166,7 +159,7 @@ export function MembershipTable({
         title="Delete membership"
         description={
           deleteTarget
-            ? `Remove ${deleteTarget.account?.email ?? deleteTarget.account_id} from this workspace. This action cannot be undone.`
+            ? `Remove ${deleteTarget.account_id} from this workspace. This action cannot be undone.`
             : undefined
         }
         isConfirming={deleteMembership.isMutating}

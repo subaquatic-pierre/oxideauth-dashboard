@@ -13,11 +13,11 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate } from "@/lib/format";
 import { EyeIcon, EditIcon, TrashIcon } from "lucide-react";
-import type { Workspace } from "@/types/workspace";
+import type { WorkspaceDescribeRes } from "@/types/workspace";
 
 interface WorkspaceTableProps {
-  workspaces?: Workspace[];
-  onDelete: (workspace: Workspace) => void;
+  workspaces?: WorkspaceDescribeRes[];
+  onDelete: (workspace: WorkspaceDescribeRes) => void;
 }
 
 export function WorkspaceTable({ workspaces, onDelete }: WorkspaceTableProps) {

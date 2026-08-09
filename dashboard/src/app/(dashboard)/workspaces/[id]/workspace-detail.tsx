@@ -199,7 +199,7 @@ export default function WorkspaceDetailPage() {
               <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 Updated At
               </p>
-              <p className="font-medium">{formatDateTime(workspace.updated_at)}</p>
+              <p className="font-medium">{workspace.updated_at ? formatDateTime(workspace.updated_at) : "—"}</p>
             </div>
           </div>
         </CardContent>

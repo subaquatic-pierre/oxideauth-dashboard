@@ -2,7 +2,7 @@
 import { createContext, useContext, useMemo } from "react"
 import { useAuth } from "@/hooks/use-auth"
 import useSWR from "swr"
-import { PermissionService } from "@/services/permission.service"
+import { permissionService } from "@/services"
 
 interface PermissionContextValue {
   permissions: string[]
@@ -28,7 +28,7 @@ export function PermissionProvider({ children }: { children: React.ReactNode }) 
       // Placeholder: the API does not yet support user-level permission
       // resolution, so we return an empty set here. Swap this for the real
       // resolution endpoint once available.
-      const svc = new PermissionService()
+      const svc = permissionService
       await svc.list(workspaceId!, { limit: 1 })
       return []
     },

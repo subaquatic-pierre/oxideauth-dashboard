@@ -9,6 +9,7 @@ import type { User, LoginRequest, RegisterRequest } from "@/types/auth";
 
 const AUTH_TOKEN_KEY = "auth_token";
 const AUTH_USER_KEY = "auth_user";
+const AUTH_REFRESH_TOKEN_KEY = "auth_refresh_token";
 
 function getStoredAuth(): { token: string | null; user: User | null } {
   if (typeof window === "undefined") return { token: null, user: null };
@@ -22,14 +23,18 @@ function getStoredAuth(): { token: string | null; user: User | null } {
   }
 }
 
-function storeAuth(token: string, user: User) {
+function storeAuth(token: string, user: User, refreshToken?: string) {
   localStorage.setItem(AUTH_TOKEN_KEY, token);
   localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+  if (refreshToken) {
+    localStorage.setItem(AUTH_REFRESH_TOKEN_KEY, refreshToken);
+  }
 }
 
 function clearAuth() {
   localStorage.removeItem(AUTH_TOKEN_KEY);
   localStorage.removeItem(AUTH_USER_KEY);
+  localStorage.removeItem(AUTH_REFRESH_TOKEN_KEY);
 }
 
 function errorMessage(error: unknown): string {
@@ -49,12 +54,17 @@ export function useAuth() {
       mutate(["auth", "me"], null, { revalidate: false });
     }
     window.addEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
-    return () => window.removeEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
+    return () =>
+      window.removeEventListener(AUTH_EXPIRED_EVENT, handleAuthExpired);
   }, [mutate]);
 
   // Load the current user from storage. Only fetches when a token exists
   // (token presence in localStorage is the source of truth for auth state).
-  const { data: user, isLoading, error } = useSWR<User | null>(
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useSWR<User | null>(
     stored.token ? ["auth", "me"] : null,
     async () => {
       const u = await authService.me();
@@ -73,7 +83,7 @@ export function useAuth() {
     "auth-login",
     async (_key: string, { arg }: { arg: LoginRequest }) => {
       const res = await authService.login(arg);
-      storeAuth(res.token, res.account);
+      storeAuth(res.accessToken, res.account, res.refreshToken);
       return res.account;
     },
     {
@@ -87,7 +97,9 @@ export function useAuth() {
   const registerMutation = useSWRMutation(
     "auth-register",
     async (_key: string, { arg }: { arg: RegisterRequest }) => {
-      return authService.register(arg);
+      const res = await authService.register(arg);
+      storeAuth(res.accessToken, res.account, res.refreshToken);
+      return res.account;
     },
   );
 
@@ -126,7 +138,9 @@ export function useAuth() {
     logout,
     loginError: loginMutation.error ? errorMessage(loginMutation.error) : null,
     isLoggingIn: loginMutation.isMutating,
-    registerError: registerMutation.error ? errorMessage(registerMutation.error) : null,
+    registerError: registerMutation.error
+      ? errorMessage(registerMutation.error)
+      : null,
     isRegistering: registerMutation.isMutating,
   };
 }

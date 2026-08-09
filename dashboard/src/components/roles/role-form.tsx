@@ -23,7 +23,7 @@ import {
 import { usePermissions } from "@/hooks/use-permissions"
 import { Loader2Icon, XIcon } from "lucide-react"
 import type { RoleFormData } from "@/types/role"
-import type { Permission } from "@/types/permission"
+import type { PermissionDescribeRes } from "@/types/permission"
 
 interface RoleFormProps {
   workspaceId?: string
@@ -50,7 +50,7 @@ export function RoleForm({
   )
 
   const permissionById = useMemo(() => {
-    const map = new Map<string, Permission>()
+    const map = new Map<string, PermissionDescribeRes>()
     for (const permission of permissions ?? []) {
       map.set(permission.id, permission)
     }

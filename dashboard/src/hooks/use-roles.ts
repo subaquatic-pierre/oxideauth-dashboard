@@ -4,7 +4,7 @@ import { useCallback } from "react"
 import useSWR, { useSWRConfig } from "swr"
 import useSWRMutation from "swr/mutation"
 import { roleService } from "@/services"
-import type { Role, RoleFormData } from "@/types/role"
+import type { RoleResponse, RoleFormData } from "@/types/role"
 import type { ListFilters } from "@/types/common"
 
 function errorMessage(error: unknown): string {
@@ -17,7 +17,7 @@ function revalidateRoles(mutate: ReturnType<typeof useSWRConfig>["mutate"]) {
 
 export function useRoles(workspaceId?: string, filters?: ListFilters) {
   const key = workspaceId ? ["roles", "list", workspaceId, filters ?? {}] : null
-  return useSWR<Role[]>(
+  return useSWR<RoleResponse[]>(
     key,
     () => roleService.list(workspaceId, filters),
     {
@@ -29,7 +29,7 @@ export function useRoles(workspaceId?: string, filters?: ListFilters) {
 
 export function useRole(workspaceId?: string, id?: string) {
   const key = workspaceId && id ? ["roles", "detail", workspaceId, id] : null
-  return useSWR<Role>(
+  return useSWR<RoleResponse>(
     key,
     () => roleService.describe(workspaceId, id as string),
     {

@@ -1,6 +1,10 @@
 import { BaseService } from "./base"
-import type { Account, AccountFormData } from "@/types/account"
-import type { PaginationMetadata } from "@/types/common"
+import type { AccountResponse, AccountFormData } from "@/types/account"
+import type { ListResponseMeta } from "@/types/pagination"
+import { isGuestMode } from "@/lib/guest-mode"
+import { mockOk } from "@/lib/mock-ok"
+import { MOCK_ACCOUNTS } from "@/lib/mock-data"
+import { isUuid } from "@/lib/utils"
 
 // Query shape accepted by POST /accounts/list. `filter.fields` carries the
 // exact-match account fields (email, name, verified, enabled, ...) and
@@ -20,8 +24,8 @@ export interface AccountListQuery {
 // Paginated list payload returned by POST /accounts/list: the accounts array
 // lives under the `accounts` key alongside pagination metadata.
 export interface AccountListResponse {
-  accounts: Account[]
-  metadata: PaginationMetadata
+  accounts: AccountResponse[]
+  metadata: ListResponseMeta
 }
 
 export class AccountService extends BaseService {
@@ -29,6 +33,23 @@ export class AccountService extends BaseService {
     workspaceId: string,
     filters?: AccountListQuery,
   ): Promise<AccountListResponse> {
+    if (isGuestMode()) {
+      const limit = filters?.options?.limit ?? 10
+      const offset = filters?.options?.offset ?? 0
+      const items = MOCK_ACCOUNTS.slice(offset, offset + limit)
+      return Promise.resolve(
+        mockOk({
+          accounts: items,
+          metadata: {
+            total: MOCK_ACCOUNTS.length,
+            count: items.length,
+            offset,
+            limit,
+            order_bys: [filters?.options?.order_bys ?? "!created_at"],
+          },
+        }).data as unknown as AccountListResponse,
+      )
+    }
     return this.post<AccountListResponse>("/accounts/list", {
       workspace_id: workspaceId,
       ...filters,
@@ -36,16 +57,31 @@ export class AccountService extends BaseService {
   }
 
   // Accepts either an account UUID `id` or an account `email`.
-  describe(workspaceId: string, identifier: string): Promise<Account> {
-    return this.post<Account>("/accounts/describe", {
+  describe(workspaceId: string, identifier: string): Promise<AccountResponse> {
+    if (isGuestMode()) {
+      const account = MOCK_ACCOUNTS.find(
+        (a) => a.id === identifier || a.email === identifier,
+      )
+      return Promise.resolve(
+        mockOk(account ?? MOCK_ACCOUNTS[0]).data as unknown as AccountResponse,
+      )
+    }
+    return this.post<AccountResponse>("/accounts/describe", {
       workspace_id: workspaceId,
-      id: identifier,
+      ...accountIdentifier(identifier),
     })
   }
 
-  create(workspaceId: string, data: AccountFormData): Promise<Account> {
-    return this.post<Account>("/accounts/create", {
+  create(workspaceId: string, data: AccountFormData): Promise<AccountResponse> {
+    if (isGuestMode()) {
+      return Promise.resolve(
+        mockOk({ id: "acc-mock-new", ...data }).data as unknown as AccountResponse,
+      )
+    }
+    return this.post<AccountResponse>("/accounts/create", {
       workspace_id: workspaceId,
+      tags: [],
+      meta: { schema_version: "1" },
       ...data,
     })
   }
@@ -55,21 +91,31 @@ export class AccountService extends BaseService {
     workspaceId: string,
     identifier: string,
     data: Partial<AccountFormData>,
-  ): Promise<Account> {
-    return this.post<Account>("/accounts/update", {
+  ): Promise<AccountResponse> {
+    if (isGuestMode()) {
+      return Promise.resolve(
+        mockOk({ id: identifier, ...data }).data as unknown as AccountResponse,
+      )
+    }
+    return this.post<AccountResponse>("/accounts/update", {
       workspace_id: workspaceId,
-      id: identifier,
+      ...accountIdentifier(identifier),
       ...data,
     })
   }
 
   // Accepts either an account UUID `id` or an account `email`.
   delete(workspaceId: string, identifier: string): Promise<void> {
+    if (isGuestMode()) {
+      return Promise.resolve()
+    }
     return this.post<void>("/accounts/delete", {
       workspace_id: workspaceId,
-      id: identifier,
+      ...accountIdentifier(identifier),
     })
   }
 }
 
-export const accountService = new AccountService()
+function accountIdentifier(idOrEmail: string): Record<string, string> {
+  return isUuid(idOrEmail) ? { id: idOrEmail } : { email: idOrEmail };
+}

@@ -2,7 +2,11 @@ import { BaseService } from "./base"
 import { buildListQuery } from "@/lib/query"
 import { getActiveWorkspaceId } from "@/lib/workspace"
 import type { Credential, CredentialFormData } from "@/types/credential"
-import type { ListFilters, PaginatedResponse } from "@/types/common"
+import type { ListFilters } from "@/types/common"
+import type { PaginatedResponse } from "@/types/pagination"
+import { isGuestMode } from "@/lib/guest-mode"
+import { mockOk } from "@/lib/mock-ok"
+import { MOCK_CREDENTIALS, filterByWorkspace } from "@/lib/mock-data"
 
 /**
  * Workspace-scoped credential management. Credentials are tied to an owning
@@ -17,6 +21,25 @@ export class CredentialService extends BaseService {
     workspaceId: string,
     filters?: ListFilters,
   ): Promise<PaginatedResponse<Credential, "credentials">> {
+    if (isGuestMode()) {
+      const items = filterByWorkspace(
+        MOCK_CREDENTIALS,
+        workspaceId || getActiveWorkspaceId(),
+      )
+      const limit = filters?.limit ?? 10
+      const offset = filters?.offset ?? 0
+      const page = items.slice(offset, offset + limit)
+      return mockOk({
+        credentials: page,
+        metadata: {
+          total: items.length,
+          count: page.length,
+          offset,
+          limit,
+          order_bys: filters?.order_bys ?? ["!created_at"],
+        },
+      }).data as unknown as PaginatedResponse<Credential, "credentials">
+    }
     return this.post("/credentials/list", {
       workspace_id: workspaceId || getActiveWorkspaceId(),
       ...buildListQuery(filters),
@@ -28,6 +51,13 @@ export class CredentialService extends BaseService {
     accountId: string,
     id: string,
   ): Promise<Credential> {
+    if (isGuestMode()) {
+      const credential = filterByWorkspace(
+        MOCK_CREDENTIALS,
+        workspaceId || getActiveWorkspaceId(),
+      ).find((c) => c.id === id && c.account_id === accountId)
+      return mockOk(credential ?? MOCK_CREDENTIALS[0]).data as unknown as Credential
+    }
     return this.post("/credentials/describe", {
       workspace_id: workspaceId || getActiveWorkspaceId(),
       account_id: accountId,
@@ -41,6 +71,9 @@ export class CredentialService extends BaseService {
     id: string,
     data: CredentialFormData,
   ): Promise<Credential> {
+    if (isGuestMode()) {
+      return mockOk({ id, account_id: accountId, ...data }).data as unknown as Credential
+    }
     return this.post("/credentials/update", {
       workspace_id: workspaceId || getActiveWorkspaceId(),
       account_id: accountId,
@@ -54,6 +87,9 @@ export class CredentialService extends BaseService {
     accountId: string,
     id: string,
   ): Promise<void> {
+    if (isGuestMode()) {
+      return Promise.resolve()
+    }
     return this.post("/credentials/delete", {
       workspace_id: workspaceId || getActiveWorkspaceId(),
       account_id: accountId,

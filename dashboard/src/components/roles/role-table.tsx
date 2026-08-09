@@ -12,12 +12,12 @@ import {
 import { Button } from "@/components/ui/button"
 import { Pill } from "@/components/ui/pill"
 import { EyeIcon, PencilIcon, Trash2Icon, Loader2Icon } from "lucide-react"
-import type { Role } from "@/types/role"
+import type { RoleDescribeRes } from "@/types/role"
 
 interface RoleTableProps {
-  roles: Role[]
+  roles: RoleDescribeRes[]
   deletingId?: string | null
-  onDelete?: (role: Role) => void
+  onDelete?: (role: RoleDescribeRes) => void
 }
 
 export function RoleTable({ roles, deletingId, onDelete }: RoleTableProps) {
@@ -33,7 +33,7 @@ export function RoleTable({ roles, deletingId, onDelete }: RoleTableProps) {
       </TableHeader>
       <TableBody>
         {roles.map((role) => {
-          const count = role.permission_ids?.length ?? 0
+          const count = role.permissions?.length ?? 0
           return (
             <TableRow key={role.id}>
               <TableCell className="font-medium">{role.name}</TableCell>

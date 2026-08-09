@@ -18,7 +18,6 @@ import {
   KeyIcon,
   UserCheckIcon,
   FingerprintIcon,
-  TicketIcon,
   PlusIcon,
   Loader2Icon,
 } from "lucide-react";
@@ -31,7 +30,6 @@ const emptyCounts = {
   permissions: 0,
   memberships: 0,
   credentials: 0,
-  tokens: 0,
 };
 
 export default function DashboardPage() {
@@ -48,9 +46,7 @@ export default function DashboardPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <Text variant="h2">Welcome back, {user?.name ?? "there"}</Text>
-          <Text variant="muted">
-            Overview of the active workspace.
-          </Text>
+          <Text variant="muted">Overview of the active workspace.</Text>
         </div>
 
         {/* Quick Create */}
@@ -149,12 +145,6 @@ export default function DashboardPage() {
             value={values.credentials}
             icon={<FingerprintIcon className="size-4" />}
             href="/credentials"
-          />
-          <MetricCard
-            title="Tokens"
-            value={values.tokens}
-            icon={<TicketIcon className="size-4" />}
-            href="/tokens"
           />
         </div>
       )}

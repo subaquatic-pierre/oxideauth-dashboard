@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useSidebar } from "@/components/layout/sidebar-provider";
 import { useCan } from "@/hooks/use-permissions-check";
+import { useGuestMode } from "@/hooks/use-guest-mode";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
@@ -16,7 +18,6 @@ import {
   KeyIcon,
   UserCheckIcon,
   FingerprintIcon,
-  TicketIcon,
 } from "lucide-react";
 
 const resourceLinks = [
@@ -27,20 +28,41 @@ const resourceLinks = [
     entity: "workspace",
   },
   { href: "/accounts", label: "Accounts", icon: UsersIcon, entity: "account" },
-  { href: "/projects", label: "Projects", icon: FolderKanbanIcon, entity: "project" },
+  {
+    href: "/projects",
+    label: "Projects",
+    icon: FolderKanbanIcon,
+    entity: "project",
+  },
   { href: "/roles", label: "Roles", icon: ShieldIcon, entity: "role" },
-  { href: "/permissions", label: "Permissions", icon: KeyIcon, entity: "permission" },
-  { href: "/memberships", label: "Memberships", icon: UserCheckIcon, entity: "membership" },
-  { href: "/credentials", label: "Credentials", icon: FingerprintIcon, entity: "credential" },
-  { href: "/tokens", label: "Tokens", icon: TicketIcon, entity: "token" },
+  {
+    href: "/permissions",
+    label: "Permissions",
+    icon: KeyIcon,
+    entity: "permission",
+  },
+  {
+    href: "/memberships",
+    label: "Memberships",
+    icon: UserCheckIcon,
+    entity: "membership",
+  },
+  {
+    href: "/credentials",
+    label: "Credentials",
+    icon: FingerprintIcon,
+    entity: "credential",
+  },
 ] as const;
 
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { collapsed } = useSidebar();
+  const { isGuest } = useGuestMode();
 
   // PERMISSION-GATED: each resource section requires `{entity}:read`.
+  // In guest mode, all links are always visible.
   const canRead = {
     workspace: useCan("workspace", "read"),
     account: useCan("account", "read"),
@@ -49,19 +71,25 @@ export function Sidebar() {
     permission: useCan("permission", "read"),
     membership: useCan("membership", "read"),
     credential: useCan("credential", "read"),
-    token: useCan("token", "read"),
   };
 
   // Home / Profile / Settings are always visible; resource links are filtered
-  // by the user's `{entity}:read` permissions.
-  const visibleLinks = resourceLinks.filter((link) => canRead[link.entity]);
+  // by the user's `{entity}:read` permissions — except in guest mode where
+  // all links are shown for full UI exploration.
+  const visibleLinks = isGuest
+    ? resourceLinks
+    : resourceLinks.filter((link) => canRead[link.entity]);
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
     return pathname.startsWith(href);
   };
 
-  const navButton = (link: { href: string; label: string; icon: typeof ShieldIcon }) => {
+  const navButton = (link: {
+    href: string;
+    label: string;
+    icon: typeof ShieldIcon;
+  }) => {
     const active = isActive(link.href);
     return (
       <Button
@@ -76,9 +104,7 @@ export function Sidebar() {
         )}
         onClick={() => router.push(link.href)}
       >
-        <link.icon
-          className={cn("size-4 shrink-0", !collapsed && "mr-3")}
-        />
+        <link.icon className={cn("size-4 shrink-0", !collapsed && "mr-3")} />
         {!collapsed && link.label}
       </Button>
     );
@@ -99,10 +125,24 @@ export function Sidebar() {
         )}
       >
         <Link href="/" className="flex items-center gap-2 font-semibold">
-          <div className="flex size-7 items-center justify-center rounded-lg bg-brand text-primary-foreground">
-            <ShieldIcon className="size-4" />
-          </div>
-          {!collapsed && <span className="text-base">OxideAuth</span>}
+          {collapsed ? (
+            <Image
+              src="/logoIconText.png"
+              alt="OxideAuth"
+              width={28}
+              height={28}
+              className="size-7 rounded-lg"
+            />
+          ) : (
+            <Image
+              src="/logo.png"
+              alt="OxideAuth"
+              width={120}
+              height={28}
+              className="h-7 w-auto"
+              priority
+            />
+          )}
         </Link>
       </div>
 

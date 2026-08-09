@@ -3,12 +3,13 @@
 import useSWR, { useSWRConfig } from "swr";
 import useSWRMutation from "swr/mutation";
 import { workspaceService } from "@/services";
-import type { ListFilters, PaginatedResponse } from "@/types/common";
-import type { Workspace, WorkspaceFormData } from "@/types/workspace";
+import type { ListFilters } from "@/types/common";
+import type { PaginatedResponse } from "@/types/pagination";
+import type { WorkspaceResponse, WorkspaceFormData } from "@/types/workspace";
 
 export function useWorkspaces(filters?: ListFilters) {
   const key = ["workspaces", "list", filters] as const;
-  return useSWR<PaginatedResponse<Workspace, "workspaces">>(
+  return useSWR<PaginatedResponse<WorkspaceResponse, "workspaces">>(
     key,
     () => workspaceService.list(filters),
     {
@@ -18,7 +19,7 @@ export function useWorkspaces(filters?: ListFilters) {
 }
 
 export function useWorkspace(id?: string) {
-  return useSWR<Workspace>(
+  return useSWR<WorkspaceResponse>(
     id ? ["workspaces", "detail", id] : null,
     () => workspaceService.describe(id as string),
   );

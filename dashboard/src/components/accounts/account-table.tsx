@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Account } from "@/types/account";
+import type { AccountDescribeRes } from "@/types/account";
 import { useDeleteAccount, useUpdateAccount } from "@/hooks/use-accounts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ function VerifiedBadge({ verified }: { verified: boolean }) {
   );
 }
 
-function EnabledSwitch({ account }: { account: Account }) {
+function EnabledSwitch({ account }: { account: AccountDescribeRes }) {
   const update = useUpdateAccount(account.id);
   const [checked, setChecked] = useState(account.enabled);
   return (
@@ -49,7 +49,7 @@ function EnabledSwitch({ account }: { account: Account }) {
 }
 
 interface AccountTableProps {
-  accounts?: Account[];
+  accounts?: AccountDescribeRes[];
   isLoading?: boolean;
 }
 
@@ -60,7 +60,7 @@ export function AccountTable({
   const router = useRouter();
   const deleteAccount = useDeleteAccount();
 
-  async function handleDelete(account: Account) {
+  async function handleDelete(account: AccountDescribeRes) {
     if (
       !confirm(
         `Delete account "${account.name}" (${account.email})? This cannot be undone.`,

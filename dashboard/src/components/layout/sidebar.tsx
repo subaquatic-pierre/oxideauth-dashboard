@@ -14,6 +14,7 @@ import {
   LayoutDashboardIcon,
   Building2Icon,
   UsersIcon,
+  UserRoundIcon,
   FolderKanbanIcon,
   KeyIcon,
   UserCheckIcon,
@@ -26,6 +27,12 @@ const resourceLinks = [
     label: "Workspaces",
     icon: Building2Icon,
     entity: "workspace",
+  },
+  {
+    href: "/profiles",
+    label: "Profiles",
+    icon: UserRoundIcon,
+    entity: "profile",
   },
   { href: "/accounts", label: "Accounts", icon: UsersIcon, entity: "account" },
   {
@@ -65,6 +72,7 @@ export function Sidebar() {
   // In guest mode, all links are always visible.
   const canRead = {
     workspace: useCan("workspace", "read"),
+    profile: useCan("profile", "read"),
     account: useCan("account", "read"),
     project: useCan("project", "read"),
     role: useCan("role", "read"),

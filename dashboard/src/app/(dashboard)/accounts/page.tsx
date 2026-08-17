@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAccounts } from "@/hooks/use-accounts";
 import { useCan } from "@/hooks/use-permissions-check";
@@ -26,6 +26,12 @@ export default function AccountsPage() {
 
   // PERMISSION-GATED: Create requires `account:create`.
   const canCreate = useCan("account", "create");
+
+  // PERMISSION-GATED: Accounts are system-admin only — redirect if no `account:read`.
+  const canRead = useCan("account", "read");
+  useEffect(() => {
+    if (!canRead) router.replace("/");
+  }, [canRead, router]);
 
   // Filters
   const [email, setEmail] = useState("");

@@ -23,7 +23,6 @@ import {
   PanelLeftIcon,
   SunIcon,
   MoonIcon,
-  UserIcon,
   SettingsIcon,
   LogOutIcon,
 } from "lucide-react";
@@ -136,10 +135,6 @@ export function Header() {
             <DropdownMenuContent align="end" className="w-48">
               <div className="px-2 py-1.5 text-sm font-medium">{user.name}</div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push("/profile")}>
-                <UserIcon className="mr-2 size-4" />
-                Profile
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push("/settings")}>
                 <SettingsIcon className="mr-2 size-4" />
                 Settings

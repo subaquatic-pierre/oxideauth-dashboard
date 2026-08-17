@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAccount, useDeleteAccount } from "@/hooks/use-accounts";
 import { useActiveWorkspaceId } from "@/hooks/use-active-workspace";
@@ -54,6 +55,12 @@ export default function AccountDetailPage() {
   // PERMISSION-GATED: Edit requires `account:update`, Delete requires `account:delete`.
   const canEdit = useCan("account", "update");
   const canDelete = useCan("account", "delete");
+
+  // PERMISSION-GATED: Accounts are system-admin only — redirect if no `account:read`.
+  const canRead = useCan("account", "read");
+  useEffect(() => {
+    if (!canRead) router.replace("/");
+  }, [canRead, router]);
 
   async function handleDelete() {
     if (!account) return;

@@ -8,6 +8,7 @@ export type ProjectMeta = EntityMeta;
 export type RoleMeta = EntityMeta;
 export type PermissionMeta = EntityMeta;
 export type MembershipMeta = EntityMeta;
+export type ProfileMeta = EntityMeta;
 export type CredentialMeta = EntityMeta;
 export type ClientMeta = EntityMeta;
 

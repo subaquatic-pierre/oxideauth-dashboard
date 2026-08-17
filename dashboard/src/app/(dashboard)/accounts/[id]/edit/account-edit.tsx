@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAccount, useUpdateAccount } from "@/hooks/use-accounts";
 import { useActiveWorkspaceId } from "@/hooks/use-active-workspace";
+import { useCan } from "@/hooks/use-permissions-check";
 import { AccountForm } from "@/components/accounts/account-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { AccountFormData } from "@/types/account";
@@ -14,6 +16,12 @@ export default function EditAccountPage() {
   const workspaceId = useActiveWorkspaceId();
   const { data: account, isLoading, error } = useAccount(id);
   const updateAccount = useUpdateAccount(id);
+
+  // PERMISSION-GATED: Accounts are system-admin only — redirect if no `account:read`.
+  const canRead = useCan("account", "read");
+  useEffect(() => {
+    if (!canRead) router.replace("/");
+  }, [canRead, router]);
 
   async function handleSubmit(data: AccountFormData) {
     await updateAccount.trigger(data);

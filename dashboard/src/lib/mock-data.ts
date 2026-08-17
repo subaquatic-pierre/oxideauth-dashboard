@@ -8,7 +8,7 @@
  * Services look up mock data by workspace_id when running in guest mode.
  */
 import type {
-  MockWorkspace, MockAccount, MockProject, MockRole,
+  MockWorkspace, MockAccount, MockProfile, MockProject, MockRole,
   MockPermission, MockMembership, MockCredential,
 } from "@/types/mock-data";
 
@@ -120,6 +120,55 @@ export const MOCK_ACCOUNTS: MockAccount[] = [
   },
 ];
 
+// ── Profiles ──────────────────────────────────────────────────────────────
+export const MOCK_PROFILES: MockProfile[] = [
+  {
+    id: "prof-001", workspace_id: WORKSPACE_ONE,
+    email: "alice@demo-org.com", name: "Alice Johnson",
+    display_name: "Alice", job_title: "Workspace Administrator",
+    timezone: "America/New_York",
+    description: "Primary demo workspace administrator",
+    avatar_url: "", tags: ["admin"],
+    created_at: "2026-01-16T10:00:00Z", updated_at: "2026-08-01T11:00:00Z",
+  },
+  {
+    id: "prof-002", workspace_id: WORKSPACE_ONE,
+    email: "bob@demo-org.com", name: "Bob Smith",
+    display_name: "Bob", job_title: "Engineering Lead",
+    timezone: "Europe/London",
+    description: "Engineering team lead",
+    avatar_url: "", tags: ["engineering"],
+    created_at: "2026-02-10T09:00:00Z", updated_at: "2026-07-20T14:00:00Z",
+  },
+  {
+    id: "prof-003", workspace_id: WORKSPACE_ONE,
+    email: "carol@demo-org.com", name: "Carol Davis",
+    display_name: "Carol", job_title: "Designer",
+    timezone: "America/Los_Angeles",
+    description: "Product designer",
+    avatar_url: "", tags: ["design"],
+    created_at: "2026-04-05T11:00:00Z", updated_at: "2026-04-05T11:00:00Z",
+  },
+  {
+    id: "prof-004", workspace_id: WORKSPACE_ONE,
+    email: "dave@demo-org.com", name: "Dave Wilson",
+    display_name: "Dave", job_title: "Contractor",
+    timezone: "UTC",
+    description: "Offboarded contractor",
+    avatar_url: "", tags: ["contractor"],
+    created_at: "2025-11-01T08:00:00Z", updated_at: "2026-06-15T10:00:00Z",
+  },
+  {
+    id: "prof-005", workspace_id: WORKSPACE_TWO,
+    email: "eve@demo-org.com", name: "Eve Martinez",
+    display_name: "Eve", job_title: "Security Auditor",
+    timezone: "America/Chicago",
+    description: "Security auditor",
+    avatar_url: "", tags: ["security"],
+    created_at: "2026-05-12T13:00:00Z", updated_at: "2026-08-06T15:00:00Z",
+  },
+];
+
 // ── Projects ──────────────────────────────────────────────────────────────
 export const MOCK_PROJECTS: MockProject[] = [
   {
@@ -208,36 +257,41 @@ export const MOCK_ROLES: MockRole[] = [
 export const MOCK_MEMBERSHIPS: MockMembership[] = [
   {
     id: "mem-001", workspace_id: WORKSPACE_ONE, account_id: "acc-001",
+    profile_id: "prof-001",
     scope: "workspace", project_id: null,
-    status: "active", roles: ["role-001"],
+    status: "active", roles: ["role-001"], policies: [],
     created_at: "2026-01-21T10:00:00Z",
     updated_at: "2026-01-21T10:00:00Z",
   },
   {
     id: "mem-002", workspace_id: WORKSPACE_ONE, account_id: "acc-002",
+    profile_id: "prof-002",
     scope: "workspace", project_id: null,
-    status: "active", roles: ["role-002"],
+    status: "active", roles: ["role-002"], policies: [],
     created_at: "2026-02-11T09:00:00Z",
     updated_at: "2026-02-11T09:00:00Z",
   },
   {
     id: "mem-003", workspace_id: WORKSPACE_ONE, account_id: "acc-003",
+    profile_id: "prof-003",
     scope: "workspace", project_id: null,
-    status: "invited", roles: ["role-003"],
+    status: "invited", roles: ["role-003"], policies: [],
     created_at: "2026-04-06T11:00:00Z",
     updated_at: "2026-04-06T11:00:00Z",
   },
   {
     id: "mem-004", workspace_id: WORKSPACE_ONE, account_id: "acc-004",
+    profile_id: "prof-004",
     scope: "project", project_id: "proj-001",
-    status: "suspended", roles: ["role-002"],
+    status: "suspended", roles: ["role-002"], policies: [],
     created_at: "2025-11-02T08:00:00Z",
     updated_at: "2026-06-15T10:00:00Z",
   },
   {
     id: "mem-005", workspace_id: WORKSPACE_TWO, account_id: "acc-005",
+    profile_id: "prof-005",
     scope: "workspace", project_id: null,
-    status: "active", roles: ["role-004"],
+    status: "active", roles: ["role-004"], policies: [],
     created_at: "2026-06-01T12:00:00Z",
     updated_at: "2026-08-05T16:45:00Z",
   },

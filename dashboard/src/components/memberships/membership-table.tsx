@@ -3,6 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { useDeleteMembership } from "@/hooks/use-memberships"
+import { useProfiles } from "@/hooks/use-profiles"
 import { ConfirmDialog } from "@/components/confirm-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -20,6 +21,7 @@ import { cn } from "@/lib/utils"
 import { formatDateTime } from "@/lib/format"
 import { EyeIcon, PencilIcon, Trash2Icon } from "lucide-react"
 import type { Membership, MembershipStatus } from "@/types/membership"
+import type { Profile } from "@/types/profile"
 
 const statusClasses: Record<MembershipStatus, string> = {
   invited: "bg-primary/10 text-primary",
@@ -49,16 +51,25 @@ export function MembershipTable({
   const deleteMembership = useDeleteMembership()
   const [deleteTarget, setDeleteTarget] = React.useState<Membership | null>(null)
 
+  // Resolve each membership's profile (by `profile_id`) for the member column.
+  const { data: profiles } = useProfiles()
+  const profileMap = React.useMemo(() => {
+    const map = new Map<string, Profile>()
+    for (const p of profiles ?? []) map.set(p.id, p)
+    return map
+  }, [profiles])
+
   return (
     <Card>
       <CardContent className="p-0">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Account</TableHead>
+              <TableHead>Member</TableHead>
               <TableHead>Scope</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Roles</TableHead>
+              <TableHead>Policies</TableHead>
               <TableHead>Created</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -67,7 +78,7 @@ export function MembershipTable({
             {isLoading ? (
               Array.from({ length: 4 }).map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell colSpan={6}>
+                  <TableCell colSpan={7}>
                     <Skeleton className="h-6 w-full" />
                   </TableCell>
                 </TableRow>
@@ -75,7 +86,7 @@ export function MembershipTable({
             ) : error ? (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="py-10 text-center text-sm text-destructive"
                 >
                   {error.message}
@@ -84,69 +95,82 @@ export function MembershipTable({
             ) : memberships.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="py-10 text-center text-sm text-muted-foreground"
                 >
                   No memberships yet. Invite someone to get started.
                 </TableCell>
               </TableRow>
             ) : (
-              memberships.map((membership) => (
-                <TableRow key={membership.id}>
-                  <TableCell>
-                    <div className="flex min-w-0 flex-col">
-                      <span className="font-medium">
-                        {membership.account_id}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="capitalize">
-                      {membership.scope}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge status={membership.status} />
-                  </TableCell>
-                  <TableCell className="tabular-nums">
-                    {membership.roles.length}
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground">
-                    {formatDateTime(membership.created_at)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label={`View ${membership.account_id ?? "membership"}`}
-                        render={<Link href={`/memberships/${membership.id}`} />}
-                      >
-                        <EyeIcon />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label={`Edit ${membership.account_id ?? "membership"}`}
-                        render={
-                          <Link href={`/memberships/${membership.id}/edit`} />
-                        }
-                      >
-                        <PencilIcon />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label="Delete membership"
-                        className="text-muted-foreground hover:text-destructive"
-                        onClick={() => setDeleteTarget(membership)}
-                      >
-                        <Trash2Icon />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
+              memberships.map((membership) => {
+                const profile = membership.profile_id
+                  ? profileMap.get(membership.profile_id)
+                  : undefined
+                return (
+                  <TableRow key={membership.id}>
+                    <TableCell>
+                      <div className="flex min-w-0 flex-col">
+                        <span className="font-medium">
+                          {profile?.name ?? "Unknown member"}
+                        </span>
+                        {profile?.email ? (
+                          <span className="truncate text-xs text-muted-foreground">
+                            {profile.email}
+                          </span>
+                        ) : null}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="capitalize">
+                        {membership.scope}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <StatusBadge status={membership.status} />
+                    </TableCell>
+                    <TableCell className="tabular-nums">
+                      {membership.roles.length}
+                    </TableCell>
+                    <TableCell className="tabular-nums">
+                      {membership.policies?.length ?? 0}
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground">
+                      {formatDateTime(membership.created_at)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label={`View ${profile?.name ?? "membership"}`}
+                          render={<Link href={`/memberships/${membership.id}`} />}
+                        >
+                          <EyeIcon />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label={`Edit ${profile?.name ?? "membership"}`}
+                          render={
+                            <Link href={`/memberships/${membership.id}/edit`} />
+                          }
+                        >
+                          <PencilIcon />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Delete membership"
+                          className="text-muted-foreground hover:text-destructive"
+                          onClick={() => setDeleteTarget(membership)}
+                        >
+                          <Trash2Icon />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
+              })
             )}
           </TableBody>
         </Table>
@@ -157,7 +181,7 @@ export function MembershipTable({
         title="Delete membership"
         description={
           deleteTarget
-            ? `Remove ${deleteTarget.account_id} from this workspace. This action cannot be undone.`
+            ? "Remove this member from the workspace. This action cannot be undone."
             : undefined
         }
         isConfirming={deleteMembership.isMutating}

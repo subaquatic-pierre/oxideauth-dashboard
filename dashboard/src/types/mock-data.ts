@@ -43,6 +43,21 @@ export interface MockRole {
   updated_at?: string | null
 }
 
+export interface MockProfile {
+  id: string
+  workspace_id: string
+  email: string
+  name: string
+  description?: string | null
+  display_name?: string | null
+  job_title?: string | null
+  timezone?: string | null
+  avatar_url?: string | null
+  tags: string[]
+  created_at: string
+  updated_at?: string | null
+}
+
 export interface MockPermission {
   id: string
   workspace_id: string
@@ -61,10 +76,12 @@ export interface MockMembership {
   id: string
   workspace_id: string
   account_id: string
+  profile_id: string | null
   scope: MembershipScope
   project_id: string | null
   status: MembershipStatus
   roles: string[]
+  policies: unknown[]
   created_at: string
   updated_at?: string | null
 }

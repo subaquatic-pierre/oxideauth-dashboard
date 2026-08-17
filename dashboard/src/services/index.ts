@@ -28,6 +28,7 @@ export { RoleService } from "./role.service";
 export { PermissionService } from "./permission.service";
 export { CredentialService } from "./credential.service";
 export { MembershipService } from "./membership.service";
+export { ProfileService } from "./profile.service";
 
 // ── Type re-exports (so consumers don't import from individual files) ─────
 export type { AccountListQuery, AccountListResponse } from "./account.service";
@@ -41,6 +42,7 @@ import { RoleService } from "./role.service";
 import { PermissionService } from "./permission.service";
 import { CredentialService } from "./credential.service";
 import { MembershipService } from "./membership.service";
+import { ProfileService } from "./profile.service";
 
 // ── Lazy singleton instances ─────────────────────────────────────────────
 export const authService = getSingleton(
@@ -81,4 +83,9 @@ export const credentialService = getSingleton(
 export const membershipsService = getSingleton(
   () => new MembershipService(),
   Symbol.for("oxideauth.membershipsService"),
+);
+
+export const profileService = getSingleton(
+  () => new ProfileService(),
+  Symbol.for("oxideauth.profileService"),
 );

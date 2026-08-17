@@ -54,14 +54,17 @@ export class MembershipService extends BaseService {
       return mockOk({
         id: "mem-mock-new",
         workspace_id: getActiveWorkspaceId(),
+        profile_id: "prof-mock-new",
+        status: data.status ?? "invited",
         ...data,
       }).data as unknown as Membership;
     }
     return this.post<Membership>("/memberships/create", {
-      status: "active" as const,
-      tags: [],
-      meta: { schema_version: "1" },
       ...data,
+      status: data.status ?? "invited",
+      policy_ids: [],
+      tags: data.tags ?? [],
+      meta: { schema_version: "1" },
     });
   }
 

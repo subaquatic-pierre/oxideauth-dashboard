@@ -22,12 +22,12 @@ TBD — choose from:
 - Next.js
 - Vue + Nuxt
 
-## Features (planned)
+## Features
 
 - Workspace management
-- Account management
+- Profile & user management (workspace members) — profiles are the workspace-scoped identity; users are created via membership onboarding by email
 - Role & permission configuration
-- Membership oversight
+- Membership oversight (members identified by their workspace profile)
 - OAuth provider setup
 - Audit log viewer
 - API key management

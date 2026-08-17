@@ -4,7 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import { useActiveWorkspaceId } from "@/hooks/use-active-workspace"
 import { useMemberships } from "@/hooks/use-memberships"
-import { useAccounts } from "@/hooks/use-accounts"
+import { useProfiles } from "@/hooks/use-profiles"
 import { useProjects } from "@/hooks/use-projects"
 import { useCan } from "@/hooks/use-permissions-check"
 import { MembershipTable } from "@/components/memberships/membership-table"
@@ -42,40 +42,40 @@ const statusOptions: { value: "all" | MembershipStatus; label: string }[] = [
 
 export default function MembershipsPage() {
   const workspaceId = useActiveWorkspaceId()
-  const [accountId, setAccountId] = React.useState<string | null>(null)
+  const [profileId, setProfileId] = React.useState<string | null>(null)
   const [scope, setScope] = React.useState<"all" | MembershipScope>("all")
   const [status, setStatus] = React.useState<"all" | MembershipStatus>("all")
   const [projectId, setProjectId] = React.useState<string | null>(null)
 
   const filters = React.useMemo<MembershipFilters>(
     () => ({
-      ...(accountId ? { account_id: accountId } : {}),
+      ...(profileId ? { profile_id: profileId } : {}),
       ...(scope !== "all" ? { scope } : {}),
       ...(status !== "all" ? { status } : {}),
       ...(projectId ? { project_id: projectId } : {}),
     }),
-    [accountId, scope, status, projectId],
+    [profileId, scope, status, projectId],
   )
 
-  const { data: accountsData } = useAccounts()
+  const { data: profiles } = useProfiles()
   const { projects } = useProjects()
   const { data: memberships, isLoading, error } = useMemberships(filters)
 
-  const accountOptions = React.useMemo(() => {
-    const list = accountsData?.accounts ?? []
-    return list.map((a) => ({
-      value: a.id,
-      label: a.email || a.name || a.id,
-      hint: a.name && a.name !== a.email ? a.name : undefined,
+  const profileOptions = React.useMemo(() => {
+    const list = profiles ?? []
+    return list.map((p) => ({
+      value: p.id,
+      label: p.email || p.name || p.id,
+      hint: p.name && p.name !== p.email ? p.name : undefined,
     }))
-  }, [accountsData])
+  }, [profiles])
   const projectOptions = React.useMemo(
     () => projects.map((p) => ({ value: p.id, label: p.name })),
     [projects],
   )
 
   function resetFilters() {
-    setAccountId(null)
+    setProfileId(null)
     setScope("all")
     setStatus("all")
     setProjectId(null)
@@ -84,7 +84,9 @@ export default function MembershipsPage() {
   // PERMISSION-GATED: Create requires `membership:create`.
   const canCreate = useCan("membership", "create")
 
-  const hasFilters = Boolean(accountId || scope !== "all" || status !== "all" || projectId)
+  const hasFilters = Boolean(
+    profileId || scope !== "all" || status !== "all" || projectId,
+  )
   const showEmpty = !isLoading && memberships && memberships.length === 0
 
   return (
@@ -118,13 +120,13 @@ export default function MembershipsPage() {
           <Card>
             <CardContent className="flex flex-wrap items-end gap-3">
               <div className="flex min-w-48 flex-col gap-1.5">
-                <Label>Account</Label>
+                <Label>Member</Label>
                 <OptionCombobox
-                  options={accountOptions}
-                  value={accountId}
-                  onChange={(v) => setAccountId(typeof v === "string" ? v : null)}
-                  placeholder="Filter by account"
-                  emptyText="No accounts found"
+                  options={profileOptions}
+                  value={profileId}
+                  onChange={(v) => setProfileId(typeof v === "string" ? v : null)}
+                  placeholder="Filter by profile"
+                  emptyText="No profiles found"
                   className="w-56"
                 />
               </div>
@@ -132,7 +134,9 @@ export default function MembershipsPage() {
                 <Label>Scope</Label>
                 <Select
                   value={scope}
-                  onValueChange={(v) => setScope((v as "all" | MembershipScope) ?? "all")}
+                  onValueChange={(v) =>
+                    setScope((v as "all" | MembershipScope) ?? "all")
+                  }
                 >
                   <SelectTrigger className="w-40">
                     <SelectValue />
@@ -150,7 +154,9 @@ export default function MembershipsPage() {
                 <Label>Status</Label>
                 <Select
                   value={status}
-                  onValueChange={(v) => setStatus((v as "all" | MembershipStatus) ?? "all")}
+                  onValueChange={(v) =>
+                    setStatus((v as "all" | MembershipStatus) ?? "all")
+                  }
                 >
                   <SelectTrigger className="w-40">
                     <SelectValue />
@@ -202,8 +208,7 @@ export default function MembershipsPage() {
               <div>
                 <Text variant="h3">No memberships yet</Text>
                 <Text variant="muted" className="mt-2">
-                  Create your first membership to link an account to this
-                  workspace.
+                  Add a user by email to create their membership.
                 </Text>
               </div>
               {canCreate && (

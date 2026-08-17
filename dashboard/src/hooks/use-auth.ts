@@ -72,8 +72,12 @@ export function useAuth() {
   );
 
   const login = useCallback(
-    async (email: string, password: string) => {
-      await loginMutation.trigger({ email, password });
+    async (email: string, password: string, workspace: string) => {
+      await loginMutation.trigger({
+        email,
+        password,
+        workspace: { id: workspace },
+      });
     },
     [loginMutation],
   );

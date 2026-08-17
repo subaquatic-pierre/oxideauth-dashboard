@@ -24,11 +24,18 @@ interface Workspace {
 
 const ACTIVE_WORKSPACE_KEY = "active_workspace_id";
 
-export function WorkspaceSelector() {
+interface Props {
+  onWorkspaceChange?: (ws: WorkspaceDescribeRes) => void;
+}
+
+export function WorkspaceSelector({ onWorkspaceChange }: Props) {
   const wsSvc = workspaceService;
   const { data, isLoading } = useSWR<{ workspaces: WorkspaceDescribeRes[] }>(
     ["workspaces", "list"],
-    () => wsSvc.list().then((res: { workspaces: WorkspaceDescribeRes[] }) => ({ workspaces: res.workspaces })),
+    () =>
+      wsSvc.list().then((res: { workspaces: WorkspaceDescribeRes[] }) => ({
+        workspaces: res.workspaces,
+      })),
   );
 
   const { workspaces } = data ?? { workspaces: [] };
@@ -86,6 +93,11 @@ export function WorkspaceSelector() {
     // so stale responses never overwrite the new workspace's data (FR-008).
     abortInFlightRequests();
     setActiveId(value);
+
+    const ws = workspaces.find((el) => el.id === value);
+    if (onWorkspaceChange && ws) {
+      onWorkspaceChange(ws);
+    }
   }
 
   if (isLoading) {

@@ -18,20 +18,25 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { WorkspaceSelector } from "@/components/workspace-selector";
+import { WorkspaceDescribeRes } from "@/types/workspace";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login, isLoggingIn, loginError } = useAuth();
   const { enterGuestMode } = useGuestMode();
-  const [email, setEmail] = useState("root@system.local");
-  const [password, setPassword] = useState("rootpass");
+  const [email, setEmail] = useState("user@email.com");
+  const [password, setPassword] = useState("password");
+  const [workspace, setWorkspace] = useState<WorkspaceDescribeRes | null>(null);
+
   const registered = searchParams.get("registered") === "1";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
-      await login(email, password);
+      if (workspace) {
+        await login(email, password, workspace.id);
+      }
       router.push("/");
     } catch {
       // error is exposed via loginError
@@ -89,7 +94,7 @@ function LoginForm() {
           <div className="space-y-2">
             <Label htmlFor="password">Workspace</Label>
             <div className="h-10">
-              <WorkspaceSelector />
+              <WorkspaceSelector onWorkspaceChange={(ws) => setWorkspace(ws)} />
             </div>
           </div>
         </CardContent>

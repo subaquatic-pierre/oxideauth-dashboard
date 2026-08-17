@@ -77,6 +77,9 @@ export interface AuthOAuthInitiateRes {
 export interface AuthLoginReq {
   email: string;
   password: string;
+  workspace: {
+    id: string;
+  };
 }
 
 export interface AuthRegisterReq {

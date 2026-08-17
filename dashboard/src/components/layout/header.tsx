@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGuestMode } from "@/hooks/use-guest-mode";
 import { useSidebar } from "@/components/layout/sidebar-provider";
 import { useTheme } from "@/components/providers/theme-provider";
-import { WorkspaceSelector } from "@/components/layout/workspace-selector";
+import { WorkspaceSelector } from "@/components/workspace-selector";
 import { GuestModeBadge } from "@/components/layout/guest-mode-badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,9 +32,7 @@ function getInitials(name?: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "?";
   if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
-  return (
-    parts[0].charAt(0) + parts[parts.length - 1].charAt(0)
-  ).toUpperCase();
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
 }
 
 export function Header() {
@@ -47,7 +45,9 @@ export function Header() {
 
   // Hydration guard: defer rendering theme-dependent UI until client mount
   // eslint-disable-next-line react-hooks/set-state-in-effect
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   function handleLogout() {
     if (isGuest) {

@@ -17,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { WorkspaceSelector } from "@/components/workspace-selector";
 
 function LoginForm() {
   const router = useRouter();
@@ -85,6 +86,12 @@ function LoginForm() {
               <p className="text-sm text-destructive">{loginError}</p>
             </div>
           )}
+          <div className="space-y-2">
+            <Label htmlFor="password">Workspace</Label>
+            <div className="h-10">
+              <WorkspaceSelector />
+            </div>
+          </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
           <Button type="submit" className="w-full" disabled={isLoggingIn}>
